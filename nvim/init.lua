@@ -22,7 +22,7 @@ vim.o.smartindent = true
 
 vim.o.clipboard = "unnamedplus"
 vim.o.colorcolumn = "120"
-vim.o.completeopt = "menuone,noselect"
+vim.o.completeopt = "menu,menuone,noinsert"
 vim.o.gdefault = true
 vim.o.mouse = "a"
 vim.o.scrolloff = 8
@@ -602,7 +602,7 @@ local servers = {
 			workspace = { checkThirdParty = false },
 			telemetry = { enable = false },
 			-- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-			-- diagnostics = { disable = { 'missing-fields' } },
+			diagnostics = { disable = { 'missing-fields' } },
 		},
 	},
 }
@@ -652,7 +652,7 @@ cmp.setup({
 		["<C-n>"] = cmp.mapping.select_next_item(),
 		["<C-p>"] = cmp.mapping.select_prev_item(),
 		["<C-Space>"] = cmp.mapping.complete({}),
-		["<Tab>"] = cmp.mapping.confirm({
+		["<CR>"] = cmp.mapping.confirm({
 			behavior = cmp.ConfirmBehavior.Insert,
 			select = true,
 		}),
