@@ -10,8 +10,6 @@
 - kitty
 - neovim
 - fzf
-- htop
 - font-fira-code-nerd-font
 - tldr
 - zoxide
-
