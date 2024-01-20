@@ -6,51 +6,45 @@ XDG_CONFIG_HOME=~/.config
 ensure_dir_exists () {
 	local dirname="$1"
 	if [ ! -d $dirname ]; then
-		echo "Creating directory $dirname"
+		echo "Creating directory: $dirname"
 		mkdir $dirname
 	fi
 }
 
-ensure_unlinked () {
-	local fname="$1"
-	if [ -L $fname ]; then
-		echo "Link already exists; unlinking $fname"
-		unlink $fname
+ensure_linked () {
+	local tname="$1"
+	local lname="$2"
+	if [ -L $lname ]; then
+		echo "Symlink exists: $lname"
+	else
+		ln -svw $tname $lname
 	fi
 }
 
+# --- fish ---
+echo "Configuring fish..."
+FISH_CFG_DIR=$XDG_CONFIG_HOME/fish
+ensure_dir_exists $FISH_CFG_DIR
+ensure_linked $PWD/fish/config.fish $FISH_CFG_DIR/config.fish
+ensure_linked $PWD/fish/fish_variables $FISH_CFG_DIR/fish_variables
+ensure_dir_exists $FISH_CFG_DIR/conf.d
+ensure_linked $PWD/fish/conf.d/fish_command_timer.fish $FISH_CFG_DIR/conf.d/fish_command_timer.fish
+ensure_dir_exists $FISH_CFG_DIR/functions
+ensure_linked $PWD/fish/functions/fish_prompt.fish $FISH_CFG_DIR/functions/fish_prompt.fish
+
+
 # --- kitty ---
-echo "Configuring kitty"
-KITTY_CFG_DIR=$XDG_CONFIG_HOME/kitty
-KITTY_THEME_LN=$KITTY_CFG_DIR/GruvboxMaterialDarkHard.conf
-KITTY_CONF_LN=$KITTY_CFG_DIR/kitty.conf
-ensure_dir_exists $KITTY_CFG_DIR
-ensure_unlinked $KITTY_THEME_LN
-ensure_unlinked $KITTY_CONF_LN
-
-echo "Linking $KITTY_THEME_LN"
-ln -s $PWD/kitty/GruvboxMaterialDarkHard.conf $KITTY_THEME_LN
-
-echo "Linking $KITTY_CONF_LN"
-ln -s $PWD/kitty/kitty.conf $KITTY_CONF_LN
+echo "Configuring kitty..."
+ensure_linked $PWD/kitty $XDG_CONFIG_HOME
 
 
 # --- neovim ---
-echo "Configuring neovim"
+echo "Configuring neovim..."
 NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
-NVIM_INIT_LUA_LN=$NVIM_CFG_DIR/init.lua
 ensure_dir_exists $NVIM_CFG_DIR
-ensure_unlinked $NVIM_INIT_LUA_LN
-
-echo "Linking $NVIM_INIT_LUA_LN"
-ln -s $PWD/nvim/init.lua $NVIM_INIT_LUA_LN
+ensure_linked $PWD/nvim/init.lua $NVIM_CFG_DIR/init.lua
 
 
 # --- tmux ---
-echo "Configuring tmux"
-TMUX_CONF_LN=~/.tmux.conf
-ensure_unlinked $TMUX_CONF_LN
-
-echo "Linking $TMUX_CONF_LN"
-ln -s $PWD/tmux/tmux.conf $TMUX_CONF_LN
-
+echo "Configuring tmux..."
+ensure_linked $PWD/tmux/tmux.conf ~/.tmux.conf
