@@ -86,7 +86,7 @@ require("lazy").setup({
 			"williamboman/mason-lspconfig.nvim",
 			-- Useful status updates for LSP
 			-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-			{ "j-hui/fidget.nvim", opts = {} },
+			{ "j-hui/fidget.nvim",       opts = {} },
 			"folke/neodev.nvim",
 		},
 		config = function()
@@ -653,7 +653,7 @@ cmp.setup({
 		["<C-p>"] = cmp.mapping.select_prev_item(),
 		["<C-Space>"] = cmp.mapping.complete({}),
 		["<Tab>"] = cmp.mapping.confirm({
-			behavior = cmp.ConfirmBehavior.Replace,
+			behavior = cmp.ConfirmBehavior.Insert,
 			select = true,
 		}),
 	}),
