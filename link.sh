@@ -21,7 +21,6 @@ ensure_linked () {
 	fi
 }
 
-# --- fish ---
 echo "Configuring fish..."
 FISH_CFG_DIR=$XDG_CONFIG_HOME/fish
 ensure_dir_exists $FISH_CFG_DIR
@@ -33,18 +32,17 @@ ensure_dir_exists $FISH_CFG_DIR/functions
 ensure_linked $PWD/fish/functions/fish_prompt.fish $FISH_CFG_DIR/functions/fish_prompt.fish
 
 
-# --- kitty ---
 echo "Configuring kitty..."
 ensure_linked $PWD/kitty $XDG_CONFIG_HOME
 
 
-# --- neovim ---
 echo "Configuring neovim..."
 NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
 ensure_dir_exists $NVIM_CFG_DIR
 ensure_linked $PWD/nvim/init.lua $NVIM_CFG_DIR/init.lua
 
 
-# --- tmux ---
 echo "Configuring tmux..."
 ensure_linked $PWD/tmux/tmux.conf ~/.tmux.conf
+
+# TODO uninstall
