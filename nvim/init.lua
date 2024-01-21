@@ -4,11 +4,11 @@ vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 vim.o.incsearch = true
-
 vim.o.ignorecase = true
 vim.o.smartcase = true
+vim.o.gdefault = true
 
 vim.o.expandtab = true
 vim.o.softtabstop = 4
@@ -19,17 +19,19 @@ vim.o.autoindent = true
 vim.o.breakindent = true
 vim.o.smartindent = true
 
+vim.o.splitright = true
+vim.o.splitbelow = true
+
 vim.o.clipboard = "unnamedplus"
 vim.o.colorcolumn = "120"
 vim.o.completeopt = "menu,menuone,noinsert"
-vim.o.gdefault = true
 vim.o.mouse = "a"
 vim.o.scrolloff = 8
 vim.o.signcolumn = "yes"
 vim.o.termguicolors = true
 vim.o.timeoutlen = 300
 vim.o.undofile = true
-vim.o.updatetime = 50
+vim.o.updatetime = 100
 vim.o.wrap = false
 
 vim.wo.number = true
@@ -351,11 +353,13 @@ vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set("n", "<leader><space>", "<C-^>", { desc = "[ ] Toggle last buffer" })
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "n", "nzz")
+vim.keymap.set("n", "N", "Nzz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-h>", ":noh<CR>")
+
+vim.keymap.set("n", "<leader><space>", "<C-^>", { desc = "[ ] Toggle last buffer" })
 vim.keymap.set("n", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
 
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
