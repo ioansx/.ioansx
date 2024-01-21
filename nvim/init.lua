@@ -1,9 +1,8 @@
 -- [[ Options ]]
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-vim.g.netrw_liststyle = 3
-vim.g.netrw_winsize = 27
-vim.g.netrw_banner = 0
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 vim.o.hlsearch = false
 vim.o.incsearch = true
@@ -47,8 +46,6 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
-vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
-vim.keymap.set("n", "<leader>e", ":Lex<CR>", { desc = "L[e]xplore" })
 vim.keymap.set("n", "[x", vim.diagnostic.goto_prev, { desc = "Go to previous diagnosti[x]" })
 vim.keymap.set("n", "]x", vim.diagnostic.goto_next, { desc = "Go to next diagnosti[x]" })
 vim.keymap.set("n", "<leader>xf", vim.diagnostic.open_float, { desc = "Open [f]loating diagnosti[x]" })
@@ -56,6 +53,7 @@ vim.keymap.set("n", "<leader>xl", vim.diagnostic.setloclist, { desc = "Open diag
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
+
 
 -- [[ Lazy package manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -192,6 +190,57 @@ require("lazy").setup({
 	},
 
 	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		cmd = "Neotree",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+			"MunifTanjim/nui.nvim",
+		},
+		deactivate = function()
+			vim.cmd([[Neotree close]])
+		end,
+		init = function()
+			if vim.fn.argc(-1) == 1 then
+				local stat = vim.loop.fs_stat(vim.fn.argv(0))
+				if stat and stat.type == "directory" then
+					require("neo-tree")
+				end
+			end
+		end,
+		opts = {
+			sources = { "filesystem" },
+			open_files_do_not_replace_types = { "terminal" },
+			filesystem = {
+				bind_to_cwd = true,
+				follow_current_file = {
+					enabled = true,
+					leave_dirs_open = true,
+				},
+				use_libuv_file_watcher = true,
+				filtered_items = {
+					visible = true, -- when true, they will just be displayed differently than normal items
+				},
+			},
+			window = {
+				width = 50,
+				mappings = {
+					["<space>"] = "none",
+				},
+			},
+			default_component_configs = {
+				indent = {
+					with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
+					expander_collapsed = "",
+					expander_expanded = "",
+					expander_highlight = "NeoTreeExpander",
+				},
+			},
+		},
+	},
+
+	{
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
 		opts = {},
@@ -316,6 +365,12 @@ require("lazy").setup({
 
 -- [[ Colorscheme ]]
 vim.cmd("colorscheme gruvbox")
+
+-- [[ LazyGit ]]
+vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
+
+--[[ Neotree ]]
+vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "[e]xplore" })
 
 -- [[ WhichKey ]]
 -- document existing key chains
