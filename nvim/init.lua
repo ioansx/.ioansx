@@ -35,26 +35,6 @@ vim.o.wrap = false
 vim.wo.number = true
 vim.wo.signcolumn = "yes"
 
--- [[ Keymaps ]]
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
-
-vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set("n", "<leader><space>", "<C-^>", { desc = "[ ] Toggle last buffer" })
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
-vim.keymap.set("n", "[x", vim.diagnostic.goto_prev, { desc = "Go to previous diagnosti[x]" })
-vim.keymap.set("n", "]x", vim.diagnostic.goto_next, { desc = "Go to next diagnosti[x]" })
-vim.keymap.set("n", "<leader>xf", vim.diagnostic.open_float, { desc = "Open [f]loating diagnosti[x]" })
-vim.keymap.set("n", "<leader>xl", vim.diagnostic.setloclist, { desc = "Open diagnosti[x] [l]ist" })
-
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
-
-
 -- [[ Lazy package manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -366,6 +346,26 @@ require("lazy").setup({
 -- [[ Colorscheme ]]
 vim.cmd("colorscheme gruvbox")
 
+-- [[ Keymaps ]]
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set("n", "<leader><space>", "<C-^>", { desc = "[ ] Toggle last buffer" })
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
+
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
+vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "Open [f]loating [d]iagnostic" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Open [d]iagnostic [l]ist" })
+
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
+
 -- [[ LazyGit ]]
 vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
 
@@ -380,7 +380,7 @@ require("which-key").register({
 	["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
 	["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
 	["<leader>w"] = { name = "[w]orkspace", _ = "which_key_ignore" },
-	["<leader>x"] = { name = "Diagnosti[x]", _ = "which_key_ignore" },
+	["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
 })
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
@@ -408,6 +408,13 @@ require("telescope").setup({
 				["<C-u>"] = false,
 				["<C-d>"] = false,
 			},
+		},
+		layout_strategy = 'vertical',
+		layout_config = {
+			height = 0.8,
+			mirror = true,
+			prompt_position = 'top',
+			width = 0.6,
 		},
 	},
 })
@@ -470,15 +477,15 @@ local function telescope_live_grep_open_files()
 end
 
 vim.keymap.set("n", "<leader>s/", telescope_live_grep_open_files, { desc = "[s]earch [/] in Open Files" })
-vim.keymap.set("n", "<leader>ss", require("telescope.builtin").builtin, { desc = "[s]earch [s]elect Telescope" })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
+vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[s]earch [d]iagnostic" })
 vim.keymap.set("n", "<leader>sf", require("telescope.builtin").find_files, { desc = "[s]earch [f]iles" })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc = "[s]earch [h]elp" })
-vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[s]earch by [g]rep" })
-vim.keymap.set("n", "<leader>sx", require("telescope.builtin").diagnostics, { desc = "[s]earch diagnosti[x]" })
-vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
+vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
+-- vim.keymap.set("n", "<leader>ss", require("telescope.builtin").builtin, { desc = "[s]earch [s]elect Telescope" })
+-- vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
+vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<cr>", { desc = "[s]earch by [G]rep on Git Root" })
+vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -584,13 +591,14 @@ local on_attach = function(_, bufnr)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
 
-	nmap("<leader>cn", vim.lsp.buf.rename, "re[n]ame")
 	nmap("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
+	nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename")
+	nmap("<leader>cD", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
 
 	nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
+	nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 	nmap("gr", require("telescope.builtin").lsp_references, "[g]oto [r]eferences")
 	nmap("gI", require("telescope.builtin").lsp_implementations, "[g]oto [I]mplementation")
-	nmap("<leader>cD", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
 	nmap("<leader>sd", require("telescope.builtin").lsp_document_symbols, "[d]ocument [s]ymbols")
 	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[w]orkspace [s]ymbols")
 
@@ -599,7 +607,6 @@ local on_attach = function(_, bufnr)
 	nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
 
 	-- Lesser used LSP functionality
-	nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 	nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "[w]orkspace [a]dd Folder")
 	nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "[w]orkspace [r]emove Folder")
 	nmap("<leader>wl", function()
