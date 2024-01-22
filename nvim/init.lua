@@ -506,7 +506,7 @@ vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc
 -- vim.keymap.set("n", "<leader>ss", require("telescope.builtin").builtin, { desc = "[s]earch [s]elect Telescope" })
 -- vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
-vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<cr>", { desc = "[s]earch by [G]rep on Git Root" })
+vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
 vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
 
 -- [[ Configure Treesitter ]]
@@ -620,14 +620,24 @@ local on_attach = function(_, bufnr)
 		})
 	end
 
-	nmap("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
-	nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename")
-	nmap("<leader>cD", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+	-- Create a command `:Format` local to the LSP buffer
+	vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
+		vim.lsp.buf.format()
+	end, { desc = "Format current buffer with LSP" })
 
+	-- code
+	nmap("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
+	nmap("<leader>cf", ":Format<CR>", "[f]ormat buffer")
+	nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename symbol")
+
+	-- goto
 	nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
 	nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 	nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
 	nmap("gI", require("telescope.builtin").lsp_implementations, "[g]oto [I]mplementation")
+	nmap("<leader>gt", require("telescope.builtin").lsp_type_definitions, "[g]oto [t]ype definition")
+
+	-- search
 	nmap("<leader>sd", require("telescope.builtin").lsp_document_symbols, "[d]ocument [s]ymbols")
 	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[w]orkspace [s]ymbols")
 
@@ -641,11 +651,6 @@ local on_attach = function(_, bufnr)
 	nmap("<leader>wl", function()
 		print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 	end, "[w]orkspace [l]ist Folders")
-
-	-- Create a command `:Format` local to the LSP buffer
-	vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
-		vim.lsp.buf.format()
-	end, { desc = "Format current buffer with LSP" })
 end
 
 -- mason-lspconfig requires that these setup functions are called in this order
