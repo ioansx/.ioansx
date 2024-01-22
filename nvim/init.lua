@@ -244,6 +244,14 @@ require("lazy").setup({
 				lualine_y = { 'progress' },
 				lualine_z = { 'location' }
 			},
+			inactive_sections = {
+				lualine_a = {},
+				lualine_b = {},
+				lualine_c = { { 'filename', path = 1, shorting_target = 60 } },
+				lualine_x = {},
+				lualine_y = {},
+				lualine_z = { 'location' }
+			},
 		},
 	},
 
@@ -425,7 +433,7 @@ require("telescope").setup({
 		layout_config = {
 			height = 0.9,
 			mirror = true,
-			prompt_position = 'top',
+			-- prompt_position = 'top',
 			width = 0.6,
 		},
 	},
@@ -607,6 +615,7 @@ local on_attach = function(_, bufnr)
 
 	local function telescope_lsp_references()
 		require("telescope.builtin").lsp_references({
+			include_declaration = false,
 			show_line = false,
 		})
 	end
