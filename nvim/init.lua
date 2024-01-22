@@ -603,13 +603,19 @@ local on_attach = function(_, bufnr)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
 
+	local function telescope_lsp_references()
+		require("telescope.builtin").lsp_references({
+			show_line = false,
+		})
+	end
+
 	nmap("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
 	nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename")
 	nmap("<leader>cD", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
 
 	nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
 	nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
-	nmap("gr", require("telescope.builtin").lsp_references, "[g]oto [r]eferences")
+	nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
 	nmap("gI", require("telescope.builtin").lsp_implementations, "[g]oto [I]mplementation")
 	nmap("<leader>sd", require("telescope.builtin").lsp_document_symbols, "[d]ocument [s]ymbols")
 	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[w]orkspace [s]ymbols")
