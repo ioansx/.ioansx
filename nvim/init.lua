@@ -423,13 +423,15 @@ require("telescope").setup({
 		},
 		layout_strategy = 'vertical',
 		layout_config = {
-			height = 0.8,
+			height = 0.9,
 			mirror = true,
 			prompt_position = 'top',
 			width = 0.6,
 		},
 	},
 })
+
+vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
 
 -- Enable telescope fzf native, if installed
 pcall(require("telescope").load_extension, "fzf")
