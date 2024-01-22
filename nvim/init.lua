@@ -206,7 +206,7 @@ require("lazy").setup({
 				},
 			},
 			window = {
-				width = 50,
+				width = 55,
 				mappings = {
 					["<space>"] = "none",
 				},
@@ -235,6 +235,14 @@ require("lazy").setup({
 			options = {
 				component_separators = "|",
 				section_separators = "",
+			},
+			sections = {
+				lualine_a = { 'mode' },
+				lualine_b = { { 'filename', path = 1, shorting_target = 60 } },
+				lualine_c = {},
+				lualine_x = { 'diff', 'diagnostics', 'encoding', 'filetype' },
+				lualine_y = { 'progress' },
+				lualine_z = { 'location' }
 			},
 		},
 	},
