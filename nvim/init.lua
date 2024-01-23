@@ -376,13 +376,13 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-h>", ":noh<CR>")
 
 vim.keymap.set("n", "<leader><space>", "<C-^>", { desc = "[ ] Toggle last buffer" })
-vim.keymap.set("n", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
 
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "Open [f]loating [d]iagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Open [d]iagnostic [l]ist" })
 
+vim.keymap.set("v", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
 
@@ -510,22 +510,24 @@ local function telescope_find_files()
 	})
 end
 
+local function telescope_find_all_files()
+	require("telescope.builtin").find_files({
+		hidden = true,
+		no_ignore = true,
+	})
+end
+
 vim.keymap.set("n", "<leader>s/", telescope_live_grep_open_files, { desc = "[s]earch [/] in Open Files" })
+vim.keymap.set("n", "<leader>sa", telescope_find_all_files, { desc = "[s]earch [a]ll cwd files" })
 vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[s]earch [d]iagnostic" })
 vim.keymap.set("n", "<leader>sf", telescope_find_files, { desc = "[s]earch [f]iles" })
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[s]earch by [g]rep" })
 vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
--- vim.keymap.set("n", "<leader>ss", require("telescope.builtin").builtin, { desc = "[s]earch [s]elect Telescope" })
--- vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
+vim.keymap.set("n", "<leader>sm", require("telescope.builtin").help_tags, { desc = "[s]earch [m]an pages" })
+vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
 vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
 vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
-vim.keymap.set("n", "<leader>sm", require("telescope.builtin").man_pages, { desc = "[s]earch [m]an pages" })
-vim.keymap.set(
-	"n",
-	"<leader>st",
-	require("telescope.builtin").lsp_type_definitions,
-	{ desc = "[s]earch [t]ype definition" }
-)
+vim.keymap.set("n", "<leader>st", require("telescope.builtin").lsp_type_definitions, { desc = "[s]earch [t]ype def" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 
 -- [[ Configure Treesitter ]]
