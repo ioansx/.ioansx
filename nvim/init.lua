@@ -25,6 +25,7 @@ vim.o.splitbelow = true
 vim.o.clipboard = "unnamedplus"
 vim.o.colorcolumn = "120"
 vim.o.completeopt = "menu,menuone,noinsert"
+vim.o.cursorline = true
 vim.o.mouse = "a"
 vim.o.scrolloff = 8
 vim.o.signcolumn = "yes"
