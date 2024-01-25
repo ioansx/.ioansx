@@ -35,15 +35,6 @@ vim.o.undofile = true
 vim.o.updatetime = 100
 vim.o.wrap = false
 
-vim.opt.listchars = {
-    tab = '│ ',
-    -- extends = '⟩',
-    -- precedes = '⟨',
-    -- trail = '·'
-    -- multispace = '|   '
-}
-vim.o.list = true
-
 vim.wo.number = true
 vim.wo.signcolumn = "yes"
 
@@ -232,11 +223,11 @@ require("lazy").setup({
         },
     },
 
-    -- {
-    --  "lukas-reineke/indent-blankline.nvim",
-    --  main = "ibl",
-    --  opts = {},
-    -- },
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
+        opts = {},
+    },
 
     {
         "nvim-lualine/lualine.nvim",
@@ -432,6 +423,12 @@ vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Open [d]i
 vim.keymap.set("v", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
+
+-- [[ indent-blankline ]]
+require("ibl").setup {
+    indent = { char = '▏' },
+    scope = { enabled = false },
+}
 
 -- [[ LazyGit ]]
 vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
