@@ -678,6 +678,18 @@ local on_attach = function(_, bufnr)
         })
     end
 
+    local function telescope_lsp_type_definitions()
+        require("telescope.builtin").lsp_type_definitions({
+            show_line = false,
+        })
+    end
+
+    local function telescope_lsp_implementations()
+        require("telescope.builtin").lsp_implementations({
+            show_line = false,
+        })
+    end
+
     -- Create a command `:Format` local to the LSP buffer
     vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
         vim.lsp.buf.format()
@@ -690,10 +702,10 @@ local on_attach = function(_, bufnr)
 
     -- goto
     nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
-    nmap("gs", require("telescope.builtin").lsp_type_definitions, { desc = "[g]oto type definition[s]" })
+    nmap("gs", telescope_lsp_type_definitions, "[g]oto type definitions")
     nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
     nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
-    nmap("gI", require("telescope.builtin").lsp_implementations, "[g]oto [I]mplementation")
+    nmap("gI", telescope_lsp_implementations, "[g]oto [I]mplementation")
 
     -- search
     nmap("<leader>ss", require("telescope.builtin").lsp_document_symbols, "[s]earch document [s]ymbols")
