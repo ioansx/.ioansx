@@ -565,7 +565,6 @@ vim.keymap.set("n", "<leader>sm", require("telescope.builtin").help_tags, { desc
 vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
 vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
 vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
-vim.keymap.set("n", "<leader>st", require("telescope.builtin").lsp_type_definitions, { desc = "[s]earch [t]ype def" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 
 -- [[ Configure Treesitter ]]
@@ -691,8 +690,9 @@ local on_attach = function(_, bufnr)
 
     -- goto
     nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
-    nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
+    nmap("gs", require("telescope.builtin").lsp_type_definitions, { desc = "[g]oto type definition[s]" })
     nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
+    nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
     nmap("gI", require("telescope.builtin").lsp_implementations, "[g]oto [I]mplementation")
 
     -- search
