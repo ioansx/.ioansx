@@ -414,6 +414,7 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-h>", ":noh<CR>")
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
+vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
 
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
@@ -477,7 +478,6 @@ require("telescope").setup({
         layout_config = {
             height = 0.9,
             mirror = true,
-            -- prompt_position = 'top',
             width = 0.6,
         },
     },
@@ -527,43 +527,39 @@ vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 -- See `:help telescope.builtin`
 vim.keymap.set("n", "<leader>f", require("telescope.builtin").oldfiles, { desc = "[f]ind recently opened files" })
 vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "[?] find existing buffers" })
-vim.keymap.set("n", "<leader>/", function()
-    -- You can pass additional configuration to telescope to change theme, layout, etc.
-    require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-        winblend = 10,
-        previewer = false,
-    }))
-end, { desc = "[/] Fuzzily search in current buffer" })
 
-local function telescope_live_grep_open_files()
+vim.keymap.set("n", "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find,
+    { desc = "[/] Fuzzily search in current buffer" })
+
+vim.keymap.set("n", "<leader>s/", function()
     require("telescope.builtin").live_grep({
         grep_open_files = true,
         prompt_title = "Live Grep in Open Files",
     })
-end
+end, { desc = "[s]earch [/] in Open Files" })
 
-local function telescope_find_files()
-    require("telescope.builtin").find_files({
-        hidden = true,
-    })
-end
-
-local function telescope_find_all_files()
+vim.keymap.set("n", "<leader>sa", function()
     require("telescope.builtin").find_files({
         hidden = true,
         no_ignore = true,
+        prompt_title = "Find Files in CWD",
     })
-end
+end, { desc = "[s]earch [a]ll cwd files" })
 
-vim.keymap.set("n", "<leader>s/", telescope_live_grep_open_files, { desc = "[s]earch [/] in Open Files" })
-vim.keymap.set("n", "<leader>sa", telescope_find_all_files, { desc = "[s]earch [a]ll cwd files" })
-vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[s]earch [d]iagnostic" })
-vim.keymap.set("n", "<leader>sf", telescope_find_files, { desc = "[s]earch [f]iles" })
+vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
+    { desc = "[s]earch [d]iagnostic" })
+vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
+    { desc = "[s]earch [D]iagnostic in workspace" })
+vim.keymap.set("n", "<leader>sf", function()
+    require("telescope.builtin").find_files({
+        hidden = true,
+    })
+end, { desc = "[s]earch [f]iles" })
+
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[s]earch by [g]rep" })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
-vim.keymap.set("n", "<leader>sm", require("telescope.builtin").help_tags, { desc = "[s]earch [m]an pages" })
-vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
 vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
+vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
+vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
 vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 
@@ -714,7 +710,7 @@ local on_attach = function(_, bufnr)
 
     -- search
     nmap("<leader>ss", require("telescope.builtin").lsp_document_symbols, "[s]earch document [s]ymbols")
-    nmap("<leader>sw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[s]earch [w]orkspace symbols")
+    nmap("<leader>sS", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[s]earch workspace [S]ymbols")
 
     -- See `:help K` for why this keymap
     nmap("K", vim.lsp.buf.hover, "Hover Documentation")
