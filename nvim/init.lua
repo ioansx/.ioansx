@@ -596,7 +596,7 @@ vim.defer_fn(function()
         ignore_install = {},
         -- You can specify additional Treesitter modules here: -- For example: -- playground = {--enable = true,-- },
         modules = {},
-        highlight = { enable = true },
+        highlight = { enable = true, additional_vim_regex_highlighting = false },
         indent = { enable = true },
         incremental_selection = {
             enable = true,
@@ -606,6 +606,11 @@ vim.defer_fn(function()
                 scope_incremental = "<c-s>",
                 node_decremental = "<M-space>",
             },
+        },
+        rainbow = {
+            enable = true,
+            extended_mode = true,
+            max_file_lines = nil,
         },
         textobjects = {
             select = {
@@ -747,6 +752,7 @@ local servers = {
                 command = "clippy",
                 extraArgs = { "--no-deps" },
             },
+            completion = { postfix = { enable = false } },
             procMacro = {
                 enable = true,
                 ignored = {
@@ -807,11 +813,6 @@ require("luasnip.loaders.from_vscode").lazy_load()
 luasnip.config.setup({})
 
 cmp.setup({
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
     completion = {
         completeopt = "menu,menuone,noinsert",
     },
@@ -824,11 +825,20 @@ cmp.setup({
             select = true,
         }),
     }),
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
     sources = {
-        { name = "nvim_lsp" },
         { name = "luasnip" },
-        { name = "path" },
+        { name = "nvim_lsp" },
         { name = "buffer" },
+        { name = "path" },
         { name = "crates" },
+    },
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
     },
 })
