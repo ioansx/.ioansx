@@ -416,6 +416,12 @@ vim.keymap.set("n", "<C-h>", ":noh<CR>")
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
 
+vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "[y]ank [a]bsolute file path" })
+vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%')<CR>", { desc = "[y]ank [r]elative file path" })
+vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "[y]ank [f]ile name" })
+vim.keymap.set("n", "<leader>yd", ":let @+ = join([expand('%'),  line('.')], ':')<CR>",
+    { desc = "[y]ank file path and line" })
+
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "Open [f]loating [d]iagnostic" })
@@ -441,11 +447,12 @@ vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "[e]xplore" })
 -- document existing key chains
 require("which-key").register({
     ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
+    ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
     ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
     ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
     ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
+    ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
     ["<leader>w"] = { name = "[w]orkspace", _ = "which_key_ignore" },
-    ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
 })
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
@@ -833,8 +840,8 @@ cmp.setup({
         { name = "path" },
         { name = "crates" },
     },
-    window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
-    },
+    -- window = {
+    --     completion = cmp.config.window.bordered(),
+    --     documentation = cmp.config.window.bordered(),
+    -- },
 })
