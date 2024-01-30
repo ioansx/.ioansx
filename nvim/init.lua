@@ -261,6 +261,7 @@ require("lazy").setup({
         branch = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
+            "debugloop/telescope-undo.nvim",
             -- Fuzzy Finder Algorithm which requires local dependencies to be built.
             -- Only load if `make` is available. Make sure you have the system
             -- requirements installed.
@@ -417,10 +418,10 @@ vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffe
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
 
 vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "[y]ank [a]bsolute file path" })
-vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%')<CR>", { desc = "[y]ank [r]elative file path" })
+vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%'),  line('.')], ':')<CR>",
+    { desc = "[y]ank relative file path:line" })
 vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "[y]ank [f]ile name" })
-vim.keymap.set("n", "<leader>yd", ":let @+ = join([expand('%'),  line('.')], ':')<CR>",
-    { desc = "[y]ank file path and line" })
+vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%')<CR>", { desc = "[y]ank [r]elative file path" })
 
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
@@ -488,12 +489,24 @@ require("telescope").setup({
             width = 0.6,
         },
     },
+    extensions = {
+        undo = {
+            side_by_side = true,
+            layout_strategy = "vertical",
+            layout_config = {
+                preview_height = 0.7,
+            },
+        },
+    },
 })
 
 vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
 
 -- Enable telescope fzf native, if installed
 pcall(require("telescope").load_extension, "fzf")
+
+-- Enable telescope-undo
+require("telescope").load_extension("undo")
 
 -- Telescope live_grep in git root
 -- Function to find the git root directory based on the current buffer's path
@@ -568,6 +581,7 @@ vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by 
 vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
 vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
 vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
+vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "[s]earch [u]ndotree" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 
 -- [[ Configure Treesitter ]]
@@ -840,8 +854,4 @@ cmp.setup({
         { name = "path" },
         { name = "crates" },
     },
-    -- window = {
-    --     completion = cmp.config.window.bordered(),
-    --     documentation = cmp.config.window.bordered(),
-    -- },
 })
