@@ -453,7 +453,6 @@ require("which-key").register({
     ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
     ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
     ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
-    ["<leader>w"] = { name = "[w]orkspace", _ = "which_key_ignore" },
 })
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
@@ -736,13 +735,6 @@ local on_attach = function(_, bufnr)
     -- See `:help K` for why this keymap
     nmap("K", vim.lsp.buf.hover, "Hover Documentation")
     nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
-    -- Lesser used LSP functionality
-    nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "[w]orkspace [a]dd Folder")
-    nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "[w]orkspace [r]emove Folder")
-    nmap("<leader>wl", function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, "[w]orkspace [l]ist Folders")
 end
 
 -- mason-lspconfig requires that these setup functions are called in this order
