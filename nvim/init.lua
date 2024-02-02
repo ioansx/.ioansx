@@ -278,6 +278,12 @@ require("lazy").setup({
     },
 
     {
+        "ThePrimeagen/harpoon",
+        branch = "harpoon2",
+        dependencies = { "nvim-lua/plenary.nvim" }
+    },
+
+    {
         -- Adds git related signs to the gutter, as well as utilities for managing changes
         "lewis6991/gitsigns.nvim",
         opts = {
@@ -412,16 +418,16 @@ vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "<C-h>", ":noh<CR>")
+vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
 
 vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "[y]ank [a]bsolute file path" })
-vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%'),  line('.')], ':')<CR>",
+vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
     { desc = "[y]ank relative file path:line" })
 vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "[y]ank [f]ile name" })
-vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%')<CR>", { desc = "[y]ank [r]elative file path" })
+vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "[y]ank [r]elative file path" })
 
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
@@ -450,6 +456,7 @@ require("which-key").register({
     ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
     ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
     ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
+    ["<leader>m"] = { name = "[harpoon]", _ = "which_key_ignore" },
     ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
     ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
     ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
@@ -582,6 +589,25 @@ vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = 
 vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
 vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "[s]earch [u]ndotree" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
+
+-- [[ Configure harpoon ]]
+local harpoon = require("harpoon")
+
+harpoon:setup()
+
+vim.keymap.set("n", "<leader>mm", function() harpoon:list():append() end, { desc = "harpoon [m]ark" })
+vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
+    { desc = "harpoon [m]ark" })
+
+vim.keymap.set("n", "<leader>ma", function() harpoon:list():select(1) end, { desc = "harpoon goto 1" })
+vim.keymap.set("n", "<leader>ms", function() harpoon:list():select(2) end, { desc = "harpoon goto 2" })
+vim.keymap.set("n", "<leader>md", function() harpoon:list():select(3) end, { desc = "harpoon goto 3" })
+vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { desc = "harpoon goto 4" })
+vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "harpoon goto 5" })
+
+-- -- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set("n", "<leader>me", function() harpoon:list():prev() end, { desc = "harpoon goto prev" })
+vim.keymap.set("n", "<leader>mr", function() harpoon:list():next() end, { desc = "harpoon goto next" })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`

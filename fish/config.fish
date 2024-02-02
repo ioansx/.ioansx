@@ -7,7 +7,7 @@ set fish_command_timer_time_format '%a %d %H:%M'
 
 set -U fish_user_paths $HOME/.cargo/bin $fish_user_paths
 
-alias lg="lazygit"
-alias ld="lazydocker"
+alias lzg="lazygit"
+alias lzd="lazydocker"
 alias z="zoxide"
 
