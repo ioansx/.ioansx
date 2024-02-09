@@ -774,6 +774,29 @@ require("mason-lspconfig").setup()
 --  Add any additional override configuration in the following tables. They will be passed to
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
+    -- clangd = {},
+    -- gopls = {},
+    html = { filetypes = { 'html', 'twig', 'hbs' } },
+    jsonls = {},
+    lua_ls = {
+        Lua = {
+            workspace = { checkThirdParty = false },
+            telemetry = { enable = false },
+            -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+            diagnostics = { disable = { 'missing-fields' } },
+        },
+    },
+    pyright = {
+        autoImportCompletion = true,
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = 'openFilesOnly',
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = 'off'
+            }
+        }
+    },
     rust_analyzer = {
         ["rust-analyzer"] = {
             cargo = {
@@ -799,30 +822,8 @@ local servers = {
         },
     },
     taplo = {},
-    -- clangd = {},
-    -- gopls = {},
-    pyright = {
-        autoImportCompletion = true,
-        python = {
-            analysis = {
-                autoSearchPaths = true,
-                diagnosticMode = 'openFilesOnly',
-                useLibraryCodeForTypes = true,
-                typeCheckingMode = 'off'
-            }
-        }
-    },
-    -- tsserver = {},
-    -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-
-    lua_ls = {
-        Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-            -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-            diagnostics = { disable = { 'missing-fields' } },
-        },
-    },
+    tsserver = {},
+    yamlls = {},
 }
 
 -- Setup neovim lua configuration
