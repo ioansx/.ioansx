@@ -801,7 +801,17 @@ local servers = {
     taplo = {},
     -- clangd = {},
     -- gopls = {},
-    -- pyright = {},
+    pyright = {
+        autoImportCompletion = true,
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = 'openFilesOnly',
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = 'off'
+            }
+        }
+    },
     -- tsserver = {},
     -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
