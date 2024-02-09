@@ -2,16 +2,12 @@
 
 CMD_1="$1"
 PWD=$(pwd)
+BIN_HOME=~/.local/bin
 XDG_CONFIG_HOME=~/.config
-FISH_CFG_DIR=$XDG_CONFIG_HOME/fish
 NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
-
-FISH_LN_1=$FISH_CFG_DIR/config.fish
-FISH_LN_2=$FISH_CFG_DIR/fish_variables
-FISH_LN_3=$FISH_CFG_DIR/conf.d/fish_command_timer.fish
-FISH_LN_4=$FISH_CFG_DIR/functions/fish_prompt.fish
 NVIM_LN=$NVIM_CFG_DIR/init.lua
 TMUX_LN=~/.tmux.conf
+TMUX_OPEN_PROJECT_LN=$BIN_HOME/tmux-open-project
 
 
 ensure_dir_exists () {
@@ -44,13 +40,7 @@ print_help () {
 
 if [ $CMD_1 = "install" ]; then
 	echo "Configuring fish..."
-	ensure_dir_exists $FISH_CFG_DIR
-	ensure_linked $PWD/fish/config.fish $FISH_LN_1
-	ensure_linked $PWD/fish/fish_variables $FISH_LN_2
-	ensure_dir_exists $FISH_CFG_DIR/conf.d
-	ensure_linked $PWD/fish/conf.d/fish_command_timer.fish $FISH_LN_3
-	ensure_dir_exists $FISH_CFG_DIR/functions
-	ensure_linked $PWD/fish/functions/fish_prompt.fish $FISH_LN_4
+	ensure_linked $PWD/fish $XDG_CONFIG_HOME
 
 	echo "Configuring kitty..."
 	ensure_linked $PWD/kitty $XDG_CONFIG_HOME
@@ -61,12 +51,13 @@ if [ $CMD_1 = "install" ]; then
 
 	echo "Configuring tmux..."
 	ensure_linked $PWD/tmux/tmux.conf $TMUX_LN
+
+	echo "Configuring scripts..."
+	ensure_dir_exists $BIN_HOME
+	ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME
 elif [ $CMD_1 = "uninstall" ]; then
 	echo "Unlinking fish..."
-	unlink $FISH_LN_1
-	unlink $FISH_LN_2
-	unlink $FISH_LN_3
-	unlink $FISH_LN_4
+	unlink $XDG_CONFIG_HOME/fish
 
 	echo "Unlinking kitty..."
 	unlink $XDG_CONFIG_HOME/kitty
@@ -76,6 +67,9 @@ elif [ $CMD_1 = "uninstall" ]; then
 
 	echo "Unlinking tmux..."
 	unlink $TMUX_LN
+
+	echo "Unlinking scripts..."
+	unlink $TMUX_OPEN_PROJECT_LN
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
 	echo "Ioan's configuration manager"
 	echo ""
