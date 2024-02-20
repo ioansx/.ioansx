@@ -30,9 +30,9 @@ vim.o.mouse = "a"
 vim.o.scrolloff = 8
 vim.o.signcolumn = "yes"
 vim.o.termguicolors = true
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 100
 vim.o.undofile = true
-vim.o.updatetime = 100
+vim.o.updatetime = 50
 vim.o.wrap = false
 
 vim.wo.number = true
@@ -394,6 +394,12 @@ require("lazy").setup({
         },
     },
 
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = {}
+    },
+
     -- Rust
     {
         "Saecki/crates.nvim",
@@ -416,8 +422,8 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-d>", "<C-d>zz:redraw<CR>")
+vim.keymap.set("n", "<C-u>", "<C-u>zz:redraw<CR>")
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
@@ -866,7 +872,7 @@ cmp.setup({
         ["<C-n>"] = cmp.mapping.select_next_item(),
         ["<C-p>"] = cmp.mapping.select_prev_item(),
         ["<C-Space>"] = cmp.mapping.complete({}),
-        ["<CR>"] = cmp.mapping.confirm({
+        ["<Tab>"] = cmp.mapping.confirm({
             behavior = cmp.ConfirmBehavior.Insert,
             select = true,
         }),
