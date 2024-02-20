@@ -30,9 +30,9 @@ vim.o.mouse = "a"
 vim.o.scrolloff = 8
 vim.o.signcolumn = "yes"
 vim.o.termguicolors = true
-vim.o.timeoutlen = 100
+vim.o.timeoutlen = 300
 vim.o.undofile = true
-vim.o.updatetime = 50
+vim.o.updatetime = 300
 vim.o.wrap = false
 
 vim.wo.number = true
