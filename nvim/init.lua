@@ -28,7 +28,6 @@ vim.o.completeopt = "menu,menuone,noinsert"
 vim.o.cursorline = true
 vim.o.mouse = "a"
 vim.o.scrolloff = 8
-vim.o.signcolumn = "yes"
 vim.o.termguicolors = true
 vim.o.timeoutlen = 300
 vim.o.undofile = true
@@ -36,7 +35,7 @@ vim.o.updatetime = 300
 vim.o.wrap = false
 
 vim.wo.number = true
-vim.wo.signcolumn = "yes"
+vim.wo.signcolumn = "yes:1"
 
 -- [[ Lazy package manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -397,7 +396,7 @@ require("lazy").setup({
     {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        opts = {}
+        opts = { signs = false }
     },
 
     -- Rust
@@ -418,12 +417,12 @@ vim.cmd("colorscheme gruvbox")
 -- [[ Keymaps ]]
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
-vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set("n", "j", "gj", { expr = true, silent = true })
+vim.keymap.set("n", "k", "gk", { expr = true, silent = true })
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
-vim.keymap.set("n", "<C-d>", "<C-d>zz:redraw<CR>")
-vim.keymap.set("n", "<C-u>", "<C-u>zz:redraw<CR>")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
@@ -749,7 +748,9 @@ local on_attach = function(_, bufnr)
     end, { desc = "Format current buffer with LSP" })
 
     -- code
-    nmap("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
+    nmap('<leader>ca', function()
+        vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
+    end, '[C]ode [A]ction')
     nmap("<leader>cf", ":Format<CR>", "[f]ormat buffer")
     nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename symbol")
 
