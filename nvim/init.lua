@@ -64,8 +64,6 @@ require("lazy").setup({
         dependencies = {
             { "williamboman/mason.nvim", config = true },
             "williamboman/mason-lspconfig.nvim",
-            -- Useful status updates for LSP
-            -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
             { "j-hui/fidget.nvim",       opts = {} },
             -- "folke/neodev.nvim",
         },
@@ -149,7 +147,10 @@ require("lazy").setup({
     {
         "hrsh7th/nvim-cmp",
         dependencies = {
-            "L3MON4D3/LuaSnip",
+            {
+                'L3MON4D3/LuaSnip',
+                build = 'make install_jsregexp',
+            },
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-path",
@@ -417,8 +418,8 @@ vim.cmd("colorscheme gruvbox")
 -- [[ Keymaps ]]
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
-vim.keymap.set("n", "j", "gj", { expr = true, silent = true })
-vim.keymap.set("n", "k", "gk", { expr = true, silent = true })
+vim.keymap.set("n", "j", "gj")
+vim.keymap.set("n", "k", "gk")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
