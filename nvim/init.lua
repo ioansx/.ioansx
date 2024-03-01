@@ -784,13 +784,14 @@ require("mason-lspconfig").setup()
 local servers = {
     -- clangd = {},
     -- gopls = {},
-    html = { filetypes = { 'html', 'twig', 'hbs' } },
+    eslint = {},
+    cssls = {},
+    html = {},
     jsonls = {},
     lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
-            -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
             diagnostics = { disable = { 'missing-fields' } },
         },
     },
@@ -831,7 +832,6 @@ local servers = {
     },
     taplo = {},
     tsserver = {},
-    yamlls = {},
 }
 
 -- Setup neovim lua configuration
