@@ -157,7 +157,9 @@ require("lazy").setup({
                 },
                 use_libuv_file_watcher = true,
                 filtered_items = {
-                    visible = true, -- when true, they will just be displayed differently than normal items
+                    visible = true,
+                    hide_gitignored = false,
+                    hide_dotfiles = false,
                 },
             },
             window = {
