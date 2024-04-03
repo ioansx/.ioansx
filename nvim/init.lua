@@ -378,8 +378,9 @@ vim.keymap.set("n", "j", "gj")
 vim.keymap.set("n", "k", "gk")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
+-- vim.keymap.set("n", "<C-d>", "<C-d>zz")
+-- vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<leader>e", "<C-w>w<CR>", { desc = "[e] Switch windows" })
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
@@ -410,7 +411,7 @@ require("ibl").setup {
 vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
 
 --[[ Neotree ]]
-vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>", { desc = "[e]xplore" })
+vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]xplore" })
 
 -- [[ WhichKey ]]
 -- document existing key chains
@@ -764,25 +765,9 @@ local servers = {
     },
     rust_analyzer = {
         ["rust-analyzer"] = {
-            cargo = {
-                allFeatures = true,
-                loadOutDirsFromCheck = true,
-                runBuildScripts = true,
-            },
-            -- Add clippy lints for Rust.
-            checkOnSave = {
-                allFeatures = true,
-                command = "clippy",
-                extraArgs = { "--no-deps" },
-            },
-            completion = { postfix = { enable = false } },
+            check = { command = "clippy" },
             procMacro = {
-                enable = true,
-                ignored = {
-                    ["async-trait"] = { "async_trait" },
-                    ["napi-derive"] = { "napi" },
-                    ["async-recursion"] = { "async_recursion" },
-                },
+                enable = true
             },
         },
     },
