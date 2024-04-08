@@ -356,6 +356,25 @@ require("lazy").setup({
         opts = { signs = false }
     },
 
+    {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({
+                suggestion = { enabled = false },
+                panel = { enabled = false },
+            })
+        end,
+    },
+
+    {
+        "zbirenbaum/copilot-cmp",
+        config = function()
+            require("copilot_cmp").setup()
+        end
+    },
+
     -- Rust
     {
         "Saecki/crates.nvim",
@@ -765,7 +784,7 @@ local servers = {
     },
     rust_analyzer = {
         ["rust-analyzer"] = {
-            check = { command = "clippy" },
+            -- check = { command = "clippy" },
             procMacro = {
                 enable = true
             },
@@ -826,8 +845,9 @@ cmp.setup({
         end,
     },
     sources = {
-        { name = "luasnip" },
+        { name = "copilot" },
         { name = "nvim_lsp" },
+        { name = "luasnip" },
         { name = "buffer" },
         { name = "path" },
         { name = "crates" },
