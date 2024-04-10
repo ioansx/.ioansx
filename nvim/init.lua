@@ -36,7 +36,7 @@ vim.o.wrap = false
 
 vim.wo.number = true
 vim.wo.relativenumber = true
-vim.wo.signcolumn = "yes:1"
+vim.wo.signcolumn = "yes"
 
 -- [[ Lazy package manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -139,14 +139,14 @@ require("lazy").setup({
         deactivate = function()
             vim.cmd([[Neotree close]])
         end,
-        init = function()
-            if vim.fn.argc(-1) == 1 then
-                local stat = vim.loop.fs_stat(vim.fn.argv(0))
-                if stat and stat.type == "directory" then
-                    require("neo-tree")
-                end
-            end
-        end,
+        -- init = function()
+        --     if vim.fn.argc(-1) == 1 then
+        --         local stat = vim.loop.fs_stat(vim.fn.argv(0))
+        --         if stat and stat.type == "directory" then
+        --             require("neo-tree")
+        --         end
+        --     end
+        -- end,
         opts = {
             sources = { "filesystem" },
             open_files_do_not_replace_types = { "terminal" },
@@ -178,6 +178,26 @@ require("lazy").setup({
                 },
             },
         },
+    },
+
+    {
+        'stevearc/oil.nvim',
+        opts = {},
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("oil").setup({
+                columns = {
+                    "icon",
+                    -- "permissions",
+                    -- "size",
+                    -- "mtime",
+                },
+                delete_to_trash = true,
+                view_options = {
+                    show_hidden = true,
+                },
+            })
+        end,
     },
 
     {
@@ -398,8 +418,8 @@ vim.keymap.set("n", "j", "gj")
 vim.keymap.set("n", "k", "gk")
 vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
--- vim.keymap.set("n", "<C-d>", "<C-d>zz")
--- vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<leader>e", "<C-w>w<CR>", { desc = "[e] Switch windows" })
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
 
@@ -432,6 +452,9 @@ vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
 
 --[[ Neotree ]]
 vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]xplore" })
+
+--[[ Oil ]]
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 -- [[ WhichKey ]]
 -- document existing key chains
