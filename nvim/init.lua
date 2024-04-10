@@ -35,6 +35,7 @@ vim.o.updatetime = 300
 vim.o.wrap = false
 
 vim.wo.number = true
+vim.wo.relativenumber = true
 vim.wo.signcolumn = "yes:1"
 
 -- [[ Lazy package manager ]]
@@ -577,7 +578,7 @@ local harpoon = require("harpoon")
 
 harpoon:setup()
 
-vim.keymap.set("n", "<leader>mm", function() harpoon:list():append() end, { desc = "harpoon [m]ark" })
+vim.keymap.set("n", "<leader>mm", function() harpoon:list():add() end, { desc = "harpoon [m]ark" })
 vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
     { desc = "harpoon [m]ark" })
 
@@ -588,8 +589,8 @@ vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { des
 vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "harpoon goto 5" })
 
 -- -- Toggle previous & next buffers stored within Harpoon list
-vim.keymap.set("n", "<leader>me", function() harpoon:list():prev() end, { desc = "harpoon goto prev" })
-vim.keymap.set("n", "<leader>mr", function() harpoon:list():next() end, { desc = "harpoon goto next" })
+vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "harpoon goto [p]rev" })
+vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "harpoon goto [n]ext" })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
