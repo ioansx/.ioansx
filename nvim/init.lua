@@ -3,39 +3,40 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
+vim.g.have_nerd_font = true
 
-vim.o.hlsearch = true
-vim.o.incsearch = true
-vim.o.ignorecase = true
-vim.o.smartcase = true
-vim.o.gdefault = true
+vim.opt.number = true
+vim.opt.relativenumber = true
 
-vim.o.expandtab = true
-vim.o.softtabstop = 4
-vim.o.shiftwidth = 4
-vim.o.tabstop = 4
+vim.opt.hlsearch = true
+vim.opt.incsearch = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.gdefault = true
 
--- vim.o.autoindent = true
-vim.o.breakindent = true
-vim.o.smartindent = true
+vim.opt.expandtab = true
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
 
-vim.o.splitright = true
-vim.o.splitbelow = true
+vim.opt.breakindent = true
+vim.opt.smartindent = true
 
-vim.o.clipboard = "unnamedplus"
-vim.o.colorcolumn = "120"
-vim.o.completeopt = "menu,menuone,noinsert"
-vim.o.cursorline = true
-vim.o.mouse = "a"
-vim.o.scrolloff = 8
-vim.o.termguicolors = true
-vim.o.timeoutlen = 300
-vim.o.undofile = true
-vim.o.updatetime = 300
-vim.o.wrap = false
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
-vim.wo.number = true
-vim.wo.relativenumber = true
+vim.opt.clipboard = "unnamedplus"
+vim.opt.colorcolumn = "120"
+vim.opt.completeopt = "menu,menuone,noinsert"
+vim.opt.cursorline = true
+vim.opt.mouse = "a"
+vim.opt.scrolloff = 8
+vim.opt.termguicolors = true
+vim.opt.undofile = true
+
+vim.opt.timeoutlen = 300
+vim.opt.updatetime = 250
+vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
 
 -- [[ Lazy package manager ]]
@@ -96,7 +97,26 @@ require("lazy").setup({
 
     {
         "folke/which-key.nvim",
-        opts = {},
+        event = 'VimEnter',
+        config = function()
+            require("which-key").setup()
+
+            require("which-key").register({
+                ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
+                ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
+                ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
+                ["<leader>m"] = { name = "[harpoon]", _ = "which_key_ignore" },
+                ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
+                ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
+                ["<leader>x"] = { name = "[trouble]", _ = "which_key_ignore" },
+                ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
+            })
+
+            require("which-key").register({
+                ["<leader>"] = { name = "VISUAL <leader>" },
+                ["<leader>h"] = { "Git [h]unk" },
+            }, { mode = "v" })
+        end,
     },
 
     {
@@ -169,14 +189,6 @@ require("lazy").setup({
                     ["<space>"] = "none",
                 },
             },
-            default_component_configs = {
-                indent = {
-                    with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
-                    expander_collapsed = "",
-                    expander_expanded = "",
-                    expander_highlight = "NeoTreeExpander",
-                },
-            },
         },
     },
 
@@ -203,7 +215,12 @@ require("lazy").setup({
     {
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
-        opts = {},
+        config = function()
+            require("ibl").setup({
+                indent = { char = '▏' },
+                scope = { enabled = false },
+            })
+        end
     },
 
     {
@@ -255,6 +272,12 @@ require("lazy").setup({
     },
 
     {
+        "folke/trouble.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        opts = {},
+    },
+
+    {
         "ThePrimeagen/harpoon",
         branch = "harpoon2",
         dependencies = { "nvim-lua/plenary.nvim" }
@@ -264,14 +287,13 @@ require("lazy").setup({
         -- Adds git related signs to the gutter, as well as utilities for managing changes
         "lewis6991/gitsigns.nvim",
         opts = {
-            -- See `:help gitsigns.txt`
-            signs = {
-                add = { text = "+" },
-                change = { text = "~" },
-                delete = { text = "_" },
-                topdelete = { text = "‾" },
-                changedelete = { text = "~" },
-            },
+            -- signs = {
+            --     add = { text = "+" },
+            --     change = { text = "~" },
+            --     delete = { text = "_" },
+            --     topdelete = { text = "‾" },
+            --     changedelete = { text = "~" },
+            -- },
             on_attach = function(bufnr)
                 local gs = package.loaded.gitsigns
 
@@ -320,9 +342,9 @@ require("lazy").setup({
                     gs.blame_line({ full = false })
                 end, { desc = "Git [b]lame line" })
                 map("n", "<leader>hd", gs.diffthis, { desc = "Git [d]iff against index" })
-                map("n", "<leader>hD", function()
-                    gs.diffthis("~")
-                end, { desc = "Git [D]iff against last commit" })
+                -- map("n", "<leader>hD", function()
+                --     gs.diffthis("~")
+                -- end, { desc = "Git [D]iff against last commit" })
 
                 -- Toggles
                 map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "[t]oggle Git blame line" })
@@ -441,12 +463,6 @@ vim.keymap.set("v", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
 
--- [[ indent-blankline ]]
-require("ibl").setup {
-    indent = { char = '▏' },
-    scope = { enabled = false },
-}
-
 -- [[ LazyGit ]]
 vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
 
@@ -456,23 +472,16 @@ vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]x
 --[[ Oil ]]
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
--- [[ WhichKey ]]
--- document existing key chains
-require("which-key").register({
-    ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
-    ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
-    ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
-    ["<leader>m"] = { name = "[harpoon]", _ = "which_key_ignore" },
-    ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
-    ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
-    ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
-})
--- register which-key VISUAL mode
--- required for visual <leader>hs (hunk stage) to work
-require("which-key").register({
-    ["<leader>"] = { name = "VISUAL <leader>" },
-    ["<leader>h"] = { "Git [h]unk" },
-}, { mode = "v" })
+--[[ Trouble ]]
+vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end, { desc = "open" })
+vim.keymap.set("n", "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end,
+    { desc = "[w]orkspace diagnostic" })
+vim.keymap.set("n", "<leader>xd", function() require("trouble").toggle("document_diagnostics") end,
+    { desc = "[d]ocument diagnostic" })
+vim.keymap.set("n", "<leader>xq", function() require("trouble").toggle("quickfix") end, { desc = "[q]uickfix list" })
+vim.keymap.set("n", "<leader>xl", function() require("trouble").toggle("loclist") end, { desc = "[l]ocation list" })
+vim.keymap.set("n", "gR", function() require("trouble").toggle("lsp_references") end, { desc = "LSP [R]eferences" })
+
 
 -- [[ Highlight on yank ]]
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
