@@ -2,14 +2,29 @@
 
 ## Tools
 
+Frequently used:
+
 - git
 - tmux
-- lf
-- lazygit
-- lazydocker
-- kitty
 - neovim
+- lazygit
+- kitty
 - fzf
-- font-fira-code-nerd-font
+- ripgrep
 - tldr
 - zoxide
+- bat
+- htop
+- jq
+- lf
+
+Less frequently used:
+
+- lazydocker
+- httping
+- atac
+- neofetch
+
+## UI
+
+- font-fira-code-nerd-font
