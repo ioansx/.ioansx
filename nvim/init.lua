@@ -131,7 +131,6 @@ require("lazy").setup({
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-buffer",
             "rafamadriz/friendly-snippets",
-            "Saecki/crates.nvim",
         },
     },
 
@@ -200,9 +199,6 @@ require("lazy").setup({
             require("oil").setup({
                 columns = {
                     "icon",
-                    -- "permissions",
-                    -- "size",
-                    -- "mtime",
                 },
                 delete_to_trash = true,
                 view_options = {
@@ -287,13 +283,13 @@ require("lazy").setup({
         -- Adds git related signs to the gutter, as well as utilities for managing changes
         "lewis6991/gitsigns.nvim",
         opts = {
-            -- signs = {
-            --     add = { text = "+" },
-            --     change = { text = "~" },
-            --     delete = { text = "_" },
-            --     topdelete = { text = "‾" },
-            --     changedelete = { text = "~" },
-            -- },
+            signs = {
+                add = { text = "+" },
+                change = { text = "~" },
+                delete = { text = "_" },
+                topdelete = { text = "‾" },
+                changedelete = { text = "~" },
+            },
             on_attach = function(bufnr)
                 local gs = package.loaded.gitsigns
 
@@ -342,9 +338,9 @@ require("lazy").setup({
                     gs.blame_line({ full = false })
                 end, { desc = "Git [b]lame line" })
                 map("n", "<leader>hd", gs.diffthis, { desc = "Git [d]iff against index" })
-                -- map("n", "<leader>hD", function()
-                --     gs.diffthis("~")
-                -- end, { desc = "Git [D]iff against last commit" })
+                map("n", "<leader>hD", function()
+                    gs.diffthis("~")
+                end, { desc = "Git [D]iff against last commit" })
 
                 -- Toggles
                 map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "[t]oggle Git blame line" })
@@ -422,11 +418,7 @@ require("lazy").setup({
     {
         "Saecki/crates.nvim",
         event = { "BufRead Cargo.toml" },
-        opts = {
-            src = {
-                cmp = { enabled = true },
-            },
-        },
+        opts = {},
     },
 }, {})
 
@@ -772,8 +764,8 @@ local on_attach = function(_, bufnr)
     nmap("gI", telescope_lsp_implementations, "[g]oto [I]mplementation")
 
     -- search
-    nmap("<leader>ss", require("telescope.builtin").lsp_document_symbols, "[s]earch document [s]ymbols")
-    nmap("<leader>sS", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[s]earch workspace [S]ymbols")
+    nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "[s]earch document [S]ymbols")
+    nmap("<leader>ss", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[s]earch workspace [s]ymbols")
 
     -- See `:help K` for why this keymap
     nmap("K", vim.lsp.buf.hover, "Hover Documentation")
@@ -817,7 +809,7 @@ local servers = {
     },
     rust_analyzer = {
         ["rust-analyzer"] = {
-            -- check = { command = "clippy" },
+            check = { command = "clippy" },
             procMacro = {
                 enable = true
             },
@@ -883,6 +875,5 @@ cmp.setup({
         { name = "luasnip" },
         { name = "buffer" },
         { name = "path" },
-        { name = "crates" },
     },
 })
