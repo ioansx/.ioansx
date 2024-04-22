@@ -4,6 +4,7 @@
 
 Frequently used:
 
+- Homebrew
 - git
 - tmux
 - neovim

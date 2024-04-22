@@ -635,6 +635,7 @@ vim.defer_fn(function()
             "vimdoc",
             "vim",
             "bash",
+            "svelte",
         },
 
         -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
@@ -817,6 +818,7 @@ local servers = {
     },
     taplo = {},
     tsserver = {},
+    svelte = {},
 }
 
 -- Setup neovim lua configuration
