@@ -455,6 +455,10 @@ vim.keymap.set("v", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
 
+vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "cprev" })
+vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "cnext" })
+
+
 -- [[ LazyGit ]]
 vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
 
@@ -465,7 +469,7 @@ vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]x
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 --[[ Trouble ]]
-vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end, { desc = "open" })
+vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end, { desc = "toggle" })
 vim.keymap.set("n", "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end,
     { desc = "[w]orkspace diagnostic" })
 vim.keymap.set("n", "<leader>xd", function() require("trouble").toggle("document_diagnostics") end,

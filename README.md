@@ -13,10 +13,8 @@ Frequently used:
 - fzf
 - ripgrep
 - tldr
-- zoxide
 - bat
 - htop
-- jq
 - lf
 
 Less frequently used:
@@ -25,6 +23,7 @@ Less frequently used:
 - httping
 - atac
 - neofetch
+- jq
 
 ## UI
 
