@@ -1,4 +1,3 @@
--- [[ Options ]]
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.loaded_netrw = 1
@@ -26,7 +25,7 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 vim.opt.clipboard = "unnamedplus"
-vim.opt.colorcolumn = "120"
+-- vim.opt.colorcolumn = "120"
 vim.opt.completeopt = "menu,menuone,noinsert"
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
@@ -39,7 +38,6 @@ vim.opt.updatetime = 250
 vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
 
--- [[ Lazy package manager ]]
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -53,12 +51,13 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- [[ Plugins ]]
 require("lazy").setup({
-    -- Colorscheme
     {
         "ellisonleao/gruvbox.nvim",
         opts = {},
+        config = function()
+            vim.cmd("colorscheme gruvbox")
+        end
     },
 
     {
@@ -89,6 +88,99 @@ require("lazy").setup({
             "nvim-treesitter/nvim-treesitter-textobjects",
         },
         build = ":TSUpdate",
+        config = function()
+            -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
+            vim.defer_fn(function()
+                require("nvim-treesitter.configs").setup({
+                    -- Add languages to be installed here that you want installed for treesitter
+                    ensure_installed = {
+                        "c",
+                        "go",
+                        "lua",
+                        "python",
+                        "ron",
+                        "rust",
+                        "javascript",
+                        "toml",
+                        "typescript",
+                        "vimdoc",
+                        "vim",
+                        "bash",
+                        "fish",
+                        "svelte",
+                    },
+
+                    -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
+                    auto_install = false,
+                    -- Install languages synchronously (only applied to `ensure_installed`)
+                    sync_install = false,
+                    -- List of parsers to ignore installing
+                    ignore_install = {},
+                    -- You can specify additional Treesitter modules here: -- For example: -- playground = {--enable = true,-- },
+                    modules = {},
+                    highlight = { enable = true, additional_vim_regex_highlighting = false },
+                    indent = { enable = true },
+                    incremental_selection = {
+                        enable = true,
+                        keymaps = {
+                            init_selection = "<c-space>",
+                            node_incremental = "<c-space>",
+                            scope_incremental = "<c-s>",
+                            node_decremental = "<M-space>",
+                        },
+                    },
+                    rainbow = {
+                        enable = true,
+                        extended_mode = true,
+                        max_file_lines = nil,
+                    },
+                    textobjects = {
+                        select = {
+                            enable = true,
+                            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+                            keymaps = {
+                                -- You can use the capture groups defined in textobjects.scm
+                                ["aa"] = "@parameter.outer",
+                                ["ia"] = "@parameter.inner",
+                                ["af"] = "@function.outer",
+                                ["if"] = "@function.inner",
+                                ["ac"] = "@class.outer",
+                                ["ic"] = "@class.inner",
+                            },
+                        },
+                        move = {
+                            enable = true,
+                            set_jumps = true, -- whether to set jumps in the jumplist
+                            goto_next_start = {
+                                ["]f"] = "@function.outer",
+                                ["]c"] = "@class.outer",
+                            },
+                            goto_next_end = {
+                                ["]F"] = "@function.outer",
+                                ["]C"] = "@class.outer",
+                            },
+                            goto_previous_start = {
+                                ["[f"] = "@function.outer",
+                                ["[c"] = "@class.outer",
+                            },
+                            goto_previous_end = {
+                                ["[F"] = "@function.outer",
+                                ["[C"] = "@class.outer",
+                            },
+                        },
+                        swap = {
+                            enable = true,
+                            swap_next = {
+                                ["<leader>cs"] = "@parameter.inner",
+                            },
+                            swap_previous = {
+                                ["<leader>cS"] = "@parameter.inner",
+                            },
+                        },
+                    },
+                })
+            end, 0)
+        end
     },
 
     {
@@ -130,13 +222,40 @@ require("lazy").setup({
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-buffer",
-            "rafamadriz/friendly-snippets",
         },
-    },
+        config = function()
+            local cmp = require("cmp")
+            local luasnip = require("luasnip")
+            require("luasnip.loaders.from_vscode").lazy_load()
+            luasnip.config.setup({})
 
-    {
-        "numToStr/Comment.nvim",
-        opts = {},
+            cmp.setup({
+                completion = {
+                    completeopt = "menu,menuone,noinsert",
+                },
+                mapping = cmp.mapping.preset.insert({
+                    ["<C-n>"] = cmp.mapping.select_next_item(),
+                    ["<C-p>"] = cmp.mapping.select_prev_item(),
+                    ["<C-Space>"] = cmp.mapping.complete({}),
+                    ["<Tab>"] = cmp.mapping.confirm({
+                        behavior = cmp.ConfirmBehavior.Insert,
+                        select = true,
+                    }),
+                }),
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
+                sources = {
+                    { name = "copilot" },
+                    { name = "nvim_lsp" },
+                    { name = "luasnip" },
+                    { name = "buffer" },
+                    { name = "path" },
+                },
+            })
+        end
     },
 
     {
@@ -144,6 +263,9 @@ require("lazy").setup({
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
+        config = function()
+            vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
+        end
     },
 
     {
@@ -189,11 +311,13 @@ require("lazy").setup({
                 },
             },
         },
+        config = function()
+            vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]xplore" })
+        end
     },
 
     {
         'stevearc/oil.nvim',
-        opts = {},
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
             require("oil").setup({
@@ -205,6 +329,8 @@ require("lazy").setup({
                     show_hidden = true,
                 },
             })
+
+            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
         end,
     },
 
@@ -257,8 +383,6 @@ require("lazy").setup({
             -- requirements installed.
             {
                 "nvim-telescope/telescope-fzf-native.nvim",
-                -- NOTE: If you are having trouble with this installation,
-                --       refer to the README for telescope-fzf-native for more instructions.
                 build = "make",
                 cond = function()
                     return vim.fn.executable("make") == 1
@@ -271,12 +395,42 @@ require("lazy").setup({
         "folke/trouble.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         opts = {},
+        config = function()
+            vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end, { desc = "toggle" })
+            vim.keymap.set("n", "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end,
+                { desc = "[w]orkspace diagnostic" })
+            vim.keymap.set("n", "<leader>xd", function() require("trouble").toggle("document_diagnostics") end,
+                { desc = "[d]ocument diagnostic" })
+            vim.keymap.set("n", "<leader>xq", function() require("trouble").toggle("quickfix") end,
+                { desc = "[q]uickfix list" })
+            vim.keymap.set("n", "<leader>xl", function() require("trouble").toggle("loclist") end,
+                { desc = "[l]ocation list" })
+            vim.keymap.set("n", "gR", function() require("trouble").toggle("lsp_references") end,
+                { desc = "LSP [R]eferences" })
+        end
     },
 
     {
         "ThePrimeagen/harpoon",
         branch = "harpoon2",
-        dependencies = { "nvim-lua/plenary.nvim" }
+        dependencies = { "nvim-lua/plenary.nvim" },
+        config = function()
+            local harpoon = require("harpoon")
+            harpoon:setup()
+
+            vim.keymap.set("n", "<leader>mm", function() harpoon:list():add() end, { desc = "harpoon [m]ark" })
+            vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
+                { desc = "harpoon [m]ark" })
+
+            vim.keymap.set("n", "<leader>ma", function() harpoon:list():select(1) end, { desc = "harpoon goto 1" })
+            vim.keymap.set("n", "<leader>ms", function() harpoon:list():select(2) end, { desc = "harpoon goto 2" })
+            vim.keymap.set("n", "<leader>md", function() harpoon:list():select(3) end, { desc = "harpoon goto 3" })
+            vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { desc = "harpoon goto 4" })
+            vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "harpoon goto 5" })
+
+            vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "harpoon goto [p]rev" })
+            vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "harpoon goto [n]ext" })
+        end,
     },
 
     {
@@ -422,9 +576,6 @@ require("lazy").setup({
     },
 }, {})
 
--- [[ Colorscheme ]]
-vim.cmd("colorscheme gruvbox")
-
 -- [[ Keymaps ]]
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
@@ -446,8 +597,6 @@ vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], '
 vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "[y]ank [f]ile name" })
 vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "[y]ank [r]elative file path" })
 
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnostic" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnostic" })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "Open [f]loating [d]iagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Open [d]iagnostic [l]ist" })
 
@@ -457,27 +606,6 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
 
 vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "cprev" })
 vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "cnext" })
-
-
--- [[ LazyGit ]]
-vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
-
---[[ Neotree ]]
-vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]xplore" })
-
---[[ Oil ]]
-vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-
---[[ Trouble ]]
-vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end, { desc = "toggle" })
-vim.keymap.set("n", "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end,
-    { desc = "[w]orkspace diagnostic" })
-vim.keymap.set("n", "<leader>xd", function() require("trouble").toggle("document_diagnostics") end,
-    { desc = "[d]ocument diagnostic" })
-vim.keymap.set("n", "<leader>xq", function() require("trouble").toggle("quickfix") end, { desc = "[q]uickfix list" })
-vim.keymap.set("n", "<leader>xl", function() require("trouble").toggle("loclist") end, { desc = "[l]ocation list" })
-vim.keymap.set("n", "gR", function() require("trouble").toggle("lsp_references") end, { desc = "LSP [R]eferences" })
-
 
 -- [[ Highlight on yank ]]
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
@@ -601,125 +729,9 @@ vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc
 vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "[s]earch [u]ndotree" })
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
 
--- [[ Configure harpoon ]]
-local harpoon = require("harpoon")
-
-harpoon:setup()
-
-vim.keymap.set("n", "<leader>mm", function() harpoon:list():add() end, { desc = "harpoon [m]ark" })
-vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
-    { desc = "harpoon [m]ark" })
-
-vim.keymap.set("n", "<leader>ma", function() harpoon:list():select(1) end, { desc = "harpoon goto 1" })
-vim.keymap.set("n", "<leader>ms", function() harpoon:list():select(2) end, { desc = "harpoon goto 2" })
-vim.keymap.set("n", "<leader>md", function() harpoon:list():select(3) end, { desc = "harpoon goto 3" })
-vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { desc = "harpoon goto 4" })
-vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "harpoon goto 5" })
-
--- -- Toggle previous & next buffers stored within Harpoon list
-vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "harpoon goto [p]rev" })
-vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "harpoon goto [n]ext" })
-
--- [[ Configure Treesitter ]]
--- See `:help nvim-treesitter`
--- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
-vim.defer_fn(function()
-    require("nvim-treesitter.configs").setup({
-        -- Add languages to be installed here that you want installed for treesitter
-        ensure_installed = {
-            "c",
-            "go",
-            "lua",
-            "python",
-            "ron",
-            "rust",
-            "javascript",
-            "toml",
-            "typescript",
-            "vimdoc",
-            "vim",
-            "bash",
-            "svelte",
-        },
-
-        -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-        auto_install = false,
-        -- Install languages synchronously (only applied to `ensure_installed`)
-        sync_install = false,
-        -- List of parsers to ignore installing
-        ignore_install = {},
-        -- You can specify additional Treesitter modules here: -- For example: -- playground = {--enable = true,-- },
-        modules = {},
-        highlight = { enable = true, additional_vim_regex_highlighting = false },
-        indent = { enable = true },
-        incremental_selection = {
-            enable = true,
-            keymaps = {
-                init_selection = "<c-space>",
-                node_incremental = "<c-space>",
-                scope_incremental = "<c-s>",
-                node_decremental = "<M-space>",
-            },
-        },
-        rainbow = {
-            enable = true,
-            extended_mode = true,
-            max_file_lines = nil,
-        },
-        textobjects = {
-            select = {
-                enable = true,
-                lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-                keymaps = {
-                    -- You can use the capture groups defined in textobjects.scm
-                    ["aa"] = "@parameter.outer",
-                    ["ia"] = "@parameter.inner",
-                    ["af"] = "@function.outer",
-                    ["if"] = "@function.inner",
-                    ["ac"] = "@class.outer",
-                    ["ic"] = "@class.inner",
-                },
-            },
-            move = {
-                enable = true,
-                set_jumps = true, -- whether to set jumps in the jumplist
-                goto_next_start = {
-                    ["]f"] = "@function.outer",
-                    ["]c"] = "@class.outer",
-                },
-                goto_next_end = {
-                    ["]F"] = "@function.outer",
-                    ["]C"] = "@class.outer",
-                },
-                goto_previous_start = {
-                    ["[f"] = "@function.outer",
-                    ["[c"] = "@class.outer",
-                },
-                goto_previous_end = {
-                    ["[F"] = "@function.outer",
-                    ["[C"] = "@class.outer",
-                },
-            },
-            swap = {
-                enable = true,
-                swap_next = {
-                    ["<leader>cs"] = "@parameter.inner",
-                },
-                swap_previous = {
-                    ["<leader>cS"] = "@parameter.inner",
-                },
-            },
-        },
-    })
-end, 0)
-
 --[[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
-    -- NOTE: Remember that lua is a real programming language, and as such it is possible
-    -- to define small helper and utility functions so you don't have to repeat yourself
-    -- many times.
-    --
     -- In this case, we create a function that lets us more easily define mappings specific
     -- for LSP related items. It sets the mode, buffer and description for us each time.
     local nmap = function(keys, func, desc)
@@ -782,11 +794,6 @@ end
 require("mason").setup()
 require("mason-lspconfig").setup()
 
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
     -- clangd = {},
     -- gopls = {},
@@ -814,9 +821,18 @@ local servers = {
     },
     rust_analyzer = {
         ["rust-analyzer"] = {
-            check = { command = "clippy" },
+            check = {
+                command = "clippy",
+                features = "all",
+                extraArgs = "--no-deps",
+            },
             procMacro = {
                 enable = true
+            },
+            completion = {
+                postfix = {
+                    enable = false,
+                }
             },
         },
     },
@@ -824,9 +840,6 @@ local servers = {
     tsserver = {},
     svelte = {},
 }
-
--- Setup neovim lua configuration
--- require("neodev").setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -848,38 +861,4 @@ mason_lspconfig.setup_handlers({
             filetypes = (servers[server_name] or {}).filetypes,
         })
     end,
-})
-
--- [[ Configure nvim-cmp ]]
--- See `:help cmp`
-local cmp = require("cmp")
-local luasnip = require("luasnip")
-require("luasnip.loaders.from_vscode").lazy_load()
-luasnip.config.setup({})
-
-cmp.setup({
-    completion = {
-        completeopt = "menu,menuone,noinsert",
-    },
-    mapping = cmp.mapping.preset.insert({
-        ["<C-n>"] = cmp.mapping.select_next_item(),
-        ["<C-p>"] = cmp.mapping.select_prev_item(),
-        ["<C-Space>"] = cmp.mapping.complete({}),
-        ["<Tab>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Insert,
-            select = true,
-        }),
-    }),
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    sources = {
-        { name = "copilot" },
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
-        { name = "buffer" },
-        { name = "path" },
-    },
 })
