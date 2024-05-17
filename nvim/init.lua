@@ -87,12 +87,12 @@ require("lazy").setup({
         dependencies = {
             "nvim-treesitter/nvim-treesitter-textobjects",
         },
+        opts = {},
         build = ":TSUpdate",
         config = function()
             -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
             vim.defer_fn(function()
                 require("nvim-treesitter.configs").setup({
-                    -- Add languages to be installed here that you want installed for treesitter
                     ensure_installed = {
                         "c",
                         "go",
@@ -105,13 +105,10 @@ require("lazy").setup({
                         "typescript",
                         "vimdoc",
                         "vim",
-                        "bash",
                         "fish",
                         "svelte",
                     },
 
-                    -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-                    auto_install = false,
                     -- Install languages synchronously (only applied to `ensure_installed`)
                     sync_install = false,
                     -- List of parsers to ignore installing
@@ -590,6 +587,9 @@ vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
+vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
+    { desc = "[t]oggle inlay hints" })
+
 
 vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "[y]ank [a]bsolute file path" })
 vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
@@ -784,8 +784,6 @@ local on_attach = function(_, bufnr)
     nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "[s]earch document [S]ymbols")
     nmap("<leader>ss", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[s]earch workspace [s]ymbols")
 
-    -- See `:help K` for why this keymap
-    nmap("K", vim.lsp.buf.hover, "Hover Documentation")
     nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
 end
 
