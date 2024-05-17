@@ -13,11 +13,16 @@ set -U fish_user_paths $HOME/.local/bin $fish_user_paths
 
 alias lzg="lazygit"
 alias lzd="lazydocker"
-alias z="zoxide"
 
+fzf --fish | source
 
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-set --export --prepend PATH "/Users/ioan/.rd/bin"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+# -------------
+# --- SoSha ---
+# -------------
+set -U fish_user_paths $HOME/dev/sosha/pulumi/ $fish_user_paths
 
-zoxide init fish | source
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ioan/google-cloud-sdk/path.fish.inc' ]; . '/Users/ioan/google-cloud-sdk/path.fish.inc'; end
+# -------------
+# --- SoSha ---
+# -------------
