@@ -67,20 +67,136 @@ require("lazy").setup({
             "williamboman/mason-lspconfig.nvim",
             { "j-hui/fidget.nvim",       opts = {} },
         },
+        config = function()
+            --  This function gets run when an LSP connects to a particular buffer.
+            local on_attach = function(_, bufnr)
+                -- In this case, we create a function that lets us more easily define mappings specific
+                -- for LSP related items. It sets the mode, buffer and description for us each time.
+                local nmap = function(keys, func, desc)
+                    if desc then
+                        desc = "LSP: " .. desc
+                    end
+
+                    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+                end
+
+                local function telescope_lsp_references()
+                    require("telescope.builtin").lsp_references({
+                        include_declaration = false,
+                        show_line = false,
+                    })
+                end
+
+                local function telescope_lsp_type_definitions()
+                    require("telescope.builtin").lsp_type_definitions({
+                        show_line = false,
+                    })
+                end
+
+                local function telescope_lsp_implementations()
+                    require("telescope.builtin").lsp_implementations({
+                        show_line = false,
+                    })
+                end
+
+                -- Create a command `:Format` local to the LSP buffer
+                vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
+                    vim.lsp.buf.format()
+                end, { desc = "Format current buffer with LSP" })
+
+                -- code
+                nmap('<leader>ca', function()
+                    vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
+                end, '[C]ode [A]ction')
+                nmap("<leader>cf", ":Format<CR>", "[f]ormat buffer")
+                nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename symbol")
+
+                -- goto
+                nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
+                nmap("gs", telescope_lsp_type_definitions, "[g]oto type definitions")
+                nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
+                nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
+                nmap("gI", telescope_lsp_implementations, "[g]oto [I]mplementation")
+
+                -- search
+                nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "[s]earch document [S]ymbols")
+                nmap("<leader>ss", require("telescope.builtin").lsp_dynamic_workspace_symbols,
+                    "[s]earch workspace [s]ymbols")
+
+                nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
+            end
+
+            -- mason-lspconfig requires that these setup functions are called in this order
+            -- before setting up the servers.
+            require("mason").setup()
+            require("mason-lspconfig").setup()
+
+            local servers = {
+                -- clangd = {},
+                -- gopls = {},
+                eslint = {},
+                cssls = {},
+                html = {},
+                jsonls = {},
+                lua_ls = {
+                    Lua = {
+                        workspace = { checkThirdParty = false },
+                        telemetry = { enable = false },
+                        diagnostics = { disable = { 'missing-fields' } },
+                    },
+                },
+                pyright = {
+                    autoImportCompletion = true,
+                    python = {
+                        analysis = {
+                            autoSearchPaths = true,
+                            diagnosticMode = 'openFilesOnly',
+                            useLibraryCodeForTypes = true,
+                            typeCheckingMode = 'off'
+                        }
+                    }
+                },
+                rust_analyzer = {
+                    ["rust-analyzer"] = {
+                        check = {
+                            command = "clippy",
+                            features = "all",
+                        },
+                        completion = {
+                            fullFunctionSignatures = { enable = true },
+                            postfix = { enable = false },
+                        },
+                    },
+                },
+                taplo = {},
+                tsserver = {},
+                svelte = {},
+            }
+
+            -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+
+            -- Ensure the servers above are installed
+            local mason_lspconfig = require("mason-lspconfig")
+
+            mason_lspconfig.setup({
+                ensure_installed = vim.tbl_keys(servers),
+            })
+
+            mason_lspconfig.setup_handlers({
+                function(server_name)
+                    require("lspconfig")[server_name].setup({
+                        capabilities = capabilities,
+                        on_attach = on_attach,
+                        settings = servers[server_name],
+                        filetypes = (servers[server_name] or {}).filetypes,
+                    })
+                end,
+            })
+        end
     },
 
-    {
-        'stevearc/conform.nvim',
-        opts = {
-            format_on_save = {
-                timeout_ms = 500,
-                lsp_fallback = true,
-            },
-            formatters_by_ft = {
-                lua = { 'stylua' },
-            },
-        },
-    },
 
     {
         "nvim-treesitter/nvim-treesitter",
@@ -180,33 +296,6 @@ require("lazy").setup({
         end
     },
 
-    {
-        "tpope/vim-sleuth",
-    },
-
-    {
-        "folke/which-key.nvim",
-        event = 'VimEnter',
-        config = function()
-            require("which-key").setup()
-
-            require("which-key").register({
-                ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
-                ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
-                ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
-                ["<leader>m"] = { name = "[harpoon]", _ = "which_key_ignore" },
-                ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
-                ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
-                ["<leader>x"] = { name = "[trouble]", _ = "which_key_ignore" },
-                ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
-            })
-
-            require("which-key").register({
-                ["<leader>"] = { name = "VISUAL <leader>" },
-                ["<leader>h"] = { "Git [h]unk" },
-            }, { mode = "v" })
-        end,
-    },
 
     {
         "hrsh7th/nvim-cmp",
@@ -327,35 +416,6 @@ require("lazy").setup({
     },
 
     {
-        'stevearc/oil.nvim',
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            require("oil").setup({
-                columns = {
-                    "icon",
-                },
-                delete_to_trash = true,
-                view_options = {
-                    show_hidden = true,
-                },
-            })
-
-            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-        end,
-    },
-
-    {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        config = function()
-            require("ibl").setup({
-                indent = { char = '▏' },
-                scope = { enabled = false },
-            })
-        end
-    },
-
-    {
         "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         opts = {
@@ -388,9 +448,6 @@ require("lazy").setup({
         dependencies = {
             "nvim-lua/plenary.nvim",
             "debugloop/telescope-undo.nvim",
-            -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-            -- Only load if `make` is available. Make sure you have the system
-            -- requirements installed.
             {
                 "nvim-telescope/telescope-fzf-native.nvim",
                 build = "make",
@@ -399,6 +456,119 @@ require("lazy").setup({
                 end,
             },
         },
+        config = function()
+            require("telescope").setup({
+                defaults = {
+                    mappings = {
+                        i = {
+                            ["<C-u>"] = false,
+                            ["<C-d>"] = false,
+                        },
+                    },
+                    layout_strategy = 'vertical',
+                    layout_config = {
+                        height = 0.9,
+                        mirror = true,
+                        width = 0.6,
+                    },
+                },
+                extensions = {
+                    undo = {
+                        side_by_side = true,
+                        layout_strategy = "vertical",
+                        layout_config = {
+                            preview_height = 0.7,
+                        },
+                    },
+                },
+            })
+
+            vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
+
+            -- Enable telescope fzf native, if installed
+            pcall(require("telescope").load_extension, "fzf")
+
+            -- Enable telescope-undo
+            require("telescope").load_extension("undo")
+
+            -- Telescope live_grep in git root
+            -- Function to find the git root directory based on the current buffer's path
+            local function find_git_root()
+                -- Use the current buffer's path as the starting point for the git search
+                local current_file = vim.api.nvim_buf_get_name(0)
+                local current_dir
+                local cwd = vim.fn.getcwd()
+                -- If the buffer is not associated with a file, return nil
+                if current_file == "" then
+                    current_dir = cwd
+                else
+                    -- Extract the directory from the current file's path
+                    current_dir = vim.fn.fnamemodify(current_file, ":h")
+                end
+
+                -- Find the Git root directory from the current file's path
+                local git_root = vim.fn.systemlist("git -C " ..
+                    vim.fn.escape(current_dir, " ") .. " rev-parse --show-toplevel")[1]
+                if vim.v.shell_error ~= 0 then
+                    print("Not a git repository. Searching on current working directory")
+                    return cwd
+                end
+                return git_root
+            end
+
+            -- Custom live_grep function to search in git root
+            local function live_grep_git_root()
+                local git_root = find_git_root()
+                if git_root then
+                    require("telescope.builtin").live_grep({
+                        search_dirs = { git_root },
+                    })
+                end
+            end
+
+            vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
+
+            vim.keymap.set("n", "<leader>f", require("telescope.builtin").oldfiles,
+                { desc = "[f]ind recently opened files" })
+            vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "[?] find existing buffers" })
+
+            vim.keymap.set("n", "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find,
+                { desc = "[/] Fuzzily search in current buffer" })
+
+            vim.keymap.set("n", "<leader>s/", function()
+                require("telescope.builtin").live_grep({
+                    grep_open_files = true,
+                    prompt_title = "Live Grep in Open Files",
+                })
+            end, { desc = "[s]earch [/] in Open Files" })
+
+            vim.keymap.set("n", "<leader>sa", function()
+                require("telescope.builtin").find_files({
+                    hidden = true,
+                    no_ignore = true,
+                    prompt_title = "Find Files in CWD",
+                })
+            end, { desc = "[s]earch [a]ll cwd files" })
+
+            vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
+                { desc = "[s]earch [d]iagnostic" })
+            vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
+                { desc = "[s]earch [D]iagnostic in workspace" })
+            vim.keymap.set("n", "<leader>sf", function()
+                require("telescope.builtin").find_files({
+                    hidden = true,
+                })
+            end, { desc = "[s]earch [f]iles" })
+
+            vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[s]earch by [g]rep" })
+            vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
+            vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
+            vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
+            vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
+            vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "[s]earch [u]ndotree" })
+            vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string,
+                { desc = "[s]earch current [w]ord" })
+        end
     },
 
     {
@@ -444,7 +614,6 @@ require("lazy").setup({
     },
 
     {
-        -- Adds git related signs to the gutter, as well as utilities for managing changes
         "lewis6991/gitsigns.nvim",
         opts = {
             signs = {
@@ -538,7 +707,6 @@ require("lazy").setup({
             map("]]", "next")
             map("[[", "prev")
 
-            -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
             vim.api.nvim_create_autocmd("FileType", {
                 callback = function()
                     local buffer = vim.api.nvim_get_current_buf()
@@ -554,9 +722,79 @@ require("lazy").setup({
     },
 
     {
+        'stevearc/conform.nvim',
+        opts = {
+            format_on_save = {
+                timeout_ms = 500,
+                lsp_fallback = true,
+            },
+            formatters_by_ft = {
+                lua = { 'stylua' },
+            },
+        },
+    },
+
+    {
+        "tpope/vim-sleuth",
+    },
+
+    {
+        "folke/which-key.nvim",
+        event = 'VimEnter',
+        config = function()
+            require("which-key").setup()
+
+            require("which-key").register({
+                ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
+                ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
+                ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
+                ["<leader>m"] = { name = "[harpoon]", _ = "which_key_ignore" },
+                ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
+                ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
+                ["<leader>x"] = { name = "[trouble]", _ = "which_key_ignore" },
+                ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
+            })
+
+            require("which-key").register({
+                ["<leader>"] = { name = "VISUAL <leader>" },
+                ["<leader>h"] = { "Git [h]unk" },
+            }, { mode = "v" })
+        end,
+    },
+
+    {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
         opts = { signs = false }
+    },
+
+    {
+        'stevearc/oil.nvim',
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("oil").setup({
+                columns = {
+                    "icon",
+                },
+                delete_to_trash = true,
+                view_options = {
+                    show_hidden = true,
+                },
+            })
+
+            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+        end,
+    },
+
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
+        config = function()
+            require("ibl").setup({
+                indent = { char = '▏' },
+                scope = { enabled = false },
+            })
+        end
     },
 
     {
@@ -578,7 +816,6 @@ require("lazy").setup({
         end
     },
 
-    -- Rust
     {
         "Saecki/crates.nvim",
         event = { "BufRead Cargo.toml" },
@@ -602,7 +839,6 @@ vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffe
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
 vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
     { desc = "[t]oggle inlay hints" })
-
 
 vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "[y]ank [a]bsolute file path" })
 vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
@@ -628,243 +864,4 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
     group = highlight_group,
     pattern = "*",
-})
-
--- [[ Configure Telescope ]]
--- See `:help telescope` and `:help telescope.setup()`
-require("telescope").setup({
-    defaults = {
-        mappings = {
-            i = {
-                ["<C-u>"] = false,
-                ["<C-d>"] = false,
-            },
-        },
-        layout_strategy = 'vertical',
-        layout_config = {
-            height = 0.9,
-            mirror = true,
-            width = 0.6,
-        },
-    },
-    extensions = {
-        undo = {
-            side_by_side = true,
-            layout_strategy = "vertical",
-            layout_config = {
-                preview_height = 0.7,
-            },
-        },
-    },
-})
-
-vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
-
--- Enable telescope fzf native, if installed
-pcall(require("telescope").load_extension, "fzf")
-
--- Enable telescope-undo
-require("telescope").load_extension("undo")
-
--- Telescope live_grep in git root
--- Function to find the git root directory based on the current buffer's path
-local function find_git_root()
-    -- Use the current buffer's path as the starting point for the git search
-    local current_file = vim.api.nvim_buf_get_name(0)
-    local current_dir
-    local cwd = vim.fn.getcwd()
-    -- If the buffer is not associated with a file, return nil
-    if current_file == "" then
-        current_dir = cwd
-    else
-        -- Extract the directory from the current file's path
-        current_dir = vim.fn.fnamemodify(current_file, ":h")
-    end
-
-    -- Find the Git root directory from the current file's path
-    local git_root = vim.fn.systemlist("git -C " .. vim.fn.escape(current_dir, " ") .. " rev-parse --show-toplevel")[1]
-    if vim.v.shell_error ~= 0 then
-        print("Not a git repository. Searching on current working directory")
-        return cwd
-    end
-    return git_root
-end
-
--- Custom live_grep function to search in git root
-local function live_grep_git_root()
-    local git_root = find_git_root()
-    if git_root then
-        require("telescope.builtin").live_grep({
-            search_dirs = { git_root },
-        })
-    end
-end
-
-vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
-
--- See `:help telescope.builtin`
-vim.keymap.set("n", "<leader>f", require("telescope.builtin").oldfiles, { desc = "[f]ind recently opened files" })
-vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "[?] find existing buffers" })
-
-vim.keymap.set("n", "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find,
-    { desc = "[/] Fuzzily search in current buffer" })
-
-vim.keymap.set("n", "<leader>s/", function()
-    require("telescope.builtin").live_grep({
-        grep_open_files = true,
-        prompt_title = "Live Grep in Open Files",
-    })
-end, { desc = "[s]earch [/] in Open Files" })
-
-vim.keymap.set("n", "<leader>sa", function()
-    require("telescope.builtin").find_files({
-        hidden = true,
-        no_ignore = true,
-        prompt_title = "Find Files in CWD",
-    })
-end, { desc = "[s]earch [a]ll cwd files" })
-
-vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
-    { desc = "[s]earch [d]iagnostic" })
-vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
-    { desc = "[s]earch [D]iagnostic in workspace" })
-vim.keymap.set("n", "<leader>sf", function()
-    require("telescope.builtin").find_files({
-        hidden = true,
-    })
-end, { desc = "[s]earch [f]iles" })
-
-vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[s]earch by [g]rep" })
-vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
-vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
-vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
-vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "[s]earch [u]ndotree" })
-vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[s]earch current [w]ord" })
-
---[[ Configure LSP ]]
---  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
-    -- In this case, we create a function that lets us more easily define mappings specific
-    -- for LSP related items. It sets the mode, buffer and description for us each time.
-    local nmap = function(keys, func, desc)
-        if desc then
-            desc = "LSP: " .. desc
-        end
-
-        vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-    end
-
-    local function telescope_lsp_references()
-        require("telescope.builtin").lsp_references({
-            include_declaration = false,
-            show_line = false,
-        })
-    end
-
-    local function telescope_lsp_type_definitions()
-        require("telescope.builtin").lsp_type_definitions({
-            show_line = false,
-        })
-    end
-
-    local function telescope_lsp_implementations()
-        require("telescope.builtin").lsp_implementations({
-            show_line = false,
-        })
-    end
-
-    -- Create a command `:Format` local to the LSP buffer
-    vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
-        vim.lsp.buf.format()
-    end, { desc = "Format current buffer with LSP" })
-
-    -- code
-    nmap('<leader>ca', function()
-        vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
-    end, '[C]ode [A]ction')
-    nmap("<leader>cf", ":Format<CR>", "[f]ormat buffer")
-    nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename symbol")
-
-    -- goto
-    nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
-    nmap("gs", telescope_lsp_type_definitions, "[g]oto type definitions")
-    nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
-    nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
-    nmap("gI", telescope_lsp_implementations, "[g]oto [I]mplementation")
-
-    -- search
-    nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "[s]earch document [S]ymbols")
-    nmap("<leader>ss", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[s]earch workspace [s]ymbols")
-
-    nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-end
-
--- mason-lspconfig requires that these setup functions are called in this order
--- before setting up the servers.
-require("mason").setup()
-require("mason-lspconfig").setup()
-
-local servers = {
-    -- clangd = {},
-    -- gopls = {},
-    eslint = {},
-    cssls = {},
-    html = {},
-    jsonls = {},
-    lua_ls = {
-        Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-            diagnostics = { disable = { 'missing-fields' } },
-        },
-    },
-    pyright = {
-        autoImportCompletion = true,
-        python = {
-            analysis = {
-                autoSearchPaths = true,
-                diagnosticMode = 'openFilesOnly',
-                useLibraryCodeForTypes = true,
-                typeCheckingMode = 'off'
-            }
-        }
-    },
-    rust_analyzer = {
-        ["rust-analyzer"] = {
-            check = {
-                command = "clippy",
-                features = "all",
-            },
-            completion = {
-                fullFunctionSignatures = { enable = true },
-                postfix = { enable = false },
-            },
-        },
-    },
-    taplo = {},
-    tsserver = {},
-    svelte = {},
-}
-
--- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-
--- Ensure the servers above are installed
-local mason_lspconfig = require("mason-lspconfig")
-
-mason_lspconfig.setup({
-    ensure_installed = vim.tbl_keys(servers),
-})
-
-mason_lspconfig.setup_handlers({
-    function(server_name)
-        require("lspconfig")[server_name].setup({
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = servers[server_name],
-            filetypes = (servers[server_name] or {}).filetypes,
-        })
-    end,
 })
