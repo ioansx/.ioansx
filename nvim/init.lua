@@ -223,16 +223,29 @@ require("lazy").setup({
         config = function()
             local cmp = require("cmp")
             local luasnip = require("luasnip")
-            require("luasnip.loaders.from_vscode").lazy_load()
             luasnip.config.setup({})
 
             cmp.setup({
                 completion = {
                     completeopt = "menu,menuone,noinsert",
                 },
+                formatting = {
+                    format = function(entry, vim_item)
+                        local menu
+                        local ci = entry.completion_item
+                        if ci.labelDetails and ci.labelDetails.detail then
+                            menu = ci.labelDetails.detail
+                            if string.len(menu) > 37 then
+                                menu = string.sub(menu, 1, 37) .. "..."
+                            end
+                        end
+                        vim_item.menu = menu
+                        return vim_item
+                    end
+                },
                 mapping = cmp.mapping.preset.insert({
-                    ["<C-n>"] = cmp.mapping.select_next_item(),
-                    ["<C-p>"] = cmp.mapping.select_prev_item(),
+                    ["<C-n>"] = cmp.mapping.scroll_docs(4),
+                    ["<C-p>"] = cmp.mapping.scroll_docs(-4),
                     ["<C-Space>"] = cmp.mapping.complete({}),
                     ["<Tab>"] = cmp.mapping.confirm({
                         behavior = cmp.ConfirmBehavior.Insert,
@@ -822,15 +835,10 @@ local servers = {
             check = {
                 command = "clippy",
                 features = "all",
-                extraArgs = "--no-deps",
-            },
-            procMacro = {
-                enable = true
             },
             completion = {
-                postfix = {
-                    enable = false,
-                }
+                fullFunctionSignatures = { enable = true },
+                postfix = { enable = false },
             },
         },
     },
