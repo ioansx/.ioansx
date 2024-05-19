@@ -132,8 +132,6 @@ require("lazy").setup({
             require("mason-lspconfig").setup()
 
             local servers = {
-                -- clangd = {},
-                -- gopls = {},
                 eslint = {},
                 cssls = {},
                 html = {},
@@ -162,10 +160,16 @@ require("lazy").setup({
                             command = "clippy",
                             features = "all",
                         },
+                        -- procMacro = {
+                        --     enable = false,
+                        -- },
                         completion = {
                             fullFunctionSignatures = { enable = true },
                             postfix = { enable = false },
                         },
+                        -- lru = {
+                        --     capacity = 512, -- default 128
+                        -- },
                     },
                 },
                 taplo = {},
@@ -345,6 +349,17 @@ require("lazy").setup({
                     expand = function(args)
                         luasnip.lsp_expand(args.body)
                     end,
+                },
+                sorting = {
+                    comparators = {
+                        cmp.config.compare.offset,
+                        cmp.config.compare.exact,
+                        cmp.config.compare.score,
+                        cmp.config.compare.kind,
+                        cmp.config.compare.sort_text,
+                        cmp.config.compare.length,
+                        cmp.config.compare.order,
+                    },
                 },
                 sources = {
                     { name = "copilot" },
@@ -729,7 +744,23 @@ require("lazy").setup({
                 lsp_fallback = true,
             },
             formatters_by_ft = {
-                lua = { 'stylua' },
+                ["lua"] = { 'stylua' },
+                ["javascript"] = { "prettier" },
+                ["javascriptreact"] = { "prettier" },
+                ["typescript"] = { "prettier" },
+                ["typescriptreact"] = { "prettier" },
+                ["vue"] = { "prettier" },
+                ["css"] = { "prettier" },
+                ["scss"] = { "prettier" },
+                ["less"] = { "prettier" },
+                ["html"] = { "prettier" },
+                ["json"] = { "prettier" },
+                ["jsonc"] = { "prettier" },
+                ["yaml"] = { "prettier" },
+                ["markdown"] = { "prettier" },
+                ["markdown.mdx"] = { "prettier" },
+                ["graphql"] = { "prettier" },
+                ["handlebars"] = { "prettier" },
             },
         },
     },
