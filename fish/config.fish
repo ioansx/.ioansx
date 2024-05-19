@@ -16,6 +16,8 @@ alias lzd="lazydocker"
 
 fzf --fish | source
 
+source /opt/homebrew/etc/grc.fish
+
 # -------------
 # --- SoSha ---
 # -------------
