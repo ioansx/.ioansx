@@ -154,7 +154,27 @@ require("lazy").setup({
                         }
                     }
                 },
-                rust_analyzer = {
+                taplo = {},
+                tsserver = {},
+                svelte = {},
+            }
+
+            -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+
+            -- Ensure the servers above are installed
+            local mason_lspconfig = require("mason-lspconfig")
+
+            mason_lspconfig.setup({
+                ensure_installed = vim.tbl_keys(servers),
+            })
+
+            require("lspconfig").rust_analyzer.setup({
+                cmd = { "rustup", "run", "stable", "rust-analyzer" },
+                capabilities = capabilities,
+                on_attach = on_attach,
+                settings = {
                     ["rust-analyzer"] = {
                         check = {
                             command = "clippy",
@@ -172,20 +192,6 @@ require("lazy").setup({
                         -- },
                     },
                 },
-                taplo = {},
-                tsserver = {},
-                svelte = {},
-            }
-
-            -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-
-            -- Ensure the servers above are installed
-            local mason_lspconfig = require("mason-lspconfig")
-
-            mason_lspconfig.setup({
-                ensure_installed = vim.tbl_keys(servers),
             })
 
             mason_lspconfig.setup_handlers({
