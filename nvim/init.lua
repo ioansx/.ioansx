@@ -180,16 +180,10 @@ require("lazy").setup({
                             command = "clippy",
                             features = "all",
                         },
-                        -- procMacro = {
-                        --     enable = false,
-                        -- },
                         completion = {
                             fullFunctionSignatures = { enable = true },
                             postfix = { enable = false },
                         },
-                        -- lru = {
-                        --     capacity = 512, -- default 128
-                        -- },
                     },
                 },
             })
@@ -617,7 +611,7 @@ require("lazy").setup({
             },
             {
                 "<leader>xr",
-                "<cmd>Trouble lsp toggle <cr>",
+                "<cmd>Trouble lsp toggle<cr>",
                 desc = "LSP",
             },
             {
@@ -629,6 +623,11 @@ require("lazy").setup({
                 "<leader>xq",
                 "<cmd>Trouble qflist toggle<cr>",
                 desc = "[q]uickfix list",
+            },
+            {
+                "<leader>xt",
+                "<cmd>Trouble todo<cr>",
+                desc = "TODO",
             },
         },
     },
@@ -793,9 +792,9 @@ require("lazy").setup({
         },
     },
 
-    {
-        "tpope/vim-sleuth",
-    },
+    -- {
+    --     "tpope/vim-sleuth",
+    -- },
 
     {
         "folke/which-key.nvim",
@@ -891,6 +890,8 @@ vim.keymap.set("n", "n", "nzz")
 vim.keymap.set("n", "N", "Nzz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<leader>e", "<C-w>w<CR>", { desc = "[e] Switch windows" })
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
 
