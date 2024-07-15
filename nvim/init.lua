@@ -802,21 +802,18 @@ require("lazy").setup({
         config = function()
             require("which-key").setup()
 
-            require("which-key").register({
-                ["<leader>c"] = { name = "[c]ode", _ = "which_key_ignore" },
-                ["<leader>d"] = { name = "[d]iagnostic", _ = "which_key_ignore" },
-                ["<leader>h"] = { name = "[h]unk (Git)", _ = "which_key_ignore" },
-                ["<leader>m"] = { name = "[harpoon]", _ = "which_key_ignore" },
-                ["<leader>s"] = { name = "[s]earch", _ = "which_key_ignore" },
-                ["<leader>t"] = { name = "[t]oggle", _ = "which_key_ignore" },
-                ["<leader>x"] = { name = "[trouble]", _ = "which_key_ignore" },
-                ["<leader>y"] = { name = "[y]ank", _ = "which_key_ignore" },
+            require("which-key").add({
+                { "<leader>",  name = "VISUAL <leader>" },
+                { "<leader>c", group = "[c]ode" },
+                { "<leader>d", group = "[d]iagnostic" },
+                { "<leader>h", group = "[h]unk (Git)" },
+                { "<leader>h", name = "[h]unk (Git)",   mode = "v" },
+                { "<leader>m", group = "[harpoon]" },
+                { "<leader>s", group = "[s]earch" },
+                { "<leader>t", group = "[t]oggle" },
+                { "<leader>x", group = "[trouble]" },
+                { "<leader>y", group = "[y]ank" },
             })
-
-            require("which-key").register({
-                ["<leader>"] = { name = "VISUAL <leader>" },
-                ["<leader>h"] = { "Git [h]unk" },
-            }, { mode = "v" })
         end,
     },
 
