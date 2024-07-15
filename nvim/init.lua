@@ -64,12 +64,20 @@ require("lazy").setup({
         'echasnovski/mini.nvim',
         version = false,
         config = function()
+            require("mini.ai").setup()
+
+            require("mini.basics").setup()
+
+            require("mini.bracketed").setup()
+
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {
                     -- Leader triggers
                     { mode = 'n', keys = '<Leader>' },
                     { mode = 'x', keys = '<Leader>' },
+                    { mode = 'n', keys = '[' },
+                    { mode = 'n', keys = ']' },
                     -- Built-in completion
                     { mode = 'i', keys = '<C-x>' },
                     -- `g` key
@@ -99,6 +107,11 @@ require("lazy").setup({
                     mini_clue.gen_clues.windows(),
                     mini_clue.gen_clues.z(),
                 },
+                window = {
+                    config = {
+                        width = "auto",
+                    },
+                },
             })
 
             require("mini.cursorword").setup()
@@ -122,6 +135,13 @@ require("lazy").setup({
                     goto_last = ']H',
                 },
             })
+
+            require("mini.files").setup({
+                options = {
+                    permanent_delete = false,
+                }
+            })
+            vim.keymap.set("n", "<leader>e", ":lua MiniFiles.open()<CR>", { desc = "files" })
 
             require("mini.git").setup()
 
@@ -235,23 +255,23 @@ require("lazy").setup({
     },
 
 
-    {
-        'stevearc/oil.nvim',
-        dependencies = { { "echasnovski/mini.icons", opts = {} } },
-        config = function()
-            require("oil").setup({
-                columns = {
-                    "icon",
-                },
-                delete_to_trash = true,
-                view_options = {
-                    show_hidden = true,
-                },
-            })
-
-            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
-        end,
-    },
+    -- {
+    --     'stevearc/oil.nvim',
+    --     dependencies = { { "echasnovski/mini.icons", opts = {} } },
+    --     config = function()
+    --         require("oil").setup({
+    --             columns = {
+    --                 "icon",
+    --             },
+    --             delete_to_trash = true,
+    --             view_options = {
+    --                 show_hidden = true,
+    --             },
+    --         })
+    --
+    --         vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
+    --     end,
+    -- },
 
     {
         "folke/todo-comments.nvim",
@@ -506,15 +526,15 @@ require("lazy").setup({
                     modules = {},
                     highlight = { enable = true, additional_vim_regex_highlighting = false },
                     indent = { enable = true },
-                    incremental_selection = {
-                        enable = true,
-                        keymaps = {
-                            init_selection = "<c-space>",
-                            node_incremental = "<c-space>",
-                            scope_incremental = "<c-s>",
-                            node_decremental = "<M-space>",
-                        },
-                    },
+                    -- incremental_selection = {
+                    --     enable = true,
+                    --     keymaps = {
+                    --         init_selection = "<c-space>",
+                    --         node_incremental = "<c-space>",
+                    --         scope_incremental = "<c-s>",
+                    --         node_decremental = "<M-space>",
+                    --     },
+                    -- },
                     rainbow = {
                         enable = true,
                         extended_mode = true,
@@ -743,78 +763,6 @@ require("lazy").setup({
             },
         },
     },
-
-    -- {
-    --     "lewis6991/gitsigns.nvim",
-    --     opts = {
-    --         signs = {
-    --             add = { text = "+" },
-    --             change = { text = "~" },
-    --             delete = { text = "_" },
-    --             topdelete = { text = "‾" },
-    --             changedelete = { text = "~" },
-    --         },
-    --         on_attach = function(bufnr)
-    --             local gs = package.loaded.gitsigns
-    --
-    --             local function map(mode, l, r, opts)
-    --                 opts = opts or {}
-    --                 opts.buffer = bufnr
-    --                 vim.keymap.set(mode, l, r, opts)
-    --             end
-    --
-    --             -- Navigation
-    --             map({ "n", "v" }, "]h", function()
-    --                 if vim.wo.diff then
-    --                     return "]h"
-    --                 end
-    --                 vim.schedule(function()
-    --                     gs.next_hunk()
-    --                 end)
-    --                 return "<Ignore>"
-    --             end, { expr = true, desc = "go to next hunk" })
-    --
-    --             map({ "n", "v" }, "[h", function()
-    --                 if vim.wo.diff then
-    --                     return "[h"
-    --                 end
-    --                 vim.schedule(function()
-    --                     gs.prev_hunk()
-    --                 end)
-    --                 return "<Ignore>"
-    --             end, { expr = true, desc = "go to previous hunk" })
-    --
-    --             -- Actions
-    --             map("v", "<leader>hs", function()
-    --                 gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-    --             end, { desc = "stage Git hunk" })
-    --             map("v", "<leader>hr", function()
-    --                 gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-    --             end, { desc = "reset Git hunk" })
-    --
-    --             map("n", "<leader>hs", gs.stage_hunk, { desc = "stage Git hunk" })
-    --             map("n", "<leader>hr", gs.reset_hunk, { desc = "reset Git hunk" })
-    --             map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "undo stage hunk" })
-    --             map("n", "<leader>hS", gs.stage_buffer, { desc = "Git stage buffer" })
-    --             map("n", "<leader>hR", gs.reset_buffer, { desc = "Git reset buffer" })
-    --             map("n", "<leader>hp", gs.preview_hunk, { desc = "preview Git hunk" })
-    --             map("n", "<leader>hb", function()
-    --                 gs.blame_line({ full = false })
-    --             end, { desc = "Git blame line" })
-    --             map("n", "<leader>hd", gs.diffthis, { desc = "Git diff against index" })
-    --             map("n", "<leader>hD", function()
-    --                 gs.diffthis("~")
-    --             end, { desc = "Git diff against last commit" })
-    --
-    --             -- Toggles
-    --             map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "toggle Git blame line" })
-    --             map("n", "<leader>td", gs.toggle_deleted, { desc = "toggle Git show deleted" })
-    --
-    --             -- Text object
-    --             map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "select git hunk" })
-    --         end,
-    --     },
-    -- },
 }, {})
 
 -- [[ Keymaps ]]
@@ -828,7 +776,6 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<leader>e", "<C-w>w<CR>", { desc = "Switch windows" })
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
@@ -849,8 +796,8 @@ vim.keymap.set("v", "<leader>p", '"_dP', { desc = "smart paste" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "move lines down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "move lines up" })
 
-vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "cprev" })
-vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "cnext" })
+-- vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "cprev" })
+-- vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "cnext" })
 
 -- [[ Highlight on yank ]]
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
