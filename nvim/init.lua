@@ -61,11 +61,281 @@ require("lazy").setup({
     },
 
     {
+        'echasnovski/mini.nvim',
+        version = false,
+        config = function()
+            local mini_clue = require("mini.clue")
+            mini_clue.setup({
+                triggers = {
+                    -- Leader triggers
+                    { mode = 'n', keys = '<Leader>' },
+                    { mode = 'x', keys = '<Leader>' },
+                    -- Built-in completion
+                    { mode = 'i', keys = '<C-x>' },
+                    -- `g` key
+                    { mode = 'n', keys = 'g' },
+                    { mode = 'x', keys = 'g' },
+                    -- Marks
+                    { mode = 'n', keys = "'" },
+                    { mode = 'n', keys = '`' },
+                    { mode = 'x', keys = "'" },
+                    { mode = 'x', keys = '`' },
+                    -- Registers
+                    { mode = 'n', keys = '"' },
+                    { mode = 'x', keys = '"' },
+                    { mode = 'i', keys = '<C-r>' },
+                    { mode = 'c', keys = '<C-r>' },
+                    -- Window commands
+                    { mode = 'n', keys = '<C-w>' },
+                    -- `z` key
+                    { mode = 'n', keys = 'z' },
+                    { mode = 'x', keys = 'z' },
+                },
+                clues = {
+                    mini_clue.gen_clues.builtin_completion(),
+                    mini_clue.gen_clues.g(),
+                    mini_clue.gen_clues.marks(),
+                    mini_clue.gen_clues.registers(),
+                    mini_clue.gen_clues.windows(),
+                    mini_clue.gen_clues.z(),
+                },
+            })
+
+            require("mini.cursorword").setup()
+
+            require("mini.diff").setup({
+                mappings = {
+                    -- Apply hunks inside a visual/operator region
+                    apply = 'gh',
+
+                    -- Reset hunks inside a visual/operator region
+                    reset = 'gH',
+
+                    -- Hunk range textobject to be used inside operator
+                    -- Works also in Visual mode if mapping differs from apply and reset
+                    textobject = 'gh',
+
+                    -- Go to hunk range in corresponding direction
+                    goto_first = '[H',
+                    goto_prev = '[h',
+                    goto_next = ']h',
+                    goto_last = ']H',
+                },
+            })
+
+            require("mini.git").setup()
+
+            require("mini.icons").setup()
+
+            local mini_indentscope = require("mini.indentscope")
+            mini_indentscope.setup({
+                draw = {
+                    delay = 50,
+                },
+                symbol = "▏",
+            })
+            mini_indentscope.gen_animation.none()
+
+            require("mini.notify").setup({
+                content = {
+                    format = function(notif) return notif.msg end,
+                },
+            })
+
+            require("mini.statusline").setup()
+
+            require("mini.trailspace").setup()
+        end
+    },
+
+    {
+        'stevearc/conform.nvim',
+        opts = {
+            format_on_save = {
+                timeout_ms = 500,
+                lsp_fallback = true,
+            },
+            formatters_by_ft = {
+                ["lua"] = { 'stylua' },
+                ["javascript"] = { "prettier" },
+                ["javascriptreact"] = { "prettier" },
+                ["typescript"] = { "prettier" },
+                ["typescriptreact"] = { "prettier" },
+                ["vue"] = { "prettier" },
+                ["css"] = { "prettier" },
+                ["scss"] = { "prettier" },
+                ["less"] = { "prettier" },
+                ["html"] = { "prettier" },
+                ["json"] = { "prettier" },
+                ["jsonc"] = { "prettier" },
+                ["yaml"] = { "prettier" },
+                ["markdown"] = { "prettier" },
+                ["markdown.mdx"] = { "prettier" },
+                ["graphql"] = { "prettier" },
+                ["handlebars"] = { "prettier" },
+            },
+        },
+    },
+
+    {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({
+                suggestion = { enabled = false },
+                panel = { enabled = false },
+            })
+        end,
+    },
+
+    {
+        "zbirenbaum/copilot-cmp",
+        config = function()
+            require("copilot_cmp").setup()
+        end
+    },
+
+    {
+        "Saecki/crates.nvim",
+        event = { "BufRead Cargo.toml" },
+        opts = {},
+    },
+    {
+        "ThePrimeagen/harpoon",
+        branch = "harpoon2",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        config = function()
+            local harpoon = require("harpoon")
+            harpoon:setup()
+
+            vim.keymap.set("n", "<leader>mm", function() harpoon:list():add() end, { desc = "Harpoon mark" })
+            vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
+                { desc = "Harpoon mark" })
+
+            vim.keymap.set("n", "<leader>ma", function() harpoon:list():select(1) end, { desc = "Harpoon goto 1" })
+            vim.keymap.set("n", "<leader>ms", function() harpoon:list():select(2) end, { desc = "Harpoon goto 2" })
+            vim.keymap.set("n", "<leader>md", function() harpoon:list():select(3) end, { desc = "Harpoon goto 3" })
+            vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { desc = "Harpoon goto 4" })
+            vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "Harpoon goto 5" })
+
+            vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "Harpoon goto prev" })
+            vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "Harpoon goto next" })
+        end,
+    },
+
+    {
+        "kdheepak/lazygit.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        config = function()
+            vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazygit" })
+        end
+    },
+
+
+    {
+        'stevearc/oil.nvim',
+        dependencies = { { "echasnovski/mini.icons", opts = {} } },
+        config = function()
+            require("oil").setup({
+                columns = {
+                    "icon",
+                },
+                delete_to_trash = true,
+                view_options = {
+                    show_hidden = true,
+                },
+            })
+
+            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
+        end,
+    },
+
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = { signs = false }
+    },
+
+    {
+        "hrsh7th/nvim-cmp",
+        dependencies = {
+            {
+                'L3MON4D3/LuaSnip',
+                build = 'make install_jsregexp',
+            },
+            "saadparwaiz1/cmp_luasnip",
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-buffer",
+        },
+        config = function()
+            local cmp = require("cmp")
+            local luasnip = require("luasnip")
+            luasnip.config.setup({})
+
+            cmp.setup({
+                completion = {
+                    completeopt = "menu,menuone,noinsert",
+                },
+                formatting = {
+                    format = function(entry, vim_item)
+                        local menu
+                        local ci = entry.completion_item
+                        if ci.labelDetails and ci.labelDetails.detail then
+                            menu = ci.labelDetails.detail
+                            if string.len(menu) > 37 then
+                                menu = string.sub(menu, 1, 37) .. "..."
+                            end
+                        end
+                        vim_item.menu = menu
+                        return vim_item
+                    end
+                },
+                mapping = cmp.mapping.preset.insert({
+                    ["<C-n>"] = cmp.mapping.scroll_docs(4),
+                    ["<C-p>"] = cmp.mapping.scroll_docs(-4),
+                    ["<C-Space>"] = cmp.mapping.complete({}),
+                    ["<Tab>"] = cmp.mapping.confirm({
+                        behavior = cmp.ConfirmBehavior.Insert,
+                        select = true,
+                    }),
+                }),
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
+                sorting = {
+                    comparators = {
+                        cmp.config.compare.offset,
+                        cmp.config.compare.exact,
+                        cmp.config.compare.score,
+                        cmp.config.compare.kind,
+                        cmp.config.compare.sort_text,
+                        cmp.config.compare.length,
+                        cmp.config.compare.order,
+                    },
+                },
+                sources = {
+                    { name = "copilot" },
+                    { name = "nvim_lsp" },
+                    { name = "luasnip" },
+                    { name = "buffer" },
+                    { name = "path" },
+                },
+            })
+        end
+    },
+
+    {
         "neovim/nvim-lspconfig",
         dependencies = {
             { "williamboman/mason.nvim", config = true },
             "williamboman/mason-lspconfig.nvim",
-            { "j-hui/fidget.nvim",       opts = {} },
+            -- { "j-hui/fidget.nvim",       opts = {} },
         },
         config = function()
             --  This function gets run when an LSP connects to a particular buffer.
@@ -102,26 +372,26 @@ require("lazy").setup({
                 -- Create a command `:Format` local to the LSP buffer
                 vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
                     vim.lsp.buf.format()
-                end, { desc = "Format current buffer with LSP" })
+                end, { desc = "format current buffer with LSP" })
 
                 -- code
                 nmap('<leader>ca', function()
                     vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
-                end, '[C]ode [A]ction')
-                nmap("<leader>cf", ":Format<CR>", "[f]ormat buffer")
-                nmap("<leader>cr", vim.lsp.buf.rename, "[r]ename symbol")
+                end, 'code action')
+                nmap("<leader>cf", ":Format<CR>", "format buffer")
+                nmap("<leader>cr", vim.lsp.buf.rename, "rename symbol")
 
                 -- goto
-                nmap("gd", require("telescope.builtin").lsp_definitions, "[g]oto [d]efinition")
-                nmap("gs", telescope_lsp_type_definitions, "[g]oto type definitions")
-                nmap("gr", telescope_lsp_references, "[g]oto [r]eferences")
-                nmap("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
-                nmap("gI", telescope_lsp_implementations, "[g]oto [I]mplementation")
+                nmap("gd", require("telescope.builtin").lsp_definitions, "goto definition")
+                nmap("gs", telescope_lsp_type_definitions, "goto type definitions")
+                nmap("gr", telescope_lsp_references, "goto references")
+                nmap("gD", vim.lsp.buf.declaration, "goto declaration")
+                nmap("gI", telescope_lsp_implementations, "goto implementation")
 
                 -- search
-                nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "[s]earch document [S]ymbols")
+                nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "search document symbols")
                 nmap("<leader>ss", require("telescope.builtin").lsp_dynamic_workspace_symbols,
-                    "[s]earch workspace [s]ymbols")
+                    "search workspace symbols")
 
                 nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
             end
@@ -200,7 +470,6 @@ require("lazy").setup({
             })
         end
     },
-
 
     {
         "nvim-treesitter/nvim-treesitter",
@@ -300,163 +569,6 @@ require("lazy").setup({
         end
     },
 
-
-    {
-        "hrsh7th/nvim-cmp",
-        dependencies = {
-            {
-                'L3MON4D3/LuaSnip',
-                build = 'make install_jsregexp',
-            },
-            "saadparwaiz1/cmp_luasnip",
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-buffer",
-        },
-        config = function()
-            local cmp = require("cmp")
-            local luasnip = require("luasnip")
-            luasnip.config.setup({})
-
-            cmp.setup({
-                completion = {
-                    completeopt = "menu,menuone,noinsert",
-                },
-                formatting = {
-                    format = function(entry, vim_item)
-                        local menu
-                        local ci = entry.completion_item
-                        if ci.labelDetails and ci.labelDetails.detail then
-                            menu = ci.labelDetails.detail
-                            if string.len(menu) > 37 then
-                                menu = string.sub(menu, 1, 37) .. "..."
-                            end
-                        end
-                        vim_item.menu = menu
-                        return vim_item
-                    end
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-n>"] = cmp.mapping.scroll_docs(4),
-                    ["<C-p>"] = cmp.mapping.scroll_docs(-4),
-                    ["<C-Space>"] = cmp.mapping.complete({}),
-                    ["<Tab>"] = cmp.mapping.confirm({
-                        behavior = cmp.ConfirmBehavior.Insert,
-                        select = true,
-                    }),
-                }),
-                snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end,
-                },
-                sorting = {
-                    comparators = {
-                        cmp.config.compare.offset,
-                        cmp.config.compare.exact,
-                        cmp.config.compare.score,
-                        cmp.config.compare.kind,
-                        cmp.config.compare.sort_text,
-                        cmp.config.compare.length,
-                        cmp.config.compare.order,
-                    },
-                },
-                sources = {
-                    { name = "copilot" },
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" },
-                    { name = "buffer" },
-                    { name = "path" },
-                },
-            })
-        end
-    },
-
-    {
-        "kdheepak/lazygit.nvim",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
-        config = function()
-            vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazy[g]it" })
-        end
-    },
-
-    {
-        "nvim-neo-tree/neo-tree.nvim",
-        branch = "v3.x",
-        cmd = "Neotree",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvim-tree/nvim-web-devicons",
-            "MunifTanjim/nui.nvim",
-        },
-        deactivate = function()
-            vim.cmd([[Neotree close]])
-        end,
-        -- init = function()
-        --     if vim.fn.argc(-1) == 1 then
-        --         local stat = vim.loop.fs_stat(vim.fn.argv(0))
-        --         if stat and stat.type == "directory" then
-        --             require("neo-tree")
-        --         end
-        --     end
-        -- end,
-        opts = {
-            sources = { "filesystem" },
-            open_files_do_not_replace_types = { "terminal" },
-            filesystem = {
-                bind_to_cwd = true,
-                follow_current_file = {
-                    enabled = true,
-                    leave_dirs_open = true,
-                },
-                use_libuv_file_watcher = true,
-                filtered_items = {
-                    visible = true,
-                    hide_gitignored = false,
-                    hide_dotfiles = false,
-                },
-            },
-            window = {
-                width = 55,
-                mappings = {
-                    ["<space>"] = "none",
-                },
-            },
-        },
-        config = function()
-            vim.keymap.set("n", "<leader>te", ":Neotree toggle<CR>", { desc = "[t]oggle [e]xplore" })
-        end
-    },
-
-    {
-        "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        opts = {
-            options = {
-                component_separators = "|",
-                section_separators = "",
-            },
-            sections = {
-                lualine_a = { 'mode' },
-                lualine_b = { { 'filename', path = 1, shorting_target = 60 } },
-                lualine_c = {},
-                lualine_x = { 'diff', 'diagnostics', 'encoding', 'filetype' },
-                lualine_y = { 'progress' },
-                lualine_z = { 'location' }
-            },
-            inactive_sections = {
-                lualine_a = {},
-                lualine_b = {},
-                lualine_c = { { 'filename', path = 1, shorting_target = 60 } },
-                lualine_x = {},
-                lualine_y = {},
-                lualine_z = { 'location' }
-            },
-        },
-    },
-
     {
         "nvim-telescope/telescope.nvim",
         branch = "0.1.x",
@@ -544,18 +656,18 @@ require("lazy").setup({
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
             vim.keymap.set("n", "<leader>f", require("telescope.builtin").oldfiles,
-                { desc = "[f]ind recently opened files" })
-            vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "[?] find existing buffers" })
+                { desc = "find recently opened files" })
+            vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "find existing buffers" })
 
             vim.keymap.set("n", "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find,
-                { desc = "[/] Fuzzily search in current buffer" })
+                { desc = "fuzzily search in current buffer" })
 
             vim.keymap.set("n", "<leader>s/", function()
                 require("telescope.builtin").live_grep({
                     grep_open_files = true,
-                    prompt_title = "Live Grep in Open Files",
+                    prompt_title = "live Grep in Open Files",
                 })
-            end, { desc = "[s]earch [/] in Open Files" })
+            end, { desc = "search in open files" })
 
             vim.keymap.set("n", "<leader>sa", function()
                 require("telescope.builtin").find_files({
@@ -563,32 +675,32 @@ require("lazy").setup({
                     no_ignore = true,
                     prompt_title = "Find Files in CWD",
                 })
-            end, { desc = "[s]earch [a]ll cwd files" })
+            end, { desc = "search all cwd files" })
 
             vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
-                { desc = "[s]earch [d]iagnostic" })
+                { desc = "search diagnostic" })
             vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
-                { desc = "[s]earch [D]iagnostic in workspace" })
+                { desc = "search diagnostic in workspace" })
             vim.keymap.set("n", "<leader>sf", function()
                 require("telescope.builtin").find_files({
                     hidden = true,
                 })
-            end, { desc = "[s]earch [f]iles" })
+            end, { desc = "search files" })
 
-            vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[s]earch by [g]rep" })
-            vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "[s]earch by [G]rep on Git Root" })
-            vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "[s]earch Git files" })
-            vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[s]earch [r]esume" })
-            vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "[s]earch [H]elp" })
-            vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "[s]earch [u]ndotree" })
+            vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "search by grep" })
+            vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "search by grep on Git Root" })
+            vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "search Git files" })
+            vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "search resume" })
+            vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "search help" })
+            vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "search undotree" })
             vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string,
-                { desc = "[s]earch current [w]ord" })
+                { desc = "search current word" })
         end
     },
 
     {
         "folke/trouble.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
+        dependencies = { "echasnovski/mini.icons" },
         cmd = "Trouble",
         opts = {
             focus = true,
@@ -597,17 +709,17 @@ require("lazy").setup({
             {
                 "<leader>xx",
                 "<cmd>Trouble diagnostics toggle<cr>",
-                desc = "diagnostic[x]",
+                desc = "diagnostics",
             },
             {
                 "<leader>xb",
                 "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-                desc = "[b]uffer diagnostic[x]",
+                desc = "buffer diagnostics",
             },
             {
                 "<leader>xs",
                 "<cmd>Trouble symbols toggle win.position=bottom<cr>",
-                desc = "[s]ymbols",
+                desc = "symbols",
             },
             {
                 "<leader>xr",
@@ -617,12 +729,12 @@ require("lazy").setup({
             {
                 "<leader>xl",
                 "<cmd>Trouble loclist toggle<cr>",
-                desc = "[l]ocation list",
+                desc = "location list",
             },
             {
                 "<leader>xq",
                 "<cmd>Trouble qflist toggle<cr>",
-                desc = "[q]uickfix list",
+                desc = "quickfix list",
             },
             {
                 "<leader>xt",
@@ -632,250 +744,77 @@ require("lazy").setup({
         },
     },
 
-    {
-        "ThePrimeagen/harpoon",
-        branch = "harpoon2",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-            local harpoon = require("harpoon")
-            harpoon:setup()
-
-            vim.keymap.set("n", "<leader>mm", function() harpoon:list():add() end, { desc = "harpoon [m]ark" })
-            vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
-                { desc = "harpoon [m]ark" })
-
-            vim.keymap.set("n", "<leader>ma", function() harpoon:list():select(1) end, { desc = "harpoon goto 1" })
-            vim.keymap.set("n", "<leader>ms", function() harpoon:list():select(2) end, { desc = "harpoon goto 2" })
-            vim.keymap.set("n", "<leader>md", function() harpoon:list():select(3) end, { desc = "harpoon goto 3" })
-            vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { desc = "harpoon goto 4" })
-            vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "harpoon goto 5" })
-
-            vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "harpoon goto [p]rev" })
-            vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "harpoon goto [n]ext" })
-        end,
-    },
-
-    {
-        "lewis6991/gitsigns.nvim",
-        opts = {
-            signs = {
-                add = { text = "+" },
-                change = { text = "~" },
-                delete = { text = "_" },
-                topdelete = { text = "‾" },
-                changedelete = { text = "~" },
-            },
-            on_attach = function(bufnr)
-                local gs = package.loaded.gitsigns
-
-                local function map(mode, l, r, opts)
-                    opts = opts or {}
-                    opts.buffer = bufnr
-                    vim.keymap.set(mode, l, r, opts)
-                end
-
-                -- Navigation
-                map({ "n", "v" }, "]h", function()
-                    if vim.wo.diff then
-                        return "]h"
-                    end
-                    vim.schedule(function()
-                        gs.next_hunk()
-                    end)
-                    return "<Ignore>"
-                end, { expr = true, desc = "Go to next [h]unk" })
-
-                map({ "n", "v" }, "[h", function()
-                    if vim.wo.diff then
-                        return "[h"
-                    end
-                    vim.schedule(function()
-                        gs.prev_hunk()
-                    end)
-                    return "<Ignore>"
-                end, { expr = true, desc = "Go to previous [h]unk" })
-
-                -- Actions
-                map("v", "<leader>hs", function()
-                    gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-                end, { desc = "[s]tage Git [h]unk" })
-                map("v", "<leader>hr", function()
-                    gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-                end, { desc = "[r]eset Git [h]unk" })
-
-                map("n", "<leader>hs", gs.stage_hunk, { desc = "[s]tage Git [h]unk" })
-                map("n", "<leader>hr", gs.reset_hunk, { desc = "[r]eset Git [h]unk" })
-                map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "[u]ndo stage [h]unk" })
-                map("n", "<leader>hS", gs.stage_buffer, { desc = "Git [S]tage buffer" })
-                map("n", "<leader>hR", gs.reset_buffer, { desc = "Git [R]eset buffer" })
-                map("n", "<leader>hp", gs.preview_hunk, { desc = "[p]review Git [h]unk" })
-                map("n", "<leader>hb", function()
-                    gs.blame_line({ full = false })
-                end, { desc = "Git [b]lame line" })
-                map("n", "<leader>hd", gs.diffthis, { desc = "Git [d]iff against index" })
-                map("n", "<leader>hD", function()
-                    gs.diffthis("~")
-                end, { desc = "Git [D]iff against last commit" })
-
-                -- Toggles
-                map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "[t]oggle Git blame line" })
-                map("n", "<leader>td", gs.toggle_deleted, { desc = "[t]oggle Git show [d]eleted" })
-
-                -- Text object
-                map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "select git hunk" })
-            end,
-        },
-    },
-
-    {
-        "RRethy/vim-illuminate",
-        event = "BufNew",
-        opts = {
-            delay = 200,
-            large_file_cutoff = 2000,
-            large_file_overrides = {
-                providers = { "lsp" },
-            },
-        },
-        config = function(_, opts)
-            require("illuminate").configure(opts)
-
-            local function map(key, dir, buffer)
-                vim.keymap.set("n", key, function()
-                    require("illuminate")["goto_" .. dir .. "_reference"](false)
-                end, { desc = dir:sub(1, 1):upper() .. dir:sub(2) .. " Reference", buffer = buffer })
-            end
-
-            map("]]", "next")
-            map("[[", "prev")
-
-            vim.api.nvim_create_autocmd("FileType", {
-                callback = function()
-                    local buffer = vim.api.nvim_get_current_buf()
-                    map("]]", "next", buffer)
-                    map("[[", "prev", buffer)
-                end,
-            })
-        end,
-        keys = {
-            { "]]", desc = "Next Reference" },
-            { "[[", desc = "Prev Reference" },
-        },
-    },
-
-    {
-        'stevearc/conform.nvim',
-        opts = {
-            format_on_save = {
-                timeout_ms = 500,
-                lsp_fallback = true,
-            },
-            formatters_by_ft = {
-                ["lua"] = { 'stylua' },
-                ["javascript"] = { "prettier" },
-                ["javascriptreact"] = { "prettier" },
-                ["typescript"] = { "prettier" },
-                ["typescriptreact"] = { "prettier" },
-                ["vue"] = { "prettier" },
-                ["css"] = { "prettier" },
-                ["scss"] = { "prettier" },
-                ["less"] = { "prettier" },
-                ["html"] = { "prettier" },
-                ["json"] = { "prettier" },
-                ["jsonc"] = { "prettier" },
-                ["yaml"] = { "prettier" },
-                ["markdown"] = { "prettier" },
-                ["markdown.mdx"] = { "prettier" },
-                ["graphql"] = { "prettier" },
-                ["handlebars"] = { "prettier" },
-            },
-        },
-    },
-
     -- {
-    --     "tpope/vim-sleuth",
+    --     "lewis6991/gitsigns.nvim",
+    --     opts = {
+    --         signs = {
+    --             add = { text = "+" },
+    --             change = { text = "~" },
+    --             delete = { text = "_" },
+    --             topdelete = { text = "‾" },
+    --             changedelete = { text = "~" },
+    --         },
+    --         on_attach = function(bufnr)
+    --             local gs = package.loaded.gitsigns
+    --
+    --             local function map(mode, l, r, opts)
+    --                 opts = opts or {}
+    --                 opts.buffer = bufnr
+    --                 vim.keymap.set(mode, l, r, opts)
+    --             end
+    --
+    --             -- Navigation
+    --             map({ "n", "v" }, "]h", function()
+    --                 if vim.wo.diff then
+    --                     return "]h"
+    --                 end
+    --                 vim.schedule(function()
+    --                     gs.next_hunk()
+    --                 end)
+    --                 return "<Ignore>"
+    --             end, { expr = true, desc = "go to next hunk" })
+    --
+    --             map({ "n", "v" }, "[h", function()
+    --                 if vim.wo.diff then
+    --                     return "[h"
+    --                 end
+    --                 vim.schedule(function()
+    --                     gs.prev_hunk()
+    --                 end)
+    --                 return "<Ignore>"
+    --             end, { expr = true, desc = "go to previous hunk" })
+    --
+    --             -- Actions
+    --             map("v", "<leader>hs", function()
+    --                 gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+    --             end, { desc = "stage Git hunk" })
+    --             map("v", "<leader>hr", function()
+    --                 gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+    --             end, { desc = "reset Git hunk" })
+    --
+    --             map("n", "<leader>hs", gs.stage_hunk, { desc = "stage Git hunk" })
+    --             map("n", "<leader>hr", gs.reset_hunk, { desc = "reset Git hunk" })
+    --             map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "undo stage hunk" })
+    --             map("n", "<leader>hS", gs.stage_buffer, { desc = "Git stage buffer" })
+    --             map("n", "<leader>hR", gs.reset_buffer, { desc = "Git reset buffer" })
+    --             map("n", "<leader>hp", gs.preview_hunk, { desc = "preview Git hunk" })
+    --             map("n", "<leader>hb", function()
+    --                 gs.blame_line({ full = false })
+    --             end, { desc = "Git blame line" })
+    --             map("n", "<leader>hd", gs.diffthis, { desc = "Git diff against index" })
+    --             map("n", "<leader>hD", function()
+    --                 gs.diffthis("~")
+    --             end, { desc = "Git diff against last commit" })
+    --
+    --             -- Toggles
+    --             map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "toggle Git blame line" })
+    --             map("n", "<leader>td", gs.toggle_deleted, { desc = "toggle Git show deleted" })
+    --
+    --             -- Text object
+    --             map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "select git hunk" })
+    --         end,
+    --     },
     -- },
-
-    {
-        "folke/which-key.nvim",
-        event = 'VimEnter',
-        config = function()
-            require("which-key").setup()
-
-            require("which-key").add({
-                { "<leader>",  name = "VISUAL <leader>" },
-                { "<leader>c", group = "[c]ode" },
-                { "<leader>d", group = "[d]iagnostic" },
-                { "<leader>h", group = "[h]unk (Git)" },
-                { "<leader>h", name = "[h]unk (Git)",   mode = "v" },
-                { "<leader>m", group = "[harpoon]" },
-                { "<leader>s", group = "[s]earch" },
-                { "<leader>t", group = "[t]oggle" },
-                { "<leader>x", group = "[trouble]" },
-                { "<leader>y", group = "[y]ank" },
-            })
-        end,
-    },
-
-    {
-        "folke/todo-comments.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        opts = { signs = false }
-    },
-
-    {
-        'stevearc/oil.nvim',
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            require("oil").setup({
-                columns = {
-                    "icon",
-                },
-                delete_to_trash = true,
-                view_options = {
-                    show_hidden = true,
-                },
-            })
-
-            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-        end,
-    },
-
-    {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        config = function()
-            require("ibl").setup({
-                indent = { char = '▏' },
-                scope = { enabled = false },
-            })
-        end
-    },
-
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            require("copilot").setup({
-                suggestion = { enabled = false },
-                panel = { enabled = false },
-            })
-        end,
-    },
-
-    {
-        "zbirenbaum/copilot-cmp",
-        config = function()
-            require("copilot_cmp").setup()
-        end
-    },
-
-    {
-        "Saecki/crates.nvim",
-        event = { "BufRead Cargo.toml" },
-        opts = {},
-    },
 }, {})
 
 -- [[ Keymaps ]]
@@ -889,26 +828,26 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<leader>e", "<C-w>w<CR>", { desc = "[e] Switch windows" })
-vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "[t]oggle [h]ighlight off" })
+vim.keymap.set("n", "<leader>e", "<C-w>w<CR>", { desc = "Switch windows" })
+vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 
-vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "[ ] Toggle last buffer" })
-vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "[t]oggle relativenumber" })
+vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
+vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
-    { desc = "[t]oggle inlay hints" })
+    { desc = "toggle inlay hints" })
 
-vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "[y]ank [a]bsolute file path" })
+vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
 vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
-    { desc = "[y]ank relative file path:line" })
-vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "[y]ank [f]ile name" })
-vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "[y]ank [r]elative file path" })
+    { desc = "yank relative file path:line" })
+vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
+vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
-vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "Open [f]loating [d]iagnostic" })
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Open [d]iagnostic [l]ist" })
+vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
 
-vim.keymap.set("v", "<leader>p", '"_dP', { desc = "Smart [p]aste" })
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move lines down" })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move lines up" })
+vim.keymap.set("v", "<leader>p", '"_dP', { desc = "smart paste" })
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "move lines down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "move lines up" })
 
 vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "cprev" })
 vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "cnext" })
