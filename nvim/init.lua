@@ -156,6 +156,8 @@ require("lazy").setup({
             })
             mini_indentscope.gen_animation.none()
 
+            require("mini.move").setup()
+
             require("mini.notify").setup({
                 content = {
                     format = function(notif) return notif.msg end,
@@ -793,18 +795,3 @@ vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floa
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
 
 vim.keymap.set("v", "<leader>p", '"_dP', { desc = "smart paste" })
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "move lines down" })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "move lines up" })
-
--- vim.keymap.set("n", "[q", ":cprev<CR>", { desc = "cprev" })
--- vim.keymap.set("n", "]q", ":cnext<CR>", { desc = "cnext" })
-
--- [[ Highlight on yank ]]
-local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
-vim.api.nvim_create_autocmd("TextYankPost", {
-    callback = function()
-        vim.highlight.on_yank()
-    end,
-    group = highlight_group,
-    pattern = "*",
-})
