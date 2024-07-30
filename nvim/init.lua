@@ -25,7 +25,6 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 vim.opt.clipboard = "unnamedplus"
--- vim.opt.colorcolumn = "120"
 vim.opt.completeopt = "menu,menuone,noinsert"
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
@@ -136,13 +135,6 @@ require("lazy").setup({
                 },
             })
 
-            require("mini.files").setup({
-                options = {
-                    permanent_delete = false,
-                }
-            })
-            vim.keymap.set("n", "<leader>e", ":lua MiniFiles.open()<CR>", { desc = "files" })
-
             require("mini.git").setup()
 
             require("mini.icons").setup()
@@ -157,12 +149,6 @@ require("lazy").setup({
             mini_indentscope.gen_animation.none()
 
             require("mini.move").setup()
-
-            require("mini.notify").setup({
-                content = {
-                    format = function(notif) return notif.msg end,
-                },
-            })
 
             require("mini.statusline").setup()
 
@@ -199,24 +185,24 @@ require("lazy").setup({
         },
     },
 
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            require("copilot").setup({
-                suggestion = { enabled = false },
-                panel = { enabled = false },
-            })
-        end,
-    },
-
-    {
-        "zbirenbaum/copilot-cmp",
-        config = function()
-            require("copilot_cmp").setup()
-        end
-    },
+    -- {
+    --     "zbirenbaum/copilot.lua",
+    --     cmd = "Copilot",
+    --     event = "InsertEnter",
+    --     config = function()
+    --         require("copilot").setup({
+    --             suggestion = { enabled = false },
+    --             panel = { enabled = false },
+    --         })
+    --     end,
+    -- },
+    --
+    -- {
+    --     "zbirenbaum/copilot-cmp",
+    --     config = function()
+    --         require("copilot_cmp").setup()
+    --     end
+    -- },
 
     {
         "Saecki/crates.nvim",
@@ -257,23 +243,23 @@ require("lazy").setup({
     },
 
 
-    -- {
-    --     'stevearc/oil.nvim',
-    --     dependencies = { { "echasnovski/mini.icons", opts = {} } },
-    --     config = function()
-    --         require("oil").setup({
-    --             columns = {
-    --                 "icon",
-    --             },
-    --             delete_to_trash = true,
-    --             view_options = {
-    --                 show_hidden = true,
-    --             },
-    --         })
-    --
-    --         vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
-    --     end,
-    -- },
+    {
+        'stevearc/oil.nvim',
+        dependencies = { { "echasnovski/mini.icons", opts = {} } },
+        config = function()
+            require("oil").setup({
+                columns = {
+                    "icon",
+                },
+                delete_to_trash = true,
+                view_options = {
+                    show_hidden = true,
+                },
+            })
+
+            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
+        end,
+    },
 
     {
         "folke/todo-comments.nvim",
@@ -342,7 +328,7 @@ require("lazy").setup({
                     },
                 },
                 sources = {
-                    { name = "copilot" },
+                    -- { name = "copilot" },
                     { name = "nvim_lsp" },
                     { name = "luasnip" },
                     { name = "buffer" },
@@ -357,7 +343,7 @@ require("lazy").setup({
         dependencies = {
             { "williamboman/mason.nvim", config = true },
             "williamboman/mason-lspconfig.nvim",
-            -- { "j-hui/fidget.nvim",       opts = {} },
+            { "j-hui/fidget.nvim",       opts = {} },
         },
         config = function()
             --  This function gets run when an LSP connects to a particular buffer.
