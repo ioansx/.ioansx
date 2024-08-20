@@ -136,6 +136,8 @@ require("lazy").setup({
             })
 
             require("mini.git").setup()
+            vim.keymap.set("n", "<leader>hb", ":Git blame %<CR>", { desc = "Git blame" })
+            vim.keymap.set("n", "<leader>hd", ":Git diff %<CR>", { desc = "Git blame" })
 
             require("mini.icons").setup()
 
@@ -242,6 +244,27 @@ require("lazy").setup({
         end
     },
 
+    {
+        "nvim-pack/nvim-spectre",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        opts = {
+            replace_engine = {
+                ["sed"] = {
+                    cmd = "sed",
+                    args = {
+                        "-i",
+                        "",
+                        "-E",
+                    },
+                },
+            },
+        },
+        config = function()
+            vim.keymap.set("n", "<leader>S", ":Spectre<CR>", { desc = "Spectre" })
+        end
+    },
 
     {
         'stevearc/oil.nvim',
@@ -383,11 +406,13 @@ require("lazy").setup({
                 end, { desc = "format current buffer with LSP" })
 
                 -- code
-                nmap('<leader>ca', function()
-                    vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
-                end, 'code action')
+                -- nmap('<leader>ca', function()
+                --     vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
+                -- end, 'code action')
+                nmap('<leader>a', vim.lsp.buf.code_action, 'code action')
                 nmap("<leader>cf", ":Format<CR>", "format buffer")
-                nmap("<leader>cr", vim.lsp.buf.rename, "rename symbol")
+                -- nmap("<leader>cr", vim.lsp.buf.rename, "rename symbol")
+                nmap("<leader>r", vim.lsp.buf.rename, "rename symbol")
 
                 -- goto
                 nmap("gd", require("telescope.builtin").lsp_definitions, "goto definition")
@@ -435,6 +460,7 @@ require("lazy").setup({
                 taplo = {},
                 tsserver = {},
                 svelte = {},
+                gopls = {},
             }
 
             -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
@@ -455,7 +481,7 @@ require("lazy").setup({
                 settings = {
                     ["rust-analyzer"] = {
                         check = {
-                            command = "clippy",
+                            -- command = "clippy",
                             features = "all",
                         },
                         completion = {
@@ -492,18 +518,20 @@ require("lazy").setup({
                 require("nvim-treesitter.configs").setup({
                     ensure_installed = {
                         "c",
+                        "commonlisp",
+                        "racket",
+                        "fish",
                         "go",
+                        "javascript",
                         "lua",
                         "python",
                         "ron",
                         "rust",
-                        "javascript",
+                        "svelte",
                         "toml",
                         "typescript",
-                        "vimdoc",
                         "vim",
-                        "fish",
-                        "svelte",
+                        "vimdoc",
                     },
 
                     -- Install languages synchronously (only applied to `ensure_installed`)
@@ -663,7 +691,7 @@ require("lazy").setup({
 
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
-            vim.keymap.set("n", "<leader>f", require("telescope.builtin").oldfiles,
+            vim.keymap.set("n", "<leader>v", require("telescope.builtin").oldfiles,
                 { desc = "find recently opened files" })
             vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "find existing buffers" })
 
@@ -689,7 +717,7 @@ require("lazy").setup({
                 { desc = "search diagnostic" })
             vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
                 { desc = "search diagnostic in workspace" })
-            vim.keymap.set("n", "<leader>sf", function()
+            vim.keymap.set("n", "<leader>f", function()
                 require("telescope.builtin").find_files({
                     hidden = true,
                 })

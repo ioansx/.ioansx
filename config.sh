@@ -8,6 +8,7 @@ NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
 NVIM_LN=$NVIM_CFG_DIR/init.lua
 TMUX_LN=~/.tmux.conf
 TMUX_OPEN_PROJECT_LN=$BIN_HOME/tmux-open-project
+ZSH_LN=~/.zshrc
 
 
 ensure_dir_exists () {
@@ -45,12 +46,18 @@ if [ $CMD_1 = "install" ]; then
 	echo "Configuring kitty..."
 	ensure_linked $PWD/kitty $XDG_CONFIG_HOME
 
+	echo "Configuring lazygit..."
+	ensure_linked $PWD/lazygit $XDG_CONFIG_HOME
+
 	echo "Configuring neovim..."
 	ensure_dir_exists $NVIM_CFG_DIR
 	ensure_linked $PWD/nvim/init.lua $NVIM_LN
 
 	echo "Configuring tmux..."
 	ensure_linked $PWD/tmux/tmux.conf $TMUX_LN
+
+	echo "Configuring zsh..."
+	ensure_linked $PWD/zsh/.zshrc $ZSH_LN
 
 	echo "Configuring scripts..."
 	ensure_dir_exists $BIN_HOME
@@ -62,11 +69,17 @@ elif [ $CMD_1 = "uninstall" ]; then
 	echo "Unlinking kitty..."
 	unlink $XDG_CONFIG_HOME/kitty
 
+	echo "Unlinking lazygit..."
+	unlink $XDG_CONFIG_HOME/lazygit
+
 	echo "Unlinking neovim..."
 	unlink $NVIM_LN
 
 	echo "Unlinking tmux..."
 	unlink $TMUX_LN
+
+	echo "Unlinking zsh..."
+	unlink $ZSH_LN
 
 	echo "Unlinking scripts..."
 	unlink $TMUX_OPEN_PROJECT_LN
