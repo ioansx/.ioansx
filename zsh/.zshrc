@@ -108,6 +108,9 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+
+export PATH=$PATH:$HOME/.cargo/bin
+
 source <(fzf --zsh)
 
 alias lzg="lazygit"

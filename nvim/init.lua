@@ -253,11 +253,7 @@ require("lazy").setup({
             replace_engine = {
                 ["sed"] = {
                     cmd = "sed",
-                    args = {
-                        "-i",
-                        "",
-                        "-E",
-                    },
+                    args = { "-i", "", "-E" },
                 },
             },
         },
@@ -727,6 +723,7 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "search by grep on Git Root" })
             vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "search Git files" })
             vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "search resume" })
+            vim.keymap.set("n", "<leader>sR", require("telescope.builtin").registers, { desc = "search registers" })
             vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "search help" })
             vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "search undotree" })
             vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string,
@@ -808,4 +805,4 @@ vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank 
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
 
-vim.keymap.set("v", "<leader>p", '"_dP', { desc = "smart paste" })
+vim.keymap.set("v", "<leader>p", '"0p', { desc = "smart paste" })
