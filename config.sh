@@ -49,6 +49,9 @@ if [ $CMD_1 = "install" ]; then
 	echo "Configuring lazygit..."
 	ensure_linked $PWD/lazygit $XDG_CONFIG_HOME
 
+	echo "Configuring wezterm..."
+	ensure_linked $PWD/wezterm $XDG_CONFIG_HOME
+
 	echo "Configuring neovim..."
 	ensure_dir_exists $NVIM_CFG_DIR
 	ensure_linked $PWD/nvim/init.lua $NVIM_LN
@@ -71,6 +74,9 @@ elif [ $CMD_1 = "uninstall" ]; then
 
 	echo "Unlinking lazygit..."
 	unlink $XDG_CONFIG_HOME/lazygit
+
+	echo "Unlinking wezterm..."
+	unlink $XDG_CONFIG_HOME/wezterm
 
 	echo "Unlinking neovim..."
 	unlink $NVIM_LN

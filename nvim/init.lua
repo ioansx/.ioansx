@@ -626,9 +626,9 @@ require("lazy").setup({
                     },
                     layout_strategy = 'vertical',
                     layout_config = {
-                        height = 0.9,
+                        height = 0.95,
+                        width = 0.8,
                         mirror = true,
-                        width = 0.6,
                     },
                 },
                 extensions = {
@@ -636,7 +636,7 @@ require("lazy").setup({
                         side_by_side = true,
                         layout_strategy = "vertical",
                         layout_config = {
-                            preview_height = 0.7,
+                            preview_height = 0.95,
                         },
                     },
                 },
@@ -687,21 +687,15 @@ require("lazy").setup({
 
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
-            vim.keymap.set("n", "<leader>v", require("telescope.builtin").oldfiles,
+            vim.keymap.set("n", "<leader>ff", function()
+                require("telescope.builtin").buffers({ sort_mru = true })
+            end, { desc = "find existing buffers" })
+            vim.keymap.set("n", "<leader>fd", require("telescope.builtin").oldfiles,
                 { desc = "find recently opened files" })
-            vim.keymap.set("n", "<leader>?", require("telescope.builtin").buffers, { desc = "find existing buffers" })
-
-            vim.keymap.set("n", "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find,
-                { desc = "fuzzily search in current buffer" })
-
-            vim.keymap.set("n", "<leader>s/", function()
-                require("telescope.builtin").live_grep({
-                    grep_open_files = true,
-                    prompt_title = "live Grep in Open Files",
-                })
-            end, { desc = "search in open files" })
-
-            vim.keymap.set("n", "<leader>sa", function()
+            vim.keymap.set("n", "<leader>fs", function()
+                require("telescope.builtin").find_files({ hidden = true })
+            end, { desc = "search files" })
+            vim.keymap.set("n", "<leader>fa", function()
                 require("telescope.builtin").find_files({
                     hidden = true,
                     no_ignore = true,
@@ -709,15 +703,21 @@ require("lazy").setup({
                 })
             end, { desc = "search all cwd files" })
 
+            vim.keymap.set("n", "<leader>s/", require("telescope.builtin").current_buffer_fuzzy_find,
+                { desc = "fuzzily search in current buffer" })
+            vim.keymap.set("n", "<leader>so", function()
+                require("telescope.builtin").live_grep({
+                    grep_open_files = true,
+                    prompt_title = "live Grep in Open files",
+                })
+            end, { desc = "search in open files" })
+
+
+
             vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
                 { desc = "search diagnostic" })
             vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
                 { desc = "search diagnostic in workspace" })
-            vim.keymap.set("n", "<leader>f", function()
-                require("telescope.builtin").find_files({
-                    hidden = true,
-                })
-            end, { desc = "search files" })
 
             vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "search by grep" })
             vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "search by grep on Git Root" })
