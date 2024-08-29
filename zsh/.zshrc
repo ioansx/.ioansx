@@ -74,6 +74,7 @@ plugins=(
     colored-man-pages
     git
     zsh-vi-mode
+    zsh-autosuggestions
     zsh-syntax-highlighting
 )
 

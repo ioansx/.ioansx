@@ -159,6 +159,13 @@ require("lazy").setup({
     },
 
     {
+        'numToStr/Comment.nvim',
+        opts = {
+            -- add any options here
+        }
+    },
+
+    {
         'stevearc/conform.nvim',
         opts = {
             format_on_save = {
@@ -513,20 +520,26 @@ require("lazy").setup({
             vim.defer_fn(function()
                 require("nvim-treesitter.configs").setup({
                     ensure_installed = {
+                        "bash",
                         "c",
                         "commonlisp",
-                        "racket",
+                        "css",
                         "fish",
                         "go",
+                        "html",
                         "javascript",
+                        "json",
                         "lua",
                         "python",
+                        "racket",
                         "ron",
                         "rust",
                         "svelte",
                         "toml",
                         "typescript",
                         "vim",
+                        "xml",
+                        "yaml",
                         "vimdoc",
                     },
 
