@@ -152,7 +152,7 @@ require("lazy").setup({
 
             require("mini.move").setup()
 
-            require("mini.statusline").setup()
+            -- require("mini.statusline").setup()
 
             require("mini.trailspace").setup()
         end
@@ -285,6 +285,33 @@ require("lazy").setup({
 
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
         end,
+    },
+
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        opts = {
+            options = {
+                component_separators = "|",
+                section_separators = "",
+            },
+            sections = {
+                lualine_a = { 'mode' },
+                lualine_b = { { 'filename', path = 1, shorting_target = 60 } },
+                lualine_c = {},
+                lualine_x = { 'diff', 'diagnostics', 'encoding', 'filetype' },
+                lualine_y = { 'progress' },
+                lualine_z = { 'location' }
+            },
+            inactive_sections = {
+                lualine_a = {},
+                lualine_b = {},
+                lualine_c = { { 'filename', path = 1, shorting_target = 60 } },
+                lualine_x = {},
+                lualine_y = {},
+                lualine_z = { 'location' }
+            },
+        },
     },
 
     {
