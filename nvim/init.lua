@@ -487,8 +487,16 @@ require("lazy").setup({
                         }
                     }
                 },
+                rust_analyzer = {
+                    ["rust-analyzer"] = {
+                        completion = {
+                            -- fullFunctionSignatures = { enable = true },
+                            postfix = { enable = false },
+                        },
+                    }
+                },
                 taplo = {},
-                tsserver = {},
+                ts_ls = {},
                 svelte = {},
                 gopls = {},
             }
@@ -504,23 +512,36 @@ require("lazy").setup({
                 ensure_installed = vim.tbl_keys(servers),
             })
 
-            require("lspconfig").rust_analyzer.setup({
-                cmd = { "rustup", "run", "stable", "rust-analyzer" },
-                capabilities = capabilities,
-                on_attach = on_attach,
-                settings = {
-                    ["rust-analyzer"] = {
-                        check = {
-                            -- command = "clippy",
-                            features = "all",
-                        },
-                        completion = {
-                            fullFunctionSignatures = { enable = true },
-                            postfix = { enable = false },
-                        },
-                    },
-                },
-            })
+            -- require("lspconfig").rust_analyzer.setup({
+            --     cmd = { "rustup", "run", "stable", "rust-analyzer" },
+            --     capabilities = capabilities,
+            --     on_attach = on_attach,
+            --     settings = {
+            --         ["rust-analyzer"] = {
+            --             check = {
+            --                 -- command = "clippy",
+            --                 features = "all",
+            --             },
+            --             completion = {
+            --                 fullFunctionSignatures = { enable = true },
+            --                 postfix = { enable = false },
+            --             },
+            --             lru = {
+            --                 capacity = 512,
+            --             },
+            --             lens = {
+            --                 references = {
+            --                     method = {
+            --                         enable = false
+            --                     }
+            --                 }
+            --             },
+            --             cachePriming = {
+            --                 enabled = false,
+            --             },
+            --         },
+            --     },
+            -- })
 
             mason_lspconfig.setup_handlers({
                 function(server_name)
