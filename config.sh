@@ -3,11 +3,13 @@
 CMD_1="$1"
 PWD=$(pwd)
 BIN_HOME=~/.local/bin
+BIN_HOME_LINUX=/usr/local/bin
 XDG_CONFIG_HOME=~/.config
 NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
 NVIM_LN=$NVIM_CFG_DIR/init.lua
 TMUX_LN=~/.tmux.conf
 TMUX_OPEN_PROJECT_LN=$BIN_HOME/tmux-open-project
+TMUX_OPEN_PROJECT_LINUX_LN=$BIN_HOME/tmux-open-project
 ZSH_LN=~/.zshrc
 
 
@@ -25,7 +27,7 @@ ensure_linked () {
 	if [ -L $lname ]; then
 		echo "Symlink exists: $lname"
 	else
-		ln -svw $tname $lname
+		ln -sv $tname $lname
 	fi
 }
 
@@ -63,8 +65,15 @@ if [ $CMD_1 = "install" ]; then
 	ensure_linked $PWD/zsh/.zshrc $ZSH_LN
 
 	echo "Configuring scripts..."
-	ensure_dir_exists $BIN_HOME
-	ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME
+    if [ "$(uname)" == "Darwin" ]; then
+        # Do something under Mac OS X platform
+        ensure_dir_exists $BIN_HOME
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        # Do something under GNU/Linux platform
+        ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME
+    fi
+
+	ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME_LINUX
 elif [ $CMD_1 = "uninstall" ]; then
 	echo "Unlinking fish..."
 	unlink $XDG_CONFIG_HOME/fish
@@ -88,7 +97,13 @@ elif [ $CMD_1 = "uninstall" ]; then
 	unlink $ZSH_LN
 
 	echo "Unlinking scripts..."
-	unlink $TMUX_OPEN_PROJECT_LN
+    if [ "$(uname)" == "Darwin" ]; then
+        # Do something under Mac OS X platform
+	    unlink $TMUX_OPEN_PROJECT_LN
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        # Do something under GNU/Linux platform
+	    unlink $TMUX_OPEN_PROJECT_LINUX_LN
+    fi
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
 	echo "Ioan's configuration manager"
 	echo ""
