@@ -493,6 +493,13 @@ require("lazy").setup({
                             -- fullFunctionSignatures = { enable = true },
                             postfix = { enable = false },
                         },
+                        cargo = {
+                            allTargets = false,
+                        },
+                        check = {
+                            command = "clippy",
+                            -- workspace = false,
+                        },
                     }
                 },
                 taplo = {},
