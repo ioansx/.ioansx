@@ -45,6 +45,9 @@ if [ $CMD_1 = "install" ]; then
 	echo "Configuring fish..."
 	ensure_linked $PWD/fish $XDG_CONFIG_HOME
 
+	echo "Configuring alacritty..."
+	ensure_linked $PWD/alacritty $XDG_CONFIG_HOME
+
 	echo "Configuring kitty..."
 	ensure_linked $PWD/kitty $XDG_CONFIG_HOME
 
@@ -77,6 +80,9 @@ if [ $CMD_1 = "install" ]; then
 elif [ $CMD_1 = "uninstall" ]; then
 	echo "Unlinking fish..."
 	unlink $XDG_CONFIG_HOME/fish
+
+	echo "Unlinking alacritty..."
+	unlink $XDG_CONFIG_HOME/alacritty
 
 	echo "Unlinking kitty..."
 	unlink $XDG_CONFIG_HOME/kitty
