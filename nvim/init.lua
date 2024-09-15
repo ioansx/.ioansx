@@ -69,49 +69,49 @@ require("lazy").setup({
 
             require("mini.bracketed").setup()
 
-            local mini_clue = require("mini.clue")
-            mini_clue.setup({
-                triggers = {
-                    -- Leader triggers
-                    { mode = 'n', keys = '<Leader>' },
-                    { mode = 'x', keys = '<Leader>' },
-                    { mode = 'n', keys = '[' },
-                    { mode = 'n', keys = ']' },
-                    -- Built-in completion
-                    { mode = 'i', keys = '<C-x>' },
-                    -- `g` key
-                    { mode = 'n', keys = 'g' },
-                    { mode = 'x', keys = 'g' },
-                    -- Marks
-                    { mode = 'n', keys = "'" },
-                    { mode = 'n', keys = '`' },
-                    { mode = 'x', keys = "'" },
-                    { mode = 'x', keys = '`' },
-                    -- Registers
-                    { mode = 'n', keys = '"' },
-                    { mode = 'x', keys = '"' },
-                    { mode = 'i', keys = '<C-r>' },
-                    { mode = 'c', keys = '<C-r>' },
-                    -- Window commands
-                    { mode = 'n', keys = '<C-w>' },
-                    -- `z` key
-                    { mode = 'n', keys = 'z' },
-                    { mode = 'x', keys = 'z' },
-                },
-                clues = {
-                    mini_clue.gen_clues.builtin_completion(),
-                    mini_clue.gen_clues.g(),
-                    mini_clue.gen_clues.marks(),
-                    mini_clue.gen_clues.registers(),
-                    mini_clue.gen_clues.windows(),
-                    mini_clue.gen_clues.z(),
-                },
-                window = {
-                    config = {
-                        width = "auto",
-                    },
-                },
-            })
+            -- local mini_clue = require("mini.clue")
+            -- mini_clue.setup({
+            --     triggers = {
+            --         -- Leader triggers
+            --         { mode = 'n', keys = '<Leader>' },
+            --         { mode = 'x', keys = '<Leader>' },
+            --         { mode = 'n', keys = '[' },
+            --         { mode = 'n', keys = ']' },
+            --         -- Built-in completion
+            --         { mode = 'i', keys = '<C-x>' },
+            --         -- `g` key
+            --         { mode = 'n', keys = 'g' },
+            --         { mode = 'x', keys = 'g' },
+            --         -- Marks
+            --         { mode = 'n', keys = "'" },
+            --         { mode = 'n', keys = '`' },
+            --         { mode = 'x', keys = "'" },
+            --         { mode = 'x', keys = '`' },
+            --         -- Registers
+            --         { mode = 'n', keys = '"' },
+            --         { mode = 'x', keys = '"' },
+            --         { mode = 'i', keys = '<C-r>' },
+            --         { mode = 'c', keys = '<C-r>' },
+            --         -- Window commands
+            --         { mode = 'n', keys = '<C-w>' },
+            --         -- `z` key
+            --         { mode = 'n', keys = 'z' },
+            --         { mode = 'x', keys = 'z' },
+            --     },
+            --     clues = {
+            --         mini_clue.gen_clues.builtin_completion(),
+            --         mini_clue.gen_clues.g(),
+            --         mini_clue.gen_clues.marks(),
+            --         mini_clue.gen_clues.registers(),
+            --         mini_clue.gen_clues.windows(),
+            --         mini_clue.gen_clues.z(),
+            --     },
+            --     window = {
+            --         config = {
+            --             width = "auto",
+            --         },
+            --     },
+            -- })
 
             require("mini.cursorword").setup()
 
@@ -152,7 +152,7 @@ require("lazy").setup({
 
             require("mini.move").setup()
 
-            -- require("mini.statusline").setup()
+            require("mini.statusline").setup()
 
             require("mini.trailspace").setup()
         end
@@ -287,32 +287,32 @@ require("lazy").setup({
         end,
     },
 
-    {
-        "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        opts = {
-            options = {
-                component_separators = "|",
-                section_separators = "",
-            },
-            sections = {
-                lualine_a = { 'mode' },
-                lualine_b = { { 'filename', path = 1, shorting_target = 60 } },
-                lualine_c = {},
-                lualine_x = { 'diff', 'diagnostics', 'encoding', 'filetype' },
-                lualine_y = { 'progress' },
-                lualine_z = { 'location' }
-            },
-            inactive_sections = {
-                lualine_a = {},
-                lualine_b = {},
-                lualine_c = { { 'filename', path = 1, shorting_target = 60 } },
-                lualine_x = {},
-                lualine_y = {},
-                lualine_z = { 'location' }
-            },
-        },
-    },
+    -- {
+    --     "nvim-lualine/lualine.nvim",
+    --     dependencies = { "nvim-tree/nvim-web-devicons" },
+    --     opts = {
+    --         options = {
+    --             component_separators = "|",
+    --             section_separators = "",
+    --         },
+    --         sections = {
+    --             lualine_a = { 'mode' },
+    --             lualine_b = { { 'filename', path = 1, shorting_target = 60 } },
+    --             lualine_c = {},
+    --             lualine_x = { 'diff', 'diagnostics', 'encoding', 'filetype' },
+    --             lualine_y = { 'progress' },
+    --             lualine_z = { 'location' }
+    --         },
+    --         inactive_sections = {
+    --             lualine_a = {},
+    --             lualine_b = {},
+    --             lualine_c = { { 'filename', path = 1, shorting_target = 60 } },
+    --             lualine_x = {},
+    --             lualine_y = {},
+    --             lualine_z = { 'location' }
+    --         },
+    --     },
+    -- },
 
     {
         "folke/todo-comments.nvim",
