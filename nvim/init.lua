@@ -62,10 +62,6 @@ require("lazy").setup({
         config = function()
             require("mini.ai").setup()
 
-            require("mini.basics").setup()
-
-            require("mini.bracketed").setup()
-
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {
@@ -133,21 +129,14 @@ require("lazy").setup({
             })
 
             require("mini.git").setup()
-            vim.keymap.set("n", "<leader>hb", ":Git blame %<CR>", { desc = "Git blame" })
-            vim.keymap.set("n", "<leader>hd", ":Git diff %<CR>", { desc = "Git blame" })
-
-            require("mini.icons").setup()
+            vim.keymap.set("n", "<leader>hb", ":Git blame %:p<CR>", { desc = "Git blame" })
+            vim.keymap.set("n", "<leader>hd", ":Git diff %:p<CR>", { desc = "Git blame" })
 
             local mini_indentscope = require("mini.indentscope")
             mini_indentscope.setup({
-                draw = {
-                    delay = 50,
-                },
                 symbol = "▏",
             })
             mini_indentscope.gen_animation.none()
-
-            require("mini.move").setup()
 
             require("mini.statusline").setup()
 
