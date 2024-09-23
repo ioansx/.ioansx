@@ -38,16 +38,13 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
-end
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+    local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+    if vim.v.shell_error ~= 0 then
+        error('Error cloning lazy.nvim:\n' .. out)
+    end
+end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
@@ -69,49 +66,49 @@ require("lazy").setup({
 
             require("mini.bracketed").setup()
 
-            -- local mini_clue = require("mini.clue")
-            -- mini_clue.setup({
-            --     triggers = {
-            --         -- Leader triggers
-            --         { mode = 'n', keys = '<Leader>' },
-            --         { mode = 'x', keys = '<Leader>' },
-            --         { mode = 'n', keys = '[' },
-            --         { mode = 'n', keys = ']' },
-            --         -- Built-in completion
-            --         { mode = 'i', keys = '<C-x>' },
-            --         -- `g` key
-            --         { mode = 'n', keys = 'g' },
-            --         { mode = 'x', keys = 'g' },
-            --         -- Marks
-            --         { mode = 'n', keys = "'" },
-            --         { mode = 'n', keys = '`' },
-            --         { mode = 'x', keys = "'" },
-            --         { mode = 'x', keys = '`' },
-            --         -- Registers
-            --         { mode = 'n', keys = '"' },
-            --         { mode = 'x', keys = '"' },
-            --         { mode = 'i', keys = '<C-r>' },
-            --         { mode = 'c', keys = '<C-r>' },
-            --         -- Window commands
-            --         { mode = 'n', keys = '<C-w>' },
-            --         -- `z` key
-            --         { mode = 'n', keys = 'z' },
-            --         { mode = 'x', keys = 'z' },
-            --     },
-            --     clues = {
-            --         mini_clue.gen_clues.builtin_completion(),
-            --         mini_clue.gen_clues.g(),
-            --         mini_clue.gen_clues.marks(),
-            --         mini_clue.gen_clues.registers(),
-            --         mini_clue.gen_clues.windows(),
-            --         mini_clue.gen_clues.z(),
-            --     },
-            --     window = {
-            --         config = {
-            --             width = "auto",
-            --         },
-            --     },
-            -- })
+            local mini_clue = require("mini.clue")
+            mini_clue.setup({
+                triggers = {
+                    -- Leader triggers
+                    { mode = 'n', keys = '<Leader>' },
+                    { mode = 'x', keys = '<Leader>' },
+                    { mode = 'n', keys = '[' },
+                    { mode = 'n', keys = ']' },
+                    -- Built-in completion
+                    { mode = 'i', keys = '<C-x>' },
+                    -- `g` key
+                    { mode = 'n', keys = 'g' },
+                    { mode = 'x', keys = 'g' },
+                    -- Marks
+                    { mode = 'n', keys = "'" },
+                    { mode = 'n', keys = '`' },
+                    { mode = 'x', keys = "'" },
+                    { mode = 'x', keys = '`' },
+                    -- Registers
+                    { mode = 'n', keys = '"' },
+                    { mode = 'x', keys = '"' },
+                    { mode = 'i', keys = '<C-r>' },
+                    { mode = 'c', keys = '<C-r>' },
+                    -- Window commands
+                    { mode = 'n', keys = '<C-w>' },
+                    -- `z` key
+                    { mode = 'n', keys = 'z' },
+                    { mode = 'x', keys = 'z' },
+                },
+                clues = {
+                    mini_clue.gen_clues.builtin_completion(),
+                    mini_clue.gen_clues.g(),
+                    mini_clue.gen_clues.marks(),
+                    mini_clue.gen_clues.registers(),
+                    mini_clue.gen_clues.windows(),
+                    mini_clue.gen_clues.z(),
+                },
+                window = {
+                    config = {
+                        width = "auto",
+                    },
+                },
+            })
 
             require("mini.cursorword").setup()
 
@@ -194,30 +191,6 @@ require("lazy").setup({
         },
     },
 
-    -- {
-    --     "zbirenbaum/copilot.lua",
-    --     cmd = "Copilot",
-    --     event = "InsertEnter",
-    --     config = function()
-    --         require("copilot").setup({
-    --             suggestion = { enabled = false },
-    --             panel = { enabled = false },
-    --         })
-    --     end,
-    -- },
-    --
-    -- {
-    --     "zbirenbaum/copilot-cmp",
-    --     config = function()
-    --         require("copilot_cmp").setup()
-    --     end
-    -- },
-
-    {
-        "Saecki/crates.nvim",
-        event = { "BufRead Cargo.toml" },
-        opts = {},
-    },
     {
         "ThePrimeagen/harpoon",
         branch = "harpoon2",
@@ -286,33 +259,6 @@ require("lazy").setup({
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
         end,
     },
-
-    -- {
-    --     "nvim-lualine/lualine.nvim",
-    --     dependencies = { "nvim-tree/nvim-web-devicons" },
-    --     opts = {
-    --         options = {
-    --             component_separators = "|",
-    --             section_separators = "",
-    --         },
-    --         sections = {
-    --             lualine_a = { 'mode' },
-    --             lualine_b = { { 'filename', path = 1, shorting_target = 60 } },
-    --             lualine_c = {},
-    --             lualine_x = { 'diff', 'diagnostics', 'encoding', 'filetype' },
-    --             lualine_y = { 'progress' },
-    --             lualine_z = { 'location' }
-    --         },
-    --         inactive_sections = {
-    --             lualine_a = {},
-    --             lualine_b = {},
-    --             lualine_c = { { 'filename', path = 1, shorting_target = 60 } },
-    --             lualine_x = {},
-    --             lualine_y = {},
-    --             lualine_z = { 'location' }
-    --         },
-    --     },
-    -- },
 
     {
         "folke/todo-comments.nvim",
@@ -399,10 +345,7 @@ require("lazy").setup({
             { "j-hui/fidget.nvim",       opts = {} },
         },
         config = function()
-            --  This function gets run when an LSP connects to a particular buffer.
             local on_attach = function(_, bufnr)
-                -- In this case, we create a function that lets us more easily define mappings specific
-                -- for LSP related items. It sets the mode, buffer and description for us each time.
                 local nmap = function(keys, func, desc)
                     if desc then
                         desc = "LSP: " .. desc
@@ -411,45 +354,34 @@ require("lazy").setup({
                     vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
                 end
 
-                local function telescope_lsp_references()
-                    require("telescope.builtin").lsp_references({
-                        include_declaration = false,
-                        show_line = false,
-                    })
-                end
-
-                local function telescope_lsp_type_definitions()
-                    require("telescope.builtin").lsp_type_definitions({
-                        show_line = false,
-                    })
-                end
-
-                local function telescope_lsp_implementations()
-                    require("telescope.builtin").lsp_implementations({
-                        show_line = false,
-                    })
-                end
-
                 -- Create a command `:Format` local to the LSP buffer
                 vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
                     vim.lsp.buf.format()
                 end, { desc = "format current buffer with LSP" })
 
-                -- code
-                -- nmap('<leader>ca', function()
-                --     vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
-                -- end, 'code action')
                 nmap('<leader>a', vim.lsp.buf.code_action, 'code action')
                 nmap("<leader>cf", ":Format<CR>", "format buffer")
-                -- nmap("<leader>cr", vim.lsp.buf.rename, "rename symbol")
                 nmap("<leader>r", vim.lsp.buf.rename, "rename symbol")
 
                 -- goto
                 nmap("gd", require("telescope.builtin").lsp_definitions, "goto definition")
-                nmap("gs", telescope_lsp_type_definitions, "goto type definitions")
-                nmap("gr", telescope_lsp_references, "goto references")
+                nmap("gs", function()
+                    require("telescope.builtin").lsp_type_definitions({
+                        show_line = false,
+                    })
+                end, "goto type definitions")
+                nmap("gr", function()
+                    require("telescope.builtin").lsp_references({
+                        include_declaration = false,
+                        show_line = false,
+                    })
+                end, "goto references")
                 nmap("gD", vim.lsp.buf.declaration, "goto declaration")
-                nmap("gI", telescope_lsp_implementations, "goto implementation")
+                nmap("gI", function()
+                    require("telescope.builtin").lsp_implementations({
+                        show_line = false,
+                    })
+                end, "goto implementation")
 
                 -- search
                 nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "search document symbols")
@@ -459,14 +391,13 @@ require("lazy").setup({
                 nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
             end
 
-            -- mason-lspconfig requires that these setup functions are called in this order
-            -- before setting up the servers.
             require("mason").setup()
             require("mason-lspconfig").setup()
 
             local servers = {
                 eslint = {},
                 cssls = {},
+                tailwindcss = {},
                 html = {},
                 jsonls = {},
                 lua_ls = {
@@ -508,47 +439,13 @@ require("lazy").setup({
                 gopls = {},
             }
 
-            -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
-            -- Ensure the servers above are installed
             local mason_lspconfig = require("mason-lspconfig")
-
             mason_lspconfig.setup({
                 ensure_installed = vim.tbl_keys(servers),
             })
-
-            -- require("lspconfig").rust_analyzer.setup({
-            --     cmd = { "rustup", "run", "stable", "rust-analyzer" },
-            --     capabilities = capabilities,
-            --     on_attach = on_attach,
-            --     settings = {
-            --         ["rust-analyzer"] = {
-            --             check = {
-            --                 -- command = "clippy",
-            --                 features = "all",
-            --             },
-            --             completion = {
-            --                 fullFunctionSignatures = { enable = true },
-            --                 postfix = { enable = false },
-            --             },
-            --             lru = {
-            --                 capacity = 512,
-            --             },
-            --             lens = {
-            --                 references = {
-            --                     method = {
-            --                         enable = false
-            --                     }
-            --                 }
-            --             },
-            --             cachePriming = {
-            --                 enabled = false,
-            --             },
-            --         },
-            --     },
-            -- })
 
             mason_lspconfig.setup_handlers({
                 function(server_name)
@@ -571,7 +468,6 @@ require("lazy").setup({
         opts = {},
         build = ":TSUpdate",
         config = function()
-            -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
             vim.defer_fn(function()
                 require("nvim-treesitter.configs").setup({
                     ensure_installed = {
@@ -593,39 +489,20 @@ require("lazy").setup({
                         "toml",
                         "typescript",
                         "vim",
+                        "vimdoc",
                         "xml",
                         "yaml",
-                        "vimdoc",
                     },
-
-                    -- Install languages synchronously (only applied to `ensure_installed`)
-                    sync_install = false,
-                    -- List of parsers to ignore installing
                     ignore_install = {},
-                    -- You can specify additional Treesitter modules here: -- For example: -- playground = {--enable = true,-- },
-                    modules = {},
-                    highlight = { enable = true, additional_vim_regex_highlighting = false },
+                    sync_install = false,
+                    highlight = { enable = true },
                     indent = { enable = true },
-                    -- incremental_selection = {
-                    --     enable = true,
-                    --     keymaps = {
-                    --         init_selection = "<c-space>",
-                    --         node_incremental = "<c-space>",
-                    --         scope_incremental = "<c-s>",
-                    --         node_decremental = "<M-space>",
-                    --     },
-                    -- },
-                    rainbow = {
-                        enable = true,
-                        extended_mode = true,
-                        max_file_lines = nil,
-                    },
+                    incremental_selection = { enable = false },
                     textobjects = {
                         select = {
                             enable = true,
-                            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+                            lookahead = true,
                             keymaps = {
-                                -- You can use the capture groups defined in textobjects.scm
                                 ["aa"] = "@parameter.outer",
                                 ["ia"] = "@parameter.inner",
                                 ["af"] = "@function.outer",
@@ -636,7 +513,7 @@ require("lazy").setup({
                         },
                         move = {
                             enable = true,
-                            set_jumps = true, -- whether to set jumps in the jumplist
+                            set_jumps = true,
                             goto_next_start = {
                                 ["]f"] = "@function.outer",
                                 ["]c"] = "@class.outer",
@@ -843,6 +720,12 @@ require("lazy").setup({
                 desc = "TODO",
             },
         },
+    },
+
+    {
+        "Saecki/crates.nvim",
+        event = { "BufRead Cargo.toml" },
+        opts = {},
     },
 }, {})
 
