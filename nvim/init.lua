@@ -155,7 +155,31 @@ require("lazy").setup({
             })
             mini_indentscope.gen_animation.none()
 
-            require("mini.statusline").setup()
+            local mini_statusline = require("mini.statusline")
+            require("mini.statusline").setup({
+                content = {
+                    active = function()
+                        local mode, mode_hl = mini_statusline.section_mode({ trunc_width = 120 })
+                        local diagnostics   = mini_statusline.section_diagnostics({ trunc_width = 75 })
+                        local lsp           = mini_statusline.section_lsp({ trunc_width = 75 })
+                        -- local filename      = mini_statusline.section_filename({ trunc_width = 140 })
+                        local filename      = vim.fn.expand('%');
+                        local fileinfo      = mini_statusline.section_fileinfo({ trunc_width = 120 })
+                        local location      = mini_statusline.section_location({ trunc_width = 75 })
+                        local search        = mini_statusline.section_searchcount({ trunc_width = 75 })
+
+                        return mini_statusline.combine_groups({
+                            { hl = mode_hl,                  strings = { mode } },
+                            '%<', -- Mark general truncate point
+                            { hl = 'MiniStatuslineDevinfo',  strings = { diagnostics, lsp } },
+                            { hl = 'MiniStatuslineFilename', strings = { filename } },
+                            '%=', -- End left alignment
+                            { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
+                            { hl = mode_hl,                  strings = { search, location } },
+                        })
+                    end
+                }
+            })
 
             require("mini.trailspace").setup()
         end
