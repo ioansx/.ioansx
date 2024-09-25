@@ -56,6 +56,8 @@ require("lazy").setup({
         end
     },
 
+    'tpope/vim-sleuth',
+
     {
         'echasnovski/mini.nvim',
         version = false,
