@@ -323,7 +323,7 @@ require("lazy").setup({
                         local ci = entry.completion_item
                         if ci.labelDetails and ci.labelDetails.detail then
                             menu = ci.labelDetails.detail
-                            if string.len(menu) > 37 then
+                            if menu ~= nil and string.len(menu) > 37 then
                                 menu = string.sub(menu, 1, 37) .. "..."
                             end
                         end
@@ -750,6 +750,16 @@ require("lazy").setup({
                 desc = "TODO",
             },
         },
+    },
+
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            library = {
+                { path = "luvit-meta/library", words = { "vim%.uv" } },
+            }
+        }
     },
 
     {
