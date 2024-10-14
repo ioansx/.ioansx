@@ -164,8 +164,8 @@ require("lazy").setup({
                         local mode, mode_hl = mini_statusline.section_mode({ trunc_width = 120 })
                         local diagnostics   = mini_statusline.section_diagnostics({ trunc_width = 75 })
                         local lsp           = mini_statusline.section_lsp({ trunc_width = 75 })
-                        -- local filename      = mini_statusline.section_filename({ trunc_width = 140 })
-                        local filename      = vim.fn.expand('%');
+                        local filename      = mini_statusline.section_filename({ trunc_width = 140 })
+                        -- local filename      = vim.fn.expand('%');
                         local fileinfo      = mini_statusline.section_fileinfo({ trunc_width = 120 })
                         local location      = mini_statusline.section_location({ trunc_width = 75 })
                         local search        = mini_statusline.section_searchcount({ trunc_width = 75 })
