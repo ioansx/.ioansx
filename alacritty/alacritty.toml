@@ -1,8 +1,9 @@
 [window]
 startup_mode = "Maximized"
+padding = { x = 3, y = 3 }
 
 [font]
-normal = { family = "FiraCode Nerd Font Mono", style = "Regular" }
+normal = { family = "MonaspiceAr NFM", style = "Regular" }
 size = 14
 
 [scrolling]

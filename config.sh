@@ -105,10 +105,10 @@ elif [ $CMD_1 = "uninstall" ]; then
 	echo "Unlinking scripts..."
     if [ "$(uname)" == "Darwin" ]; then
         # Do something under Mac OS X platform
-	    unlink $TMUX_OPEN_PROJECT_LN
+	unlink $TMUX_OPEN_PROJECT_LN
     elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         # Do something under GNU/Linux platform
-	    unlink $TMUX_OPEN_PROJECT_LINUX_LN
+	unlink $TMUX_OPEN_PROJECT_LINUX_LN
     fi
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
 	echo "Ioan's configuration manager"

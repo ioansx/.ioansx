@@ -112,7 +112,7 @@ fi
 
 export PATH=$PATH:$HOME/.cargo/bin
 
-source <(fzf --zsh)
+# source <(fzf --zsh)
 
 alias lzg="lazygit"
 alias lzd="lazydocker"
@@ -123,3 +123,7 @@ export PATH=$PATH:$HOME/dev/sosha/pulumi:$HOME/.local/bin
 if [ -f '/Users/ioan/google-cloud-sdk/path.zsh.inc' ]; then
     source '/Users/ioan/google-cloud-sdk/path.zsh.inc';
 fi
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

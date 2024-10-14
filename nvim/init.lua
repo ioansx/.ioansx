@@ -794,7 +794,7 @@ vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 
 vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
-vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
+vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil)) end,
     { desc = "toggle inlay hints" })
 
 vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
