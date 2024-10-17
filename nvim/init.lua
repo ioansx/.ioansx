@@ -469,6 +469,7 @@ require("lazy").setup({
                 ts_ls = {},
                 svelte = {},
                 gopls = {},
+                zls = {},
             }
 
             local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -664,15 +665,15 @@ require("lazy").setup({
 
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
-            vim.keymap.set("n", "<leader>ff", function()
+            vim.keymap.set("n", "<leader>f", function()
                 require("telescope.builtin").buffers({ sort_mru = true })
             end, { desc = "find existing buffers" })
-            vim.keymap.set("n", "<leader>fd", require("telescope.builtin").oldfiles,
+            vim.keymap.set("n", "<leader>sa", require("telescope.builtin").oldfiles,
                 { desc = "find recently opened files" })
-            vim.keymap.set("n", "<leader>fs", function()
+            vim.keymap.set("n", "<leader>sf", function()
                 require("telescope.builtin").find_files({ hidden = true })
             end, { desc = "search files" })
-            vim.keymap.set("n", "<leader>fa", function()
+            vim.keymap.set("n", "<leader>s.", function()
                 require("telescope.builtin").find_files({
                     hidden = true,
                     no_ignore = true,
