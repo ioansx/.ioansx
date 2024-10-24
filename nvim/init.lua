@@ -24,7 +24,6 @@ vim.opt.smartindent = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
-vim.opt.clipboard = "unnamedplus"
 vim.opt.completeopt = "menu,menuone,noinsert"
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
@@ -36,6 +35,41 @@ vim.opt.timeoutlen = 300
 vim.opt.updatetime = 250
 vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
+
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+
+vim.keymap.set("n", "j", "gj")
+vim.keymap.set("n", "k", "gk")
+vim.keymap.set("n", "n", "nzz")
+vim.keymap.set("n", "N", "Nzz")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+
+vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
+
+vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
+vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil)) end,
+    { desc = "toggle inlay hints" })
+vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
+
+vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
+vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
+    { desc = "yank relative file path:line" })
+vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
+vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
+
+vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking (copying) text',
+    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+    callback = function()
+        vim.highlight.on_yank()
+    end,
+})
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -62,8 +96,6 @@ require("lazy").setup({
         'echasnovski/mini.nvim',
         version = false,
         config = function()
-            require("mini.ai").setup()
-
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {
@@ -113,15 +145,12 @@ require("lazy").setup({
             require("mini.diff").setup({
                 mappings = {
                     -- Apply hunks inside a visual/operator region
-                    apply = 'gh',
-
+                    apply = '<leader>hh',
                     -- Reset hunks inside a visual/operator region
-                    reset = 'gH',
-
+                    reset = '<leader>hr',
                     -- Hunk range textobject to be used inside operator
                     -- Works also in Visual mode if mapping differs from apply and reset
-                    textobject = 'gh',
-
+                    textobject = '<leader>hh',
                     -- Go to hunk range in corresponding direction
                     goto_first = '[H',
                     goto_prev = '[h',
@@ -147,7 +176,7 @@ require("lazy").setup({
             local au_opts = { pattern = 'MiniGitCommandSplit', callback = align_blame }
             vim.api.nvim_create_autocmd('User', au_opts)
 
-            vim.keymap.set("n", "<leader>hb", ":vertical Git blame -- %:p<CR>:vertical resize 60<CR>",
+            vim.keymap.set("n", "<leader>hb", ":vertical Git blame -- %:p<CR>",
                 { desc = "Git blame" })
             vim.keymap.set("n", "<leader>hd", ":Git diff %:p<CR>", { desc = "Git blame" })
 
@@ -165,7 +194,6 @@ require("lazy").setup({
                         local diagnostics   = mini_statusline.section_diagnostics({ trunc_width = 75 })
                         local lsp           = mini_statusline.section_lsp({ trunc_width = 75 })
                         local filename      = mini_statusline.section_filename({ trunc_width = 140 })
-                        -- local filename      = vim.fn.expand('%');
                         local fileinfo      = mini_statusline.section_fileinfo({ trunc_width = 120 })
                         local location      = mini_statusline.section_location({ trunc_width = 75 })
                         local search        = mini_statusline.section_searchcount({ trunc_width = 75 })
@@ -773,40 +801,3 @@ require("lazy").setup({
         opts = {},
     },
 }, {})
-
-vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Highlight when yanking (copying) text',
-    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
-    callback = function()
-        vim.highlight.on_yank()
-    end,
-})
-
--- [[ Keymaps ]]
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
-
-vim.keymap.set("n", "j", "gj")
-vim.keymap.set("n", "k", "gk")
-vim.keymap.set("n", "n", "nzz")
-vim.keymap.set("n", "N", "Nzz")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
-
-vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
-vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
-vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil)) end,
-    { desc = "toggle inlay hints" })
-
-vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
-vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
-    { desc = "yank relative file path:line" })
-vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
-vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
-
-vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
-
-vim.keymap.set("v", "<leader>p", '"0p', { desc = "smart paste" })
