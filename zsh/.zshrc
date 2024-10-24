@@ -119,7 +119,6 @@ alias lzd="lazydocker"
 
 export XDG_CONFIG_HOME="$HOME/.config"
 
-export PATH=$PATH:$HOME/dev/sosha/pulumi:$HOME/.local/bin
 if [ -f '/Users/ioan/google-cloud-sdk/path.zsh.inc' ]; then
     source '/Users/ioan/google-cloud-sdk/path.zsh.inc';
 fi
