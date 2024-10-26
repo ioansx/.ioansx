@@ -109,10 +109,11 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+source <(fzf --zsh)
 
 export PATH=$PATH:$HOME/.cargo/bin
+export PATH=$PATH:$HOME/.ioansx
 
-# source <(fzf --zsh)
 
 alias lzg="lazygit"
 alias lzd="lazydocker"

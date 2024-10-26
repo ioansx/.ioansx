@@ -3,13 +3,13 @@
 CMD_1="$1"
 PWD=$(pwd)
 BIN_HOME=~/.local/bin
-BIN_HOME_LINUX=/usr/local/bin
+BIN_HOME_LINUX=~/.ioansx
 XDG_CONFIG_HOME=~/.config
 NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
 NVIM_LN=$NVIM_CFG_DIR/init.lua
 TMUX_LN=~/.tmux.conf
 TMUX_OPEN_PROJECT_LN=$BIN_HOME/tmux-open-project
-TMUX_OPEN_PROJECT_LINUX_LN=$BIN_HOME/tmux-open-project
+TMUX_OPEN_PROJECT_LINUX_LN=$BIN_HOME_LINUX/tmux-open-project
 ZSH_LN=~/.zshrc
 
 
@@ -42,6 +42,8 @@ print_help () {
 }
 
 if [ $CMD_1 = "install" ]; then
+	mkdir $BIN_HOME_LINUX
+
 	echo "Configuring fish..."
 	ensure_linked $PWD/fish $XDG_CONFIG_HOME
 
@@ -71,12 +73,11 @@ if [ $CMD_1 = "install" ]; then
     if [ "$(uname)" == "Darwin" ]; then
         # Do something under Mac OS X platform
         ensure_dir_exists $BIN_HOME
+        ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME
     elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         # Do something under GNU/Linux platform
-        ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME
-    fi
-
 	ensure_linked $PWD/scripts/tmux-open-project $BIN_HOME_LINUX
+    fi
 elif [ $CMD_1 = "uninstall" ]; then
 	echo "Unlinking fish..."
 	unlink $XDG_CONFIG_HOME/fish
