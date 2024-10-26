@@ -4,8 +4,8 @@ sudo apt install \
 	alacritty \
 	curl \
 	fd-find \
-	fzf \
 	gcc \
+	git \
 	make \
 	ripgrep \
 	vim \
