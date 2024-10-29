@@ -19,7 +19,7 @@ fzf --fish | source
 # -------------
 # --- SoSha ---
 # -------------
-set -U fish_user_paths $HOME/dev/sosha/pulumi/ $fish_user_paths
+# set -U fish_user_paths $HOME/dev/sosha/pulumi/ $fish_user_paths
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/ioan/google-cloud-sdk/path.fish.inc' ]; . '/Users/ioan/google-cloud-sdk/path.fish.inc'; end
