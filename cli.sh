@@ -7,7 +7,6 @@ NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
 NVIM_LN=$NVIM_CFG_DIR/init.lua
 PWD=$(pwd)
 TMUX_LN=~/.tmux.conf
-TMUX_OPEN_PROJECT_LN=$DOTHOME/tmux-open-project
 XDG_CONFIG_HOME=~/.config
 ZSH_LN=~/.zshrc
 
@@ -41,9 +40,6 @@ print_help () {
 }
 
 if [ $CMD_1 = "install" ]; then
-    echo "Creating personal directory..."
-    mkdir $DOTHOME
-
     echo "Configuring fish..."
     ensure_linked $PWD/fish $XDG_CONFIG_HOME
 
@@ -68,9 +64,6 @@ if [ $CMD_1 = "install" ]; then
 
     echo "Configuring zsh..."
     ensure_linked $PWD/zsh/.zshrc $ZSH_LN
-
-    echo "Configuring scripts..."
-    ensure_linked $PWD/scripts/tmux-open-project $DOTHOME
 elif [ $CMD_1 = "uninstall" ]; then
     echo "Unlinking fish..."
     unlink $XDG_CONFIG_HOME/fish
@@ -95,12 +88,6 @@ elif [ $CMD_1 = "uninstall" ]; then
 
     echo "Unlinking zsh..."
     unlink $ZSH_LN
-
-    echo "Unlinking scripts..."
-    unlink $TMUX_OPEN_PROJECT_LN
-
-    echo "Removing personal directory..."
-    rm -R $DOTHOME
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
     echo "Ioan's configuration manager"
     echo ""

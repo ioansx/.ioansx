@@ -112,7 +112,9 @@ fi
 source <(fzf --zsh)
 
 export PATH=$PATH:$HOME/.cargo/bin
-export PATH=$PATH:$HOME/.ioansx
+
+# My dotfiles
+export PATH=$PATH:$HOME/.ioansx/bin
 
 
 alias lzg="lazygit"
