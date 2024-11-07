@@ -54,6 +54,8 @@ vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.l
     { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
+vim.keymap.set({ "n", "v" }, "<leader>=", "\"+", { desc = "queue clipboard" })
+
 vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
 vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
     { desc = "yank relative file path:line" })
@@ -188,7 +190,7 @@ require("lazy").setup({
             mini_indentscope.gen_animation.none()
 
             local mini_statusline = require("mini.statusline")
-            require("mini.statusline").setup({
+            mini_statusline.setup({
                 content = {
                     active = function()
                         local mode, mode_hl = mini_statusline.section_mode({ trunc_width = 120 })
@@ -228,7 +230,7 @@ require("lazy").setup({
         opts = {
             format_on_save = {
                 timeout_ms = 500,
-                lsp_fallback = false,
+                lsp_fallback = true,
             },
             formatters_by_ft = {
                 ["javascript"] = { "prettier" },
@@ -324,74 +326,39 @@ require("lazy").setup({
     },
 
     {
-        "hrsh7th/nvim-cmp",
-        dependencies = {
-            {
-                'L3MON4D3/LuaSnip',
-                build = 'make install_jsregexp',
+        'saghen/blink.cmp',
+        lazy = false, -- lazy loading handled internally
+        -- use a release tag to download pre-built binaries
+        version = 'v0.*',
+        opts = {
+            -- 'default' for mappings similar to built-in completion
+            -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
+            -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+            -- see the "default configuration" section below for full documentation on how to define
+            -- your own keymap.
+            keymap = { preset = 'super-tab' },
+            highlight = {
+                -- sets the fallback highlight groups to nvim-cmp's highlight groups
+                -- useful for when your theme doesn't support blink.cmp
+                -- will be removed in a future release, assuming themes add support
+                use_nvim_cmp_as_default = true,
             },
-            "saadparwaiz1/cmp_luasnip",
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-buffer",
-        },
-        config = function()
-            local cmp = require("cmp")
-            local luasnip = require("luasnip")
-            luasnip.config.setup({})
-
-            cmp.setup({
+            nerd_font_variant = 'mono', -- or 'normal'
+            accept = {
+                auto_brackets = { enabled = true }
+            },
+            sources = {
                 completion = {
-                    completeopt = "menu,menuone,noinsert",
-                },
-                formatting = {
-                    format = function(entry, vim_item)
-                        local menu
-                        local ci = entry.completion_item
-                        if ci.labelDetails and ci.labelDetails.detail then
-                            menu = ci.labelDetails.detail
-                            if menu ~= nil and string.len(menu) > 37 then
-                                menu = string.sub(menu, 1, 37) .. "..."
-                            end
-                        end
-                        vim_item.menu = menu
-                        return vim_item
-                    end
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<C-n>"] = cmp.mapping.scroll_docs(4),
-                    ["<C-p>"] = cmp.mapping.scroll_docs(-4),
-                    ["<C-Space>"] = cmp.mapping.complete({}),
-                    ["<Tab>"] = cmp.mapping.confirm({
-                        behavior = cmp.ConfirmBehavior.Insert,
-                        select = true,
-                    }),
-                }),
-                snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end,
-                },
-                sorting = {
-                    comparators = {
-                        cmp.config.compare.offset,
-                        cmp.config.compare.exact,
-                        cmp.config.compare.score,
-                        cmp.config.compare.kind,
-                        cmp.config.compare.sort_text,
-                        cmp.config.compare.length,
-                        cmp.config.compare.order,
-                    },
-                },
-                sources = {
-                    -- { name = "copilot" },
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" },
-                    { name = "buffer" },
-                    { name = "path" },
-                },
-            })
-        end
+                    enabled_providers = { 'lsp', 'path', 'buffer' },
+                }
+            },
+            trigger = {
+                signature_help = { enabled = true }
+            },
+            windows = {
+                documentation = { auto_show = true },
+            },
+        }
     },
 
     {
@@ -401,7 +368,7 @@ require("lazy").setup({
             "williamboman/mason-lspconfig.nvim",
             { "j-hui/fidget.nvim",       opts = {} },
         },
-        config = function()
+        config = function(_, opts)
             local on_attach = function(_, bufnr)
                 local nmap = function(keys, func, desc)
                     if desc then
@@ -485,7 +452,8 @@ require("lazy").setup({
                             allTargets = false,
                         },
                         check = {
-                            command = "clippy",
+                            command = "check",
+                            -- command = "clippy",
                             -- workspace = false,
                         },
                     }
@@ -497,8 +465,6 @@ require("lazy").setup({
                 zls = {},
             }
 
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
             local mason_lspconfig = require("mason-lspconfig")
             mason_lspconfig.setup({
@@ -508,13 +474,18 @@ require("lazy").setup({
             mason_lspconfig.setup_handlers({
                 function(server_name)
                     require("lspconfig")[server_name].setup({
-                        capabilities = capabilities,
                         on_attach = on_attach,
                         settings = servers[server_name],
                         filetypes = (servers[server_name] or {}).filetypes,
                     })
                 end,
             })
+
+            local lspconfig = require('lspconfig')
+            for server, config in pairs(opts.servers or {}) do
+                config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+                lspconfig[server].setup(config)
+            end
 
             vim.g.zig_fmt_parse_errors = 0
         end
