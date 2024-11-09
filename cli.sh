@@ -30,13 +30,14 @@ ensure_linked () {
 }
 
 print_help () {
-    echo "Options:"
-    echo "    --help, -h  Print help"
-    echo ""
-    echo "Commands:"
-    echo "    install     Link the configuration with symbolic links"
-    echo "    uninstall   Unlink the configuration"
-    echo "    help        Print help"
+    echo "Options:
+--help, -h  Print help
+
+Commands:
+    install     Link the configuration with symbolic links
+    uninstall   Unlink the configuration
+    help        Print help
+"
 }
 
 if [ $CMD_1 = "install" ]; then
