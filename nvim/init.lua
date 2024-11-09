@@ -38,10 +38,10 @@ vim.wo.signcolumn = "yes"
 
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
-vim.keymap.set("n", "j", "gj")
-vim.keymap.set("n", "k", "gk")
-vim.keymap.set("n", "n", "nzz")
-vim.keymap.set("n", "N", "Nzz")
+vim.keymap.set("n", "j", "gj", { silent = true })
+vim.keymap.set("n", "k", "gk", { silent = true })
+vim.keymap.set("n", "n", "nzz", { silent = true })
+vim.keymap.set("n", "N", "Nzz", { silent = true })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
@@ -54,13 +54,14 @@ vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.l
     { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
-vim.keymap.set({ "n", "v" }, "<leader>=", "\"+", { desc = "queue clipboard" })
+vim.keymap.set({ "n", "v" }, "<leader>y", "\"+y", { desc = "clipboard copy" })
+vim.keymap.set({ "n", "v" }, "<leader>p", "\"+p", { desc = "clipboard paste" })
 
-vim.keymap.set("n", "<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
-vim.keymap.set("n", "<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
+vim.keymap.set("n", "<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
+vim.keymap.set("n", "<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
     { desc = "yank relative file path:line" })
-vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
-vim.keymap.set("n", "<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
+vim.keymap.set("n", "<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
+vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
@@ -75,10 +76,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-    local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local out = vim.fn.system { "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath }
     if vim.v.shell_error ~= 0 then
-        error('Error cloning lazy.nvim:\n' .. out)
+        error("Error cloning lazy.nvim:\n" .. out)
     end
 end
 ---@diagnostic disable-next-line: undefined-field
@@ -186,8 +187,10 @@ require("lazy").setup({
             local mini_indentscope = require("mini.indentscope")
             mini_indentscope.setup({
                 symbol = "▏",
+                draw = {
+                    animation = mini_indentscope.gen_animation.none(),
+                },
             })
-            mini_indentscope.gen_animation.none()
 
             local mini_statusline = require("mini.statusline")
             mini_statusline.setup({
@@ -600,7 +603,7 @@ require("lazy").setup({
                             ["<C-d>"] = false,
                         },
                     },
-                    layout_strategy = 'vertical',
+                    layout_strategy = "vertical",
                     layout_config = {
                         height = 0.95,
                         width = 0.8,
@@ -666,44 +669,61 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>f", function()
                 require("telescope.builtin").buffers({ sort_mru = true })
             end, { desc = "find existing buffers" })
+
             vim.keymap.set("n", "<leader>sa", require("telescope.builtin").oldfiles,
-                { desc = "find recently opened files" })
+                { desc = "find recently opened files", noremap = true })
+
             vim.keymap.set("n", "<leader>sf", function()
                 require("telescope.builtin").find_files({ hidden = true })
-            end, { desc = "search files" })
+            end, { desc = "search files", noremap = true })
+
             vim.keymap.set("n", "<leader>s.", function()
                 require("telescope.builtin").find_files({
                     hidden = true,
                     no_ignore = true,
                     prompt_title = "Find Files in CWD",
                 })
-            end, { desc = "search all cwd files" })
+            end, { desc = "search all cwd files", noremap = true })
 
             vim.keymap.set("n", "<leader>s/", require("telescope.builtin").current_buffer_fuzzy_find,
-                { desc = "fuzzily search in current buffer" })
+                { desc = "fuzzily search in current buffer", noremap = true })
+
             vim.keymap.set("n", "<leader>so", function()
                 require("telescope.builtin").live_grep({
                     grep_open_files = true,
                     prompt_title = "live Grep in Open files",
                 })
-            end, { desc = "search in open files" })
-
-
+            end, { desc = "search in open files", noremap = true })
 
             vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
-                { desc = "search diagnostic" })
-            vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
-                { desc = "search diagnostic in workspace" })
+                { desc = "search diagnostic", noremap = true })
 
-            vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "search by grep" })
-            vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>", { desc = "search by grep on Git Root" })
-            vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files, { desc = "search Git files" })
-            vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "search resume" })
-            vim.keymap.set("n", "<leader>sR", require("telescope.builtin").registers, { desc = "search registers" })
-            vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags, { desc = "search help" })
-            vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo, { desc = "search undotree" })
+            vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
+                { desc = "search diagnostic in workspace", noremap = true })
+
+            vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep,
+                { desc = "search by grep", noremap = true })
+
+            vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>",
+                { desc = "search by grep on Git Root", noremap = true })
+
+            vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files,
+                { desc = "search Git files", noremap = true })
+
+            vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume,
+                { desc = "search resume", noremap = true })
+
+            vim.keymap.set("n", "<leader>sR", require("telescope.builtin").registers,
+                { desc = "search registers", noremap = true })
+
+            vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags,
+                { desc = "search help", noremap = true })
+
+            vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo,
+                { desc = "search undotree", noremap = true })
+
             vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string,
-                { desc = "search current word" })
+                { desc = "search current word", noremap = true })
         end
     },
 
