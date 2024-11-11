@@ -82,19 +82,20 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
         error("Error cloning lazy.nvim:\n" .. out)
     end
 end
----@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
-        "ellisonleao/gruvbox.nvim",
+        "rebelot/kanagawa.nvim",
         opts = {},
         config = function()
-            vim.cmd("colorscheme gruvbox")
+            vim.cmd("colorscheme kanagawa-wave")
         end
     },
 
     'tpope/vim-sleuth',
+
+    'tpope/vim-fugitive',
 
     {
         'echasnovski/mini.nvim',
@@ -148,13 +149,8 @@ require("lazy").setup({
 
             require("mini.diff").setup({
                 mappings = {
-                    -- Apply hunks inside a visual/operator region
-                    apply = '<leader>hh',
                     -- Reset hunks inside a visual/operator region
                     reset = '<leader>hr',
-                    -- Hunk range textobject to be used inside operator
-                    -- Works also in Visual mode if mapping differs from apply and reset
-                    textobject = '<leader>hh',
                     -- Go to hunk range in corresponding direction
                     goto_first = '[H',
                     goto_prev = '[h',
@@ -162,27 +158,27 @@ require("lazy").setup({
                     goto_last = ']H',
                 },
             })
-
-            require("mini.git").setup()
-
-            local align_blame = function(au_data)
-                if au_data.data.git_subcommand ~= 'blame' then return end
-                -- Align blame output with source
-                local win_src = au_data.data.win_source
-                vim.wo.wrap = false
-                vim.wo.relativenumber = false
-                vim.fn.winrestview({ topline = vim.fn.line('w0', win_src) })
-                vim.api.nvim_win_set_cursor(0, { vim.fn.line('.', win_src), 0 })
-                -- Bind both windows so that they scroll together
-                vim.wo[win_src].scrollbind, vim.wo.scrollbind = true, true
-            end
-
-            local au_opts = { pattern = 'MiniGitCommandSplit', callback = align_blame }
-            vim.api.nvim_create_autocmd('User', au_opts)
-
-            vim.keymap.set("n", "<leader>hb", ":vertical Git blame -- %:p<CR>",
-                { desc = "Git blame" })
-            vim.keymap.set("n", "<leader>hd", ":Git diff %:p<CR>", { desc = "Git blame" })
+            --
+            -- require("mini.git").setup()
+            --
+            -- local align_blame = function(au_data)
+            --     if au_data.data.git_subcommand ~= 'blame' then return end
+            --     -- Align blame output with source
+            --     local win_src = au_data.data.win_source
+            --     vim.wo.wrap = false
+            --     vim.wo.relativenumber = false
+            --     vim.fn.winrestview({ topline = vim.fn.line('w0', win_src) })
+            --     vim.api.nvim_win_set_cursor(0, { vim.fn.line('.', win_src), 0 })
+            --     -- Bind both windows so that they scroll together
+            --     vim.wo[win_src].scrollbind, vim.wo.scrollbind = true, true
+            -- end
+            --
+            -- local au_opts = { pattern = 'MiniGitCommandSplit', callback = align_blame }
+            -- vim.api.nvim_create_autocmd('User', au_opts)
+            --
+            -- vim.keymap.set("n", "<leader>hb", ":vertical Git blame -- %:p<CR>",
+            --     { desc = "Git blame" })
+            -- vim.keymap.set("n", "<leader>hd", ":Git diff %:p<CR>", { desc = "Git blame" })
 
             local mini_indentscope = require("mini.indentscope")
             mini_indentscope.setup({
@@ -192,40 +188,13 @@ require("lazy").setup({
                 },
             })
 
-            local mini_statusline = require("mini.statusline")
-            mini_statusline.setup({
-                content = {
-                    active = function()
-                        local mode, mode_hl = mini_statusline.section_mode({ trunc_width = 120 })
-                        local diagnostics   = mini_statusline.section_diagnostics({ trunc_width = 75 })
-                        local lsp           = mini_statusline.section_lsp({ trunc_width = 75 })
-                        local filename      = mini_statusline.section_filename({ trunc_width = 140 })
-                        local fileinfo      = mini_statusline.section_fileinfo({ trunc_width = 120 })
-                        local location      = mini_statusline.section_location({ trunc_width = 75 })
-                        local search        = mini_statusline.section_searchcount({ trunc_width = 75 })
-
-                        return mini_statusline.combine_groups({
-                            { hl = mode_hl,                  strings = { mode } },
-                            '%<', -- Mark general truncate point
-                            { hl = 'MiniStatuslineDevinfo',  strings = { diagnostics, lsp } },
-                            { hl = 'MiniStatuslineFilename', strings = { filename } },
-                            '%=', -- End left alignment
-                            { hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
-                            { hl = mode_hl,                  strings = { search, location } },
-                        })
-                    end
-                }
-            })
-
             require("mini.trailspace").setup()
         end
     },
 
     {
         'numToStr/Comment.nvim',
-        opts = {
-            -- add any options here
-        }
+        opts = {}
     },
 
     {
@@ -291,14 +260,7 @@ require("lazy").setup({
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
-        opts = {
-            replace_engine = {
-                ["sed"] = {
-                    cmd = "sed",
-                    args = { "-i", "", "-E" },
-                },
-            },
-        },
+        opts = {},
         config = function()
             vim.keymap.set("n", "<leader>S", ":Spectre<CR>", { desc = "Spectre" })
         end
@@ -311,6 +273,9 @@ require("lazy").setup({
             require("oil").setup({
                 columns = {
                     "icon",
+                    -- "permissions",
+                    -- "size",
+                    -- "mtime",
                 },
                 delete_to_trash = true,
                 view_options = {
