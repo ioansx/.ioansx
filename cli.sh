@@ -10,6 +10,8 @@ TMUX_LN=~/.tmux.conf
 XDG_CONFIG_HOME=~/.config
 ZSH_LN=~/.zshrc
 
+BLUE='\e[94m'
+RESET='\e[0m'
 
 ensure_dir_exists () {
     local dirname="$1"
@@ -30,17 +32,19 @@ ensure_linked () {
 }
 
 print_help () {
-    echo "Options:
---help, -h  Print help
+    printf "Options:
+${BLUE}--help, -h${RESET} Print help
 
 Commands:
-    install     Link the configuration with symbolic links
-    uninstall   Unlink the configuration
-    help        Print help
+    ${BLUE}install${RESET}     Link the configuration with symbolic links
+    ${BLUE}uninstall${RESET}   Unlink the configuration
+    ${BLUE}help${RESET}        Print help
 "
 }
 
-if [ $CMD_1 = "install" ]; then
+if [ -z "$CMD_1" ]; then
+    print_help
+elif [ $CMD_1 = "install" ]; then
     echo "Configuring fish..."
     ensure_linked $PWD/fish $XDG_CONFIG_HOME
 
