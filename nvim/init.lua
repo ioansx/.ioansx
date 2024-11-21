@@ -94,7 +94,6 @@ require("lazy").setup({
     },
 
     'tpope/vim-sleuth',
-
     'tpope/vim-fugitive',
 
     {
@@ -243,16 +242,6 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "Harpoon goto prev" })
             vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "Harpoon goto next" })
         end,
-    },
-
-    {
-        "kdheepak/lazygit.nvim",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
-        config = function()
-            vim.keymap.set("n", "<leader>hg", ":LazyGit<CR>", { desc = "Lazygit" })
-        end
     },
 
     {
