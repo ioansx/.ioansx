@@ -94,7 +94,14 @@ require("lazy").setup({
     },
 
     'tpope/vim-sleuth',
-    'tpope/vim-fugitive',
+
+    {
+        'tpope/vim-fugitive',
+        config = function()
+            vim.keymap.set("n", "<leader>hb", ":Git blame<CR>", { desc = "Git blame" })
+            vim.keymap.set("n", "<leader>hd", ":Git diff | only<CR>", { desc = "Git diff" })
+        end
+    },
 
     {
         'echasnovski/mini.nvim',
@@ -157,27 +164,6 @@ require("lazy").setup({
                     goto_last = ']H',
                 },
             })
-            --
-            -- require("mini.git").setup()
-            --
-            -- local align_blame = function(au_data)
-            --     if au_data.data.git_subcommand ~= 'blame' then return end
-            --     -- Align blame output with source
-            --     local win_src = au_data.data.win_source
-            --     vim.wo.wrap = false
-            --     vim.wo.relativenumber = false
-            --     vim.fn.winrestview({ topline = vim.fn.line('w0', win_src) })
-            --     vim.api.nvim_win_set_cursor(0, { vim.fn.line('.', win_src), 0 })
-            --     -- Bind both windows so that they scroll together
-            --     vim.wo[win_src].scrollbind, vim.wo.scrollbind = true, true
-            -- end
-            --
-            -- local au_opts = { pattern = 'MiniGitCommandSplit', callback = align_blame }
-            -- vim.api.nvim_create_autocmd('User', au_opts)
-            --
-            -- vim.keymap.set("n", "<leader>hb", ":vertical Git blame -- %:p<CR>",
-            --     { desc = "Git blame" })
-            -- vim.keymap.set("n", "<leader>hd", ":Git diff %:p<CR>", { desc = "Git blame" })
 
             local mini_indentscope = require("mini.indentscope")
             mini_indentscope.setup({
@@ -219,29 +205,6 @@ require("lazy").setup({
                 ["yaml"] = { "prettier" },
             },
         },
-    },
-
-    {
-        "ThePrimeagen/harpoon",
-        branch = "harpoon2",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-            local harpoon = require("harpoon")
-            harpoon:setup()
-
-            vim.keymap.set("n", "<leader>mm", function() harpoon:list():add() end, { desc = "Harpoon mark" })
-            vim.keymap.set("n", "<leader>ml", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
-                { desc = "Harpoon mark" })
-
-            vim.keymap.set("n", "<leader>ma", function() harpoon:list():select(1) end, { desc = "Harpoon goto 1" })
-            vim.keymap.set("n", "<leader>ms", function() harpoon:list():select(2) end, { desc = "Harpoon goto 2" })
-            vim.keymap.set("n", "<leader>md", function() harpoon:list():select(3) end, { desc = "Harpoon goto 3" })
-            vim.keymap.set("n", "<leader>mf", function() harpoon:list():select(4) end, { desc = "Harpoon goto 4" })
-            vim.keymap.set("n", "<leader>mg", function() harpoon:list():select(5) end, { desc = "Harpoon goto 5" })
-
-            vim.keymap.set("n", "<leader>mp", function() harpoon:list():prev() end, { desc = "Harpoon goto prev" })
-            vim.keymap.set("n", "<leader>mn", function() harpoon:list():next() end, { desc = "Harpoon goto next" })
-        end,
     },
 
     {
@@ -442,6 +405,17 @@ require("lazy").setup({
             for server, config in pairs(opts.servers or {}) do
                 config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
                 lspconfig[server].setup(config)
+            end
+
+            -- https://github.com/neovim/neovim/issues/30985#issuecomment-2447329525
+            for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
+                local default_diagnostic_handler = vim.lsp.handlers[method]
+                vim.lsp.handlers[method] = function(err, result, context, config)
+                    if err ~= nil and err.code == -32802 then
+                        return
+                    end
+                    return default_diagnostic_handler(err, result, context, config)
+                end
             end
 
             vim.g.zig_fmt_parse_errors = 0
