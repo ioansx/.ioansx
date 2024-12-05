@@ -257,26 +257,16 @@ require("lazy").setup({
             -- see the "default configuration" section below for full documentation on how to define
             -- your own keymap.
             keymap = { preset = 'super-tab' },
-            highlight = {
-                -- sets the fallback highlight groups to nvim-cmp's highlight groups
-                -- useful for when your theme doesn't support blink.cmp
-                -- will be removed in a future release, assuming themes add support
-                use_nvim_cmp_as_default = true,
-            },
-            nerd_font_variant = 'mono', -- or 'normal'
-            accept = {
-                auto_brackets = { enabled = true }
+            completion = {
+                documentation = { auto_show = true },
             },
             sources = {
                 completion = {
                     enabled_providers = { 'lsp', 'path', 'buffer' },
                 }
             },
-            trigger = {
-                signature_help = { enabled = true }
-            },
-            windows = {
-                documentation = { auto_show = true },
+            signature = {
+                enabled = true
             },
         }
     },
