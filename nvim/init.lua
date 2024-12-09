@@ -297,29 +297,31 @@ require("lazy").setup({
                 nmap("<leader>cf", ":Format<CR>", "format buffer")
                 nmap("<leader>r", vim.lsp.buf.rename, "rename symbol")
 
+                local telescope_builtin = require("telescope.builtin")
+
                 -- goto
-                nmap("gd", require("telescope.builtin").lsp_definitions, "goto definition")
+                nmap("gd", telescope_builtin.lsp_definitions, "goto definition")
                 nmap("gs", function()
-                    require("telescope.builtin").lsp_type_definitions({
+                    telescope_builtin.lsp_type_definitions({
                         show_line = false,
                     })
                 end, "goto type definitions")
                 nmap("gr", function()
-                    require("telescope.builtin").lsp_references({
+                    telescope_builtin.lsp_references({
                         include_declaration = false,
                         show_line = false,
                     })
                 end, "goto references")
                 nmap("gD", vim.lsp.buf.declaration, "goto declaration")
                 nmap("gI", function()
-                    require("telescope.builtin").lsp_implementations({
+                    telescope_builtin.lsp_implementations({
                         show_line = false,
                     })
                 end, "goto implementation")
 
                 -- search
-                nmap("<leader>sS", require("telescope.builtin").lsp_document_symbols, "search document symbols")
-                nmap("<leader>ss", require("telescope.builtin").lsp_dynamic_workspace_symbols,
+                nmap("<leader>sS", telescope_builtin.lsp_document_symbols, "search document symbols")
+                nmap("<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
                     "search workspace symbols")
 
                 nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
@@ -513,6 +515,10 @@ require("lazy").setup({
             },
         },
         config = function()
+            -- require('telescope').setup({
+            --     defaults = require('telescope.themes').get_ivy(),
+            -- })
+
             require("telescope").setup({
                 defaults = {
                     mappings = {
@@ -525,7 +531,17 @@ require("lazy").setup({
                     layout_config = {
                         height = 0.95,
                         width = 0.8,
-                        mirror = true,
+                    },
+                },
+                pickers = {
+                    find_files = {
+                        theme = "ivy",
+                    },
+                    buffers = {
+                        theme = "ivy",
+                    },
+                    oldfiles = {
+                        theme = "ivy",
                     },
                 },
                 extensions = {
