@@ -47,7 +47,7 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 
-vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
+-- vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
 
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil)) end,
@@ -603,7 +603,7 @@ require("lazy").setup({
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
 
-            vim.keymap.set("n", "<leader>b", function()
+            vim.keymap.set("n", "<leader><leader>", function()
                 telescope_builtin.buffers({ sort_mru = true })
             end, { desc = "find existing buffers" })
 
