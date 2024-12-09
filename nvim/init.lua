@@ -572,11 +572,13 @@ require("lazy").setup({
                 return git_root
             end
 
+            local telescope_builtin = require("telescope.builtin")
+
             -- Custom live_grep function to search in git root
             local function live_grep_git_root()
                 local git_root = find_git_root()
                 if git_root then
-                    require("telescope.builtin").live_grep({
+                    telescope_builtin.live_grep({
                         search_dirs = { git_root },
                     })
                 end
@@ -584,63 +586,64 @@ require("lazy").setup({
 
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
-            vim.keymap.set("n", "<leader>f", function()
-                require("telescope.builtin").buffers({ sort_mru = true })
+
+            vim.keymap.set("n", "<leader>b", function()
+                telescope_builtin.buffers({ sort_mru = true })
             end, { desc = "find existing buffers" })
 
-            vim.keymap.set("n", "<leader>sa", require("telescope.builtin").oldfiles,
+            vim.keymap.set("n", "<leader>sa", telescope_builtin.oldfiles,
                 { desc = "find recently opened files", noremap = true })
 
-            vim.keymap.set("n", "<leader>sf", function()
-                require("telescope.builtin").find_files({ hidden = true })
+            vim.keymap.set("n", "<leader>f", function()
+                telescope_builtin.find_files({ hidden = true })
             end, { desc = "search files", noremap = true })
 
             vim.keymap.set("n", "<leader>s.", function()
-                require("telescope.builtin").find_files({
+                telescope_builtin.find_files({
                     hidden = true,
                     no_ignore = true,
                     prompt_title = "Find Files in CWD",
                 })
             end, { desc = "search all cwd files", noremap = true })
 
-            vim.keymap.set("n", "<leader>s/", require("telescope.builtin").current_buffer_fuzzy_find,
+            vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
                 { desc = "fuzzily search in current buffer", noremap = true })
 
             vim.keymap.set("n", "<leader>so", function()
-                require("telescope.builtin").live_grep({
+                telescope_builtin.live_grep({
                     grep_open_files = true,
                     prompt_title = "live Grep in Open files",
                 })
             end, { desc = "search in open files", noremap = true })
 
-            vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics({ bufnr = 0 }) end,
+            vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = 0 }) end,
                 { desc = "search diagnostic", noremap = true })
 
-            vim.keymap.set("n", "<leader>sD", function() require("telescope.builtin").diagnostics({ bufnr = nil }) end,
+            vim.keymap.set("n", "<leader>sD", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
                 { desc = "search diagnostic in workspace", noremap = true })
 
-            vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep,
+            vim.keymap.set("n", "<leader>sg", telescope_builtin.live_grep,
                 { desc = "search by grep", noremap = true })
 
             vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>",
                 { desc = "search by grep on Git Root", noremap = true })
 
-            vim.keymap.set("n", "<leader>sh", require("telescope.builtin").git_files,
+            vim.keymap.set("n", "<leader>sh", telescope_builtin.git_files,
                 { desc = "search Git files", noremap = true })
 
-            vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume,
+            vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
                 { desc = "search resume", noremap = true })
 
-            vim.keymap.set("n", "<leader>sR", require("telescope.builtin").registers,
+            vim.keymap.set("n", "<leader>sR", telescope_builtin.registers,
                 { desc = "search registers", noremap = true })
 
-            vim.keymap.set("n", "<leader>sH", require("telescope.builtin").help_tags,
+            vim.keymap.set("n", "<leader>sH", telescope_builtin.help_tags,
                 { desc = "search help", noremap = true })
 
             vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo,
                 { desc = "search undotree", noremap = true })
 
-            vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string,
+            vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
                 { desc = "search current word", noremap = true })
         end
     },
