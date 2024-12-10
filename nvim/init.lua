@@ -54,8 +54,8 @@ vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.l
     { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
-vim.keymap.set({ "n", "v" }, "<leader>y", "\"+y", { desc = "clipboard copy" })
-vim.keymap.set({ "n", "v" }, "<leader>p", "\"+p", { desc = "clipboard paste" })
+vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "clipboard copy" })
+vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "clipboard paste" })
 
 vim.keymap.set("n", "<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
 vim.keymap.set("n", "<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
@@ -280,51 +280,25 @@ require("lazy").setup({
         },
         config = function(_, opts)
             local on_attach = function(_, bufnr)
-                local nmap = function(keys, func, desc)
-                    if desc then
-                        desc = "LSP: " .. desc
-                    end
-
-                    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-                end
-
                 -- Create a command `:Format` local to the LSP buffer
                 vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
                     vim.lsp.buf.format()
                 end, { desc = "format current buffer with LSP" })
 
-                nmap('<leader>a', vim.lsp.buf.code_action, 'code action')
-                nmap("<leader>cf", ":Format<CR>", "format buffer")
-                nmap("<leader>r", vim.lsp.buf.rename, "rename symbol")
+                vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format,
+                    { buffer = bufnr, desc = "LSP: format buffer" })
 
-                local telescope_builtin = require("telescope.builtin")
+                vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action,
+                    { buffer = bufnr, desc = "LSP: code action" })
 
-                -- goto
-                nmap("gd", telescope_builtin.lsp_definitions, "goto definition")
-                nmap("gs", function()
-                    telescope_builtin.lsp_type_definitions({
-                        show_line = false,
-                    })
-                end, "goto type definitions")
-                nmap("gr", function()
-                    telescope_builtin.lsp_references({
-                        include_declaration = false,
-                        show_line = false,
-                    })
-                end, "goto references")
-                nmap("gD", vim.lsp.buf.declaration, "goto declaration")
-                nmap("gI", function()
-                    telescope_builtin.lsp_implementations({
-                        show_line = false,
-                    })
-                end, "goto implementation")
+                vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename,
+                    { buffer = bufnr, desc = "LSP: rename symbol" })
 
-                -- search
-                nmap("<leader>sS", telescope_builtin.lsp_document_symbols, "search document symbols")
-                nmap("<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
-                    "search workspace symbols")
+                vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help,
+                    { buffer = bufnr, desc = "LSP: signature docs" })
 
-                nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
+                -- vim.keymap.set("n", "gD", vim.lsp.buf.declaration,
+                --     { buffer = bufnr, desc = "goto declaration" })
             end
 
             require("mason").setup()
@@ -515,10 +489,6 @@ require("lazy").setup({
             },
         },
         config = function()
-            -- require('telescope').setup({
-            --     defaults = require('telescope.themes').get_ivy(),
-            -- })
-
             require("telescope").setup({
                 defaults = {
                     mappings = {
@@ -534,15 +504,19 @@ require("lazy").setup({
                     },
                 },
                 pickers = {
-                    find_files = {
-                        theme = "ivy",
-                    },
-                    buffers = {
-                        theme = "ivy",
-                    },
-                    oldfiles = {
-                        theme = "ivy",
-                    },
+                    buffers = { theme = "ivy" },
+                    current_buffer_fuzzy_find = { theme = "ivy" },
+                    diagnostics = { theme = "ivy" },
+                    find_files = { theme = "ivy" },
+                    grep_string = { theme = "ivy" },
+                    lsp_definitions = { theme = "ivy" },
+                    lsp_document_symbols = { theme = "ivy" },
+                    lsp_dynamic_workspace_symbols = { theme = "ivy" },
+                    lsp_references = { theme = "ivy" },
+                    lsp_type_definitions = { theme = "ivy" },
+                    oldfiles = { theme = "ivy" },
+                    registers = { theme = "ivy" },
+                    resume = { theme = "ivy" },
                 },
                 extensions = {
                     undo = {
@@ -602,7 +576,6 @@ require("lazy").setup({
 
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
-
             vim.keymap.set("n", "<leader><leader>", function()
                 telescope_builtin.buffers({ sort_mru = true })
             end, { desc = "find existing buffers" })
@@ -625,17 +598,17 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
                 { desc = "fuzzily search in current buffer", noremap = true })
 
-            vim.keymap.set("n", "<leader>so", function()
-                telescope_builtin.live_grep({
-                    grep_open_files = true,
-                    prompt_title = "live Grep in Open files",
-                })
-            end, { desc = "search in open files", noremap = true })
+            -- vim.keymap.set("n", "<leader>so", function()
+            --     telescope_builtin.live_grep({
+            --         grep_open_files = true,
+            --         prompt_title = "live Grep in Open files",
+            --     })
+            -- end, { desc = "search in open files", noremap = true })
 
-            vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = 0 }) end,
+            vim.keymap.set("n", "<leader>sD", function() telescope_builtin.diagnostics({ bufnr = 0 }) end,
                 { desc = "search diagnostic", noremap = true })
 
-            vim.keymap.set("n", "<leader>sD", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
+            vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
                 { desc = "search diagnostic in workspace", noremap = true })
 
             vim.keymap.set("n", "<leader>sg", telescope_builtin.live_grep,
@@ -661,53 +634,34 @@ require("lazy").setup({
 
             vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
                 { desc = "search current word", noremap = true })
-        end
-    },
 
-    {
-        "folke/trouble.nvim",
-        dependencies = { "echasnovski/mini.icons" },
-        cmd = "Trouble",
-        opts = {
-            focus = true,
-        },
-        keys = {
-            {
-                "<leader>xx",
-                "<cmd>Trouble diagnostics toggle<cr>",
-                desc = "diagnostics",
-            },
-            {
-                "<leader>xb",
-                "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-                desc = "buffer diagnostics",
-            },
-            {
-                "<leader>xs",
-                "<cmd>Trouble symbols toggle win.position=bottom<cr>",
-                desc = "symbols",
-            },
-            {
-                "<leader>xr",
-                "<cmd>Trouble lsp toggle<cr>",
-                desc = "LSP",
-            },
-            {
-                "<leader>xl",
-                "<cmd>Trouble loclist toggle<cr>",
-                desc = "location list",
-            },
-            {
-                "<leader>xq",
-                "<cmd>Trouble qflist toggle<cr>",
-                desc = "quickfix list",
-            },
-            {
-                "<leader>xt",
-                "<cmd>Trouble todo<cr>",
-                desc = "TODO",
-            },
-        },
+            vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, { desc = "goto definition" })
+
+            vim.keymap.set("n", "gs", function()
+                telescope_builtin.lsp_type_definitions({
+                    show_line = false,
+                })
+            end, { desc = "goto type definitions" })
+
+            vim.keymap.set("n", "gr", function()
+                telescope_builtin.lsp_references({
+                    include_declaration = false,
+                    show_line = false,
+                })
+            end, { desc = "goto references" })
+
+            vim.keymap.set("n", "gI", function()
+                telescope_builtin.lsp_implementations({
+                    show_line = false,
+                })
+            end, { desc = "goto implementation" })
+
+            vim.keymap.set("n", "<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
+                { desc = "search workspace symbols" })
+
+            vim.keymap.set("n", "<leader>sS", telescope_builtin.lsp_document_symbols,
+                { desc = "search document symbols" })
+        end
     },
 
     {
