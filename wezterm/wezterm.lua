@@ -17,8 +17,10 @@ config.window_padding = {
 -- Font
 config.font = wezterm.font "FiraCode Nerd Font Mono"
 config.font_size = 15
+config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 
 -- Keyboard concepts
 config.send_composed_key_when_right_alt_is_pressed = false
+
 
 return config
