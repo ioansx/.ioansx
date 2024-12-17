@@ -104,6 +104,16 @@ require("lazy").setup({
     },
 
     {
+        'mbbill/undotree',
+        config = function()
+            vim.keymap.set('n', '<leader>u', function()
+                vim.cmd.UndotreeToggle()
+                vim.cmd.UndotreeFocus()
+            end, { desc = "undotree" })
+        end
+    },
+
+    {
         'echasnovski/mini.nvim',
         version = false,
         config = function()
@@ -479,7 +489,6 @@ require("lazy").setup({
         branch = "0.1.x",
         dependencies = {
             "nvim-lua/plenary.nvim",
-            "debugloop/telescope-undo.nvim",
             {
                 "nvim-telescope/telescope-fzf-native.nvim",
                 build = "make",
@@ -508,7 +517,9 @@ require("lazy").setup({
                     current_buffer_fuzzy_find = { theme = "ivy" },
                     diagnostics = { theme = "ivy" },
                     find_files = { theme = "ivy" },
+                    git_files = { theme = "ivy" },
                     grep_string = { theme = "ivy" },
+                    live_grep = { theme = "ivy" },
                     lsp_definitions = { theme = "ivy" },
                     lsp_document_symbols = { theme = "ivy" },
                     lsp_dynamic_workspace_symbols = { theme = "ivy" },
@@ -518,24 +529,12 @@ require("lazy").setup({
                     registers = { theme = "ivy" },
                     resume = { theme = "ivy" },
                 },
-                extensions = {
-                    undo = {
-                        side_by_side = true,
-                        layout_strategy = "vertical",
-                        layout_config = {
-                            preview_height = 0.95,
-                        },
-                    },
-                },
             })
 
             vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
 
             -- Enable telescope fzf native, if installed
             pcall(require("telescope").load_extension, "fzf")
-
-            -- Enable telescope-undo
-            require("telescope").load_extension("undo")
 
             -- Telescope live_grep in git root
             -- Function to find the git root directory based on the current buffer's path
@@ -580,12 +579,15 @@ require("lazy").setup({
                 telescope_builtin.buffers({ sort_mru = true })
             end, { desc = "find existing buffers" })
 
-            vim.keymap.set("n", "<leader>sa", telescope_builtin.oldfiles,
-                { desc = "find recently opened files", noremap = true })
-
             vim.keymap.set("n", "<leader>f", function()
                 telescope_builtin.find_files({ hidden = true })
             end, { desc = "search files", noremap = true })
+
+            vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
+                { desc = "search by grep", noremap = true })
+
+            vim.keymap.set("n", "<leader>sa", telescope_builtin.oldfiles,
+                { desc = "find recently opened files", noremap = true })
 
             vim.keymap.set("n", "<leader>s.", function()
                 telescope_builtin.find_files({
@@ -611,9 +613,6 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
                 { desc = "search diagnostic in workspace", noremap = true })
 
-            vim.keymap.set("n", "<leader>sg", telescope_builtin.live_grep,
-                { desc = "search by grep", noremap = true })
-
             vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>",
                 { desc = "search by grep on Git Root", noremap = true })
 
@@ -628,9 +627,6 @@ require("lazy").setup({
 
             vim.keymap.set("n", "<leader>sH", telescope_builtin.help_tags,
                 { desc = "search help", noremap = true })
-
-            vim.keymap.set("n", "<leader>su", require("telescope").extensions.undo.undo,
-                { desc = "search undotree", noremap = true })
 
             vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
                 { desc = "search current word", noremap = true })
