@@ -3,12 +3,8 @@
 CMD_1="$1"
 
 DOTHOME=~/.ioansx
-NVIM_CFG_DIR=$XDG_CONFIG_HOME/nvim
-NVIM_LN=$NVIM_CFG_DIR/init.lua
 PWD=$(pwd)
-TMUX_LN=~/.tmux.conf
 XDG_CONFIG_HOME=~/.config
-ZSH_LN=~/.zshrc
 
 BLUE='\e[94m'
 RESET='\e[0m'
@@ -51,6 +47,12 @@ elif [ $CMD_1 = "install" ]; then
     echo "Configuring alacritty..."
     ensure_linked $PWD/alacritty $XDG_CONFIG_HOME
 
+    if [ "$(uname)" == "Darwin" ]; then
+        echo "Configuring karabiner..."
+        ensure_dir_exists $XDG_CONFIG_HOME/karabiner
+        ensure_linked $PWD/karabiner/karabiner.json $XDG_CONFIG_HOME/karabiner
+    fi
+
     echo "Configuring kitty..."
     ensure_linked $PWD/kitty $XDG_CONFIG_HOME
 
@@ -61,20 +63,25 @@ elif [ $CMD_1 = "install" ]; then
     ensure_linked $PWD/wezterm $XDG_CONFIG_HOME
 
     echo "Configuring neovim..."
-    ensure_dir_exists $NVIM_CFG_DIR
-    ensure_linked $PWD/nvim/init.lua $NVIM_LN
+    ensure_dir_exists $XDG_CONFIG_HOME/nvim
+    ensure_linked $PWD/nvim/init.lua $XDG_CONFIG_HOME/nvim/init.lua
 
     echo "Configuring tmux..."
-    ensure_linked $PWD/tmux/tmux.conf $TMUX_LN
+    ensure_linked $PWD/tmux/tmux.conf ~/.tmux.conf
 
     echo "Configuring zsh..."
-    ensure_linked $PWD/zsh/.zshrc $ZSH_LN
+    ensure_linked $PWD/zsh/.zshrc ~/.zshrc
 elif [ $CMD_1 = "uninstall" ]; then
     echo "Unlinking fish..."
     unlink $XDG_CONFIG_HOME/fish
 
     echo "Unlinking alacritty..."
     unlink $XDG_CONFIG_HOME/alacritty
+
+    if [ "$(uname)" == "Darwin" ]; then
+        echo "Unlinking karabiner..."
+        unlink $XDG_CONFIG_HOME/karabiner/karabiner.json
+    fi
 
     echo "Unlinking kitty..."
     unlink $XDG_CONFIG_HOME/kitty
@@ -86,13 +93,13 @@ elif [ $CMD_1 = "uninstall" ]; then
     unlink $XDG_CONFIG_HOME/wezterm
 
     echo "Unlinking neovim..."
-    unlink $NVIM_LN
+    unlink $XDG_CONFIG_HOME/nvim/init.lua
 
     echo "Unlinking tmux..."
-    unlink $TMUX_LN
+    unlink ~/.tmux.conf
 
     echo "Unlinking zsh..."
-    unlink $ZSH_LN
+    unlink ~/.zshrc
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
     echo "Ioan's configuration manager"
     echo ""
