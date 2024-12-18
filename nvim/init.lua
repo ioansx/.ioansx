@@ -47,8 +47,6 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 
--- vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "toggle last buffer" })
-
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil)) end,
     { desc = "toggle inlay hints" })
@@ -518,6 +516,7 @@ require("lazy").setup({
                     diagnostics = { theme = "ivy" },
                     find_files = { theme = "ivy" },
                     git_files = { theme = "ivy" },
+                    git_bcommits = { theme = "ivy" },
                     grep_string = { theme = "ivy" },
                     live_grep = { theme = "ivy" },
                     lsp_definitions = { theme = "ivy" },
@@ -597,6 +596,15 @@ require("lazy").setup({
                 })
             end, { desc = "search all cwd files", noremap = true })
 
+            vim.keymap.set("n", "<leader>hf", telescope_builtin.git_files,
+                { desc = "search Git files", noremap = true })
+
+            vim.keymap.set("n", "<leader>hc", telescope_builtin.git_bcommits,
+                { desc = "find buffer commits", noremap = true })
+
+            vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
+                { desc = "search by grep on Git Root", noremap = true })
+
             vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
                 { desc = "fuzzily search in current buffer", noremap = true })
 
@@ -612,12 +620,6 @@ require("lazy").setup({
 
             vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
                 { desc = "search diagnostic in workspace", noremap = true })
-
-            vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<CR>",
-                { desc = "search by grep on Git Root", noremap = true })
-
-            vim.keymap.set("n", "<leader>sh", telescope_builtin.git_files,
-                { desc = "search Git files", noremap = true })
 
             vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
                 { desc = "search resume", noremap = true })
