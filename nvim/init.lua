@@ -48,8 +48,9 @@ vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
-vim.keymap.set("n", "<leader>tk", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil)) end,
-    { desc = "toggle inlay hints" })
+vim.keymap.set("n", "<leader>tk", function()
+    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
+end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "clipboard copy" })
@@ -277,6 +278,22 @@ require("lazy").setup({
                 enabled = true
             },
         }
+    },
+
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            library = {
+                { path = "luvit-meta/library", words = { "vim%.uv" } },
+            }
+        }
+    },
+
+    {
+        "Saecki/crates.nvim",
+        event = { "BufRead Cargo.toml" },
+        opts = {},
     },
 
     {
@@ -636,21 +653,5 @@ require("lazy").setup({
                 telescope_builtin.lsp_implementations({ show_line = false })
             end, { desc = "goto implementation" })
         end
-    },
-
-    {
-        "folke/lazydev.nvim",
-        ft = "lua", -- only load on lua files
-        opts = {
-            library = {
-                { path = "luvit-meta/library", words = { "vim%.uv" } },
-            }
-        }
-    },
-
-    {
-        "Saecki/crates.nvim",
-        event = { "BufRead Cargo.toml" },
-        opts = {},
     },
 }, {})
