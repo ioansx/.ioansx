@@ -264,7 +264,7 @@ require("lazy").setup({
             -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
             -- see the "default configuration" section below for full documentation on how to define
             -- your own keymap.
-            keymap = { preset = 'super-tab' },
+            keymap = { preset = 'default' },
             completion = {
                 documentation = { auto_show = true },
             },
@@ -313,10 +313,10 @@ require("lazy").setup({
             require("mason-lspconfig").setup()
 
             local servers = {
-                eslint = {},
-                cssls = {},
-                tailwindcss = {},
                 html = {},
+                cssls = {},
+                eslint = {},
+                tailwindcss = {},
                 jsonls = {},
                 lua_ls = {
                     Lua = {
@@ -382,15 +382,15 @@ require("lazy").setup({
             end
 
             -- https://github.com/neovim/neovim/issues/30985#issuecomment-2447329525
-            for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
-                local default_diagnostic_handler = vim.lsp.handlers[method]
-                vim.lsp.handlers[method] = function(err, result, context, config)
-                    if err ~= nil and err.code == -32802 then
-                        return
-                    end
-                    return default_diagnostic_handler(err, result, context, config)
-                end
-            end
+            -- for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
+            --     local default_diagnostic_handler = vim.lsp.handlers[method]
+            --     vim.lsp.handlers[method] = function(err, result, context, config)
+            --         if err ~= nil and err.code == -32802 then
+            --             return
+            --         end
+            --         return default_diagnostic_handler(err, result, context, config)
+            --     end
+            -- end
 
             vim.g.zig_fmt_parse_errors = 0
         end
@@ -498,16 +498,10 @@ require("lazy").setup({
         config = function()
             require("telescope").setup({
                 defaults = {
-                    mappings = {
-                        i = {
-                            ["<C-u>"] = false,
-                            ["<C-d>"] = false,
-                        },
-                    },
                     layout_strategy = "vertical",
                     layout_config = {
-                        height = 0.95,
-                        width = 0.8,
+                        height = 0.9,
+                        width = 0.9,
                     },
                 },
                 pickers = {
@@ -516,7 +510,7 @@ require("lazy").setup({
                     diagnostics = { theme = "ivy" },
                     find_files = { theme = "ivy" },
                     git_files = { theme = "ivy" },
-                    git_bcommits = { theme = "ivy" },
+                    -- git_bcommits = { theme = "ivy" },
                     grep_string = { theme = "ivy" },
                     live_grep = { theme = "ivy" },
                     lsp_definitions = { theme = "ivy" },
@@ -582,22 +576,17 @@ require("lazy").setup({
                 telescope_builtin.find_files({ hidden = true })
             end, { desc = "search files", noremap = true })
 
+            vim.keymap.set("n", "<leader>F", telescope_builtin.git_files,
+                { desc = "search Git files", noremap = true })
+
             vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
                 { desc = "search by grep", noremap = true })
 
-            vim.keymap.set("n", "<leader>sa", telescope_builtin.oldfiles,
+            vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
+                { desc = "fuzzily search in current buffer", noremap = true })
+
+            vim.keymap.set("n", "<leader>sf", telescope_builtin.oldfiles,
                 { desc = "find recently opened files", noremap = true })
-
-            vim.keymap.set("n", "<leader>s.", function()
-                telescope_builtin.find_files({
-                    hidden = true,
-                    no_ignore = true,
-                    prompt_title = "Find Files in CWD",
-                })
-            end, { desc = "search all cwd files", noremap = true })
-
-            vim.keymap.set("n", "<leader>hf", telescope_builtin.git_files,
-                { desc = "search Git files", noremap = true })
 
             vim.keymap.set("n", "<leader>hc", telescope_builtin.git_bcommits,
                 { desc = "find buffer commits", noremap = true })
@@ -605,21 +594,11 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
                 { desc = "search by grep on Git Root", noremap = true })
 
-            vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
-                { desc = "fuzzily search in current buffer", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>so", function()
-            --     telescope_builtin.live_grep({
-            --         grep_open_files = true,
-            --         prompt_title = "live Grep in Open files",
-            --     })
-            -- end, { desc = "search in open files", noremap = true })
+            vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
+                { desc = "search diagnostic in workspace", noremap = true })
 
             vim.keymap.set("n", "<leader>sD", function() telescope_builtin.diagnostics({ bufnr = 0 }) end,
                 { desc = "search diagnostic", noremap = true })
-
-            vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
-                { desc = "search diagnostic in workspace", noremap = true })
 
             vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
                 { desc = "search resume", noremap = true })
@@ -627,18 +606,22 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>sR", telescope_builtin.registers,
                 { desc = "search registers", noremap = true })
 
-            vim.keymap.set("n", "<leader>sH", telescope_builtin.help_tags,
+            vim.keymap.set("n", "<leader>sh", telescope_builtin.help_tags,
                 { desc = "search help", noremap = true })
 
             vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
                 { desc = "search current word", noremap = true })
 
+            vim.keymap.set("n", "<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
+                { desc = "search workspace symbols" })
+
+            vim.keymap.set("n", "<leader>sS", telescope_builtin.lsp_document_symbols,
+                { desc = "search document symbols" })
+
             vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, { desc = "goto definition" })
 
             vim.keymap.set("n", "gs", function()
-                telescope_builtin.lsp_type_definitions({
-                    show_line = false,
-                })
+                telescope_builtin.lsp_type_definitions({ show_line = false })
             end, { desc = "goto type definitions" })
 
             vim.keymap.set("n", "gr", function()
@@ -649,16 +632,8 @@ require("lazy").setup({
             end, { desc = "goto references" })
 
             vim.keymap.set("n", "gI", function()
-                telescope_builtin.lsp_implementations({
-                    show_line = false,
-                })
+                telescope_builtin.lsp_implementations({ show_line = false })
             end, { desc = "goto implementation" })
-
-            vim.keymap.set("n", "<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
-                { desc = "search workspace symbols" })
-
-            vim.keymap.set("n", "<leader>sS", telescope_builtin.lsp_document_symbols,
-                { desc = "search document symbols" })
         end
     },
 
