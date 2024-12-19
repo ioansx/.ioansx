@@ -11,23 +11,24 @@ RESET='\e[0m'
 
 ensure_dir_exists () {
     local dirname="$1"
-    if [ ! -d $dirname ]; then
+    if [ ! -d "$dirname" ]; then
         echo "Creating directory: $dirname"
-        mkdir $dirname
+        mkdir "$dirname"
     fi
 }
 
 ensure_linked () {
     local tname="$1"
     local lname="$2"
-    if [ -L $lname ]; then
+    if [ -L "$lname" ]; then
         echo "Symlink exists: $lname"
     else
-        ln -sv $tname $lname
+        ln -sv "$tname" "$lname"
     fi
 }
 
 print_help () {
+    # shellcheck disable=SC2059
     printf "Options:
 ${BLUE}--help, -h${RESET} Print help
 
@@ -40,38 +41,38 @@ Commands:
 
 if [ -z "$CMD_1" ]; then
     print_help
-elif [ $CMD_1 = "install" ]; then
+elif [ "$CMD_1" = "install" ]; then
     echo "Configuring fish..."
-    ensure_linked $PWD/fish $XDG_CONFIG_HOME
+    ensure_linked "$PWD/fish" $XDG_CONFIG_HOME
 
     echo "Configuring alacritty..."
-    ensure_linked $PWD/alacritty $XDG_CONFIG_HOME
+    ensure_linked "$PWD/alacritty" $XDG_CONFIG_HOME
 
     if [ "$(uname)" == "Darwin" ]; then
         echo "Configuring karabiner..."
         ensure_dir_exists $XDG_CONFIG_HOME/karabiner
-        ensure_linked $PWD/karabiner/karabiner.json $XDG_CONFIG_HOME/karabiner
+        ensure_linked "$PWD/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
     fi
 
     echo "Configuring kitty..."
-    ensure_linked $PWD/kitty $XDG_CONFIG_HOME
+    ensure_linked "$PWD/kitty" $XDG_CONFIG_HOME
 
     echo "Configuring lazygit..."
-    ensure_linked $PWD/lazygit $XDG_CONFIG_HOME
+    ensure_linked "$PWD/lazygit" $XDG_CONFIG_HOME
 
     echo "Configuring wezterm..."
-    ensure_linked $PWD/wezterm $XDG_CONFIG_HOME
+    ensure_linked "$PWD/wezterm" $XDG_CONFIG_HOME
 
     echo "Configuring neovim..."
     ensure_dir_exists $XDG_CONFIG_HOME/nvim
-    ensure_linked $PWD/nvim/init.lua $XDG_CONFIG_HOME/nvim/init.lua
+    ensure_linked "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
 
     echo "Configuring tmux..."
-    ensure_linked $PWD/tmux/tmux.conf ~/.tmux.conf
+    ensure_linked "$PWD/tmux/tmux.conf" ~/.tmux.conf
 
     echo "Configuring zsh..."
-    ensure_linked $PWD/zsh/.zshrc ~/.zshrc
-elif [ $CMD_1 = "uninstall" ]; then
+    ensure_linked "$PWD/zsh/.zshrc" ~/.zshrc
+elif [ "$CMD_1" = "uninstall" ]; then
     echo "Unlinking fish..."
     unlink $XDG_CONFIG_HOME/fish
 

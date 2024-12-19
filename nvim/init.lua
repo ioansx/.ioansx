@@ -313,6 +313,7 @@ require("lazy").setup({
             require("mason-lspconfig").setup()
 
             local servers = {
+                bashls = {},
                 html = {},
                 cssls = {},
                 eslint = {},
