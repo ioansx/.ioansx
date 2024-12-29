@@ -256,24 +256,11 @@ require("lazy").setup({
 
     {
         'saghen/blink.cmp',
-        lazy = false, -- lazy loading handled internally
-        -- use a release tag to download pre-built binaries
         version = 'v0.*',
         opts = {
-            -- 'default' for mappings similar to built-in completion
-            -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys to navigate)
-            -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
-            -- see the "default configuration" section below for full documentation on how to define
-            -- your own keymap.
             keymap = { preset = 'super-tab' },
-            completion = {
-                documentation = { auto_show = true },
-            },
             sources = {
-                default = { 'lsp' },
-            },
-            signature = {
-                enabled = true
+                default = { 'lsp', 'path', 'buffer' },
             },
         }
     },
@@ -319,9 +306,6 @@ require("lazy").setup({
 
                 vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help,
                     { buffer = bufnr, desc = "LSP: signature docs" })
-
-                -- vim.keymap.set("n", "gD", vim.lsp.buf.declaration,
-                --     { buffer = bufnr, desc = "goto declaration" })
             end
 
             require("mason").setup()
