@@ -270,9 +270,7 @@ require("lazy").setup({
                 documentation = { auto_show = true },
             },
             sources = {
-                completion = {
-                    enabled_providers = { 'lsp', 'path', 'buffer' },
-                }
+                default = { 'lsp' },
             },
             signature = {
                 enabled = true

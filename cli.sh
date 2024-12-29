@@ -54,6 +54,9 @@ elif [ "$CMD_1" = "install" ]; then
         ensure_linked "$PWD/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
     fi
 
+    echo "Configuring ghostty..."
+    ensure_linked "$PWD/ghostty" $XDG_CONFIG_HOME
+
     echo "Configuring kitty..."
     ensure_linked "$PWD/kitty" $XDG_CONFIG_HOME
 
@@ -83,6 +86,9 @@ elif [ "$CMD_1" = "uninstall" ]; then
         echo "Unlinking karabiner..."
         unlink $XDG_CONFIG_HOME/karabiner/karabiner.json
     fi
+
+    echo "Unlinking ghostty..."
+    unlink $XDG_CONFIG_HOME/ghostty
 
     echo "Unlinking kitty..."
     unlink $XDG_CONFIG_HOME/kitty
