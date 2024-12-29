@@ -32,7 +32,6 @@ Commands:
 if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
-    ln -fsvw "$PWD/alacritty" $XDG_CONFIG_HOME
     ln -fsvw "$PWD/fish" $XDG_CONFIG_HOME
     ln -fsvw "$PWD/ghostty" $XDG_CONFIG_HOME
 
@@ -51,7 +50,6 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsvw "$PWD/tmux/tmux.conf" ~/.tmux.conf
     ln -fsvw "$PWD/zsh/.zshrc" ~/.zshrc
 elif [ "$CMD_1" = "unlink" ]; then
-    rm -v $XDG_CONFIG_HOME/alacritty
     rm -v $XDG_CONFIG_HOME/fish
     rm -v $XDG_CONFIG_HOME/ghostty
 
