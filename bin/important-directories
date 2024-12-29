@@ -4,7 +4,9 @@ if [[ $# -eq 1 ]]; then
     selected=$1
 else
     selected=$({ \
-        find ~/dev/personal ~/dev/sosha/lightspeed -mindepth 1 -maxdepth 1 -type d; \
+        find ~/dev/personal -mindepth 1 -maxdepth 1 -type d; \
+        find ~/dev/thesis -mindepth 1 -maxdepth 1 -type d; \
+        find ~/dev/sosha/lightspeed -mindepth 1 -maxdepth 1 -type d; \
         echo ~/dev/sosha/sosha-conversion-tracking; \
         echo ~/.ioansx; \
     } | fzf)
