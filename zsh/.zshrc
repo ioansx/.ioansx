@@ -121,6 +121,7 @@ export PATH=$PATH:$HOME/.ioansx/bin
 
 alias lzg="lazygit"
 alias lzd="lazydocker"
+alias nav='cd $(important-directories)'
 
 export XDG_CONFIG_HOME="$HOME/.config"
 

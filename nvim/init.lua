@@ -261,6 +261,8 @@ require("lazy").setup({
             keymap = { preset = 'super-tab' },
             sources = {
                 default = { 'lsp', 'path', 'buffer' },
+                cmdline = {},
+
             },
         }
     },
