@@ -73,7 +73,6 @@ DISABLE_AUTO_TITLE="true"
 plugins=(
     colored-man-pages
     git
-    zsh-vi-mode
     zsh-autosuggestions
     zsh-syntax-highlighting
 )
@@ -93,6 +92,9 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
+
+# Enable vi mode
+bindkey -v
 
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"

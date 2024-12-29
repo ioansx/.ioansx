@@ -1,6 +1,10 @@
 font-feature = -calt, -liga, -dlig
 font-size = 15
 
+# These are clamped to max screen size.
+window-height = 9000
+window-width = 9000
+
 macos-option-as-alt = true
 
 # The command to run, usually a shell. If this is not an absolute path, it'll
