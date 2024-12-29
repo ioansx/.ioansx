@@ -23,15 +23,15 @@ print_help () {
 ${BLUE}--help, -h${RESET} Print help
 
 Commands:
-    ${BLUE}install${RESET}     Link the configuration with symbolic links
-    ${BLUE}uninstall${RESET}   Unlink the configuration
-    ${BLUE}help${RESET}        Print help
+    ${BLUE}link${RESET}     Link the configuration.
+    ${BLUE}unlink${RESET}   Unlink the configuration
+    ${BLUE}help${RESET}     Print help
 "
 }
 
 if [ -z "$CMD_1" ]; then
     print_help
-elif [ "$CMD_1" = "install" ]; then
+elif [ "$CMD_1" = "link" ]; then
     ln -fsvw "$PWD/alacritty" $XDG_CONFIG_HOME
     ln -fsvw "$PWD/fish" $XDG_CONFIG_HOME
     ln -fsvw "$PWD/ghostty" $XDG_CONFIG_HOME
@@ -50,21 +50,21 @@ elif [ "$CMD_1" = "install" ]; then
 
     ln -fsvw "$PWD/tmux/tmux.conf" ~/.tmux.conf
     ln -fsvw "$PWD/zsh/.zshrc" ~/.zshrc
-elif [ "$CMD_1" = "uninstall" ]; then
-    unlink -v $XDG_CONFIG_HOME/alacritty
-    unlink -v $XDG_CONFIG_HOME/fish
-    unlink -v $XDG_CONFIG_HOME/ghostty
+elif [ "$CMD_1" = "unlink" ]; then
+    rm -v $XDG_CONFIG_HOME/alacritty
+    rm -v $XDG_CONFIG_HOME/fish
+    rm -v $XDG_CONFIG_HOME/ghostty
 
     if [ "$(uname)" == "Darwin" ]; then
-        unlink -v $XDG_CONFIG_HOME/karabiner/karabiner.json
+        rm -v $XDG_CONFIG_HOME/karabiner/karabiner.json
     fi
 
-    unlink -v $XDG_CONFIG_HOME/kitty
-    unlink -v $XDG_CONFIG_HOME/lazygit
-    unlink -v $XDG_CONFIG_HOME/wezterm
-    unlink -v $XDG_CONFIG_HOME/nvim/init.lua
-    unlink -v ~/.tmux.conf
-    unlink -v ~/.zshrc
+    rm -v $XDG_CONFIG_HOME/kitty
+    rm -v $XDG_CONFIG_HOME/lazygit
+    rm -v $XDG_CONFIG_HOME/wezterm
+    rm -v $XDG_CONFIG_HOME/nvim/init.lua
+    rm -v ~/.tmux.conf
+    rm -v ~/.zshrc
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
     echo "Ioan's configuration manager"
     echo ""
