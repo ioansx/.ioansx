@@ -575,11 +575,12 @@ require("lazy").setup({
             end, { desc = "find existing buffers" })
 
             vim.keymap.set("n", "<leader>f", function()
+                telescope_builtin.git_files({ show_untracked = true })
+            end, { desc = "search Git files", noremap = true })
+
+            vim.keymap.set("n", "<leader>F", function()
                 telescope_builtin.find_files({ hidden = true })
             end, { desc = "search files", noremap = true })
-
-            vim.keymap.set("n", "<leader>F", telescope_builtin.git_files,
-                { desc = "search Git files", noremap = true })
 
             vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
                 { desc = "search by grep", noremap = true })
@@ -596,11 +597,13 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
                 { desc = "search by grep on Git Root", noremap = true })
 
-            vim.keymap.set("n", "<leader>sd", function() telescope_builtin.diagnostics({ bufnr = nil }) end,
-                { desc = "search diagnostic in workspace", noremap = true })
+            vim.keymap.set("n", "<leader>sd", function()
+                telescope_builtin.diagnostics({ bufnr = nil })
+            end, { desc = "search diagnostic in workspace", noremap = true })
 
-            vim.keymap.set("n", "<leader>sD", function() telescope_builtin.diagnostics({ bufnr = 0 }) end,
-                { desc = "search diagnostic", noremap = true })
+            vim.keymap.set("n", "<leader>sD", function()
+                telescope_builtin.diagnostics({ bufnr = 0 })
+            end, { desc = "search diagnostic", noremap = true })
 
             vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
                 { desc = "search resume", noremap = true })
