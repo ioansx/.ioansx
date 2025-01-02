@@ -36,6 +36,8 @@ vim.opt.updatetime = 250
 vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
 
+vim.opt.clipboard = "unnamedplus"
+
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 vim.keymap.set("n", "j", "gj", { silent = true })
@@ -53,8 +55,7 @@ vim.keymap.set("n", "<leader>tk", function()
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
-vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "clipboard copy" })
-vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "clipboard paste" })
+vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
 
 vim.keymap.set("n", "<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
 vim.keymap.set("n", "<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
@@ -264,6 +265,7 @@ require("lazy").setup({
                 cmdline = {},
 
             },
+            signature = { enabled = true },
         }
     },
 
