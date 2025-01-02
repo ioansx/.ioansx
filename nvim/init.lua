@@ -577,11 +577,11 @@ require("lazy").setup({
             end, { desc = "find existing buffers" })
 
             vim.keymap.set("n", "<leader>f", function()
-                telescope_builtin.git_files({ show_untracked = true })
-            end, { desc = "search Git files", noremap = true })
-
-            vim.keymap.set("n", "<leader>F", function()
-                telescope_builtin.find_files({ hidden = true })
+                telescope_builtin.find_files({
+                    hidden = true,
+                    no_ignore = true,
+                    no_ignore_parent = true,
+                })
             end, { desc = "search files", noremap = true })
 
             vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
@@ -592,6 +592,10 @@ require("lazy").setup({
 
             vim.keymap.set("n", "<leader>sf", telescope_builtin.oldfiles,
                 { desc = "find recently opened files", noremap = true })
+
+            vim.keymap.set("n", "<leader>sg", function()
+                telescope_builtin.git_files({ show_untracked = true })
+            end, { desc = "search Git files", noremap = true })
 
             vim.keymap.set("n", "<leader>hc", telescope_builtin.git_bcommits,
                 { desc = "find buffer commits", noremap = true })
