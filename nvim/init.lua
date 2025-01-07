@@ -308,6 +308,9 @@ require("lazy").setup({
                 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format,
                     { buffer = bufnr, desc = "LSP: format buffer" })
 
+                vim.keymap.set("n", "<leader>cr", ":LspRestart<CR>",
+                    { buffer = bufnr, desc = "LSP restart" })
+
                 vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action,
                     { buffer = bufnr, desc = "LSP: code action" })
 
