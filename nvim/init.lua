@@ -67,7 +67,7 @@ vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floa
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
 
 vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Highlight when yanking (copying) text',
+    desc = 'Highlight when yanking text',
     group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
     callback = function()
         vim.highlight.on_yank()
@@ -193,6 +193,12 @@ require("lazy").setup({
     },
 
     {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = { signs = false }
+    },
+
+    {
         'stevearc/conform.nvim',
         opts = {
             format_on_save = {
@@ -247,12 +253,6 @@ require("lazy").setup({
 
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
         end,
-    },
-
-    {
-        "folke/todo-comments.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        opts = { signs = false }
     },
 
     {
@@ -583,6 +583,12 @@ require("lazy").setup({
             end, { desc = "find existing buffers" })
 
             vim.keymap.set("n", "<leader>f", function()
+                telescope_builtin.find_files({
+                    hidden = true,
+                })
+            end, { desc = "search files", noremap = true })
+
+            vim.keymap.set("n", "<leader>F", function()
                 telescope_builtin.find_files({
                     hidden = true,
                     no_ignore = true,
