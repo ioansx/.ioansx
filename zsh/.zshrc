@@ -71,8 +71,6 @@ DISABLE_AUTO_TITLE="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    colored-man-pages
-    git
     zsh-autosuggestions
     zsh-syntax-highlighting
 )
@@ -122,6 +120,7 @@ export PATH=$PATH:$HOME/.ioansx/bin
 alias lzg="lazygit"
 alias lzd="lazydocker"
 alias nav='cd $(important-directories)'
+alias man='MANWIDTH=80 man'
 
 export XDG_CONFIG_HOME="$HOME/.config"
 
