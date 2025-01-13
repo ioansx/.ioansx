@@ -326,7 +326,7 @@ require("lazy").setup({
 
             local servers = {
                 bashls = {},
-                html = {},
+                -- html = {},
                 cssls = {},
                 eslint = {},
                 tailwindcss = {},
