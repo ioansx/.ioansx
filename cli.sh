@@ -32,37 +32,41 @@ Commands:
 if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
-    ln -fsvw "$PWD/fish" $XDG_CONFIG_HOME
-    ln -fsvw "$PWD/ghostty" $XDG_CONFIG_HOME
+    # ln -fsv "$PWD/fish" $XDG_CONFIG_HOME
+    ln -fsv "$PWD/ghostty" $XDG_CONFIG_HOME
 
     if [ "$(uname)" == "Darwin" ]; then
         ensure_dir_exists $XDG_CONFIG_HOME/karabiner
-        ln -fsvw "$PWD/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
+        ln -fsv "$PWD/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
     fi
 
-    ln -fsvw "$PWD/kitty" $XDG_CONFIG_HOME
-    ln -fsvw "$PWD/lazygit" $XDG_CONFIG_HOME
-    ln -fsvw "$PWD/wezterm" $XDG_CONFIG_HOME
+    # ln -fsv "$PWD/kitty" $XDG_CONFIG_HOME
+    ln -fsv "$PWD/lazygit" $XDG_CONFIG_HOME
+    ln -fsv "$PWD/wezterm" $XDG_CONFIG_HOME
 
     ensure_dir_exists $XDG_CONFIG_HOME/nvim
-    ln -fsvw "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
+    ln -fsv "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
 
-    ln -fsvw "$PWD/tmux/tmux.conf" ~/.tmux.conf
-    ln -fsvw "$PWD/zsh/.zshrc" ~/.zshrc
+    ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
+    if [ "$(uname)" == "Darwin" ]; then
+        ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
+    fi
 elif [ "$CMD_1" = "unlink" ]; then
-    rm -v $XDG_CONFIG_HOME/fish
+    # rm -v $XDG_CONFIG_HOME/fish
     rm -v $XDG_CONFIG_HOME/ghostty
 
     if [ "$(uname)" == "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/karabiner/karabiner.json
     fi
 
-    rm -v $XDG_CONFIG_HOME/kitty
+    # rm -v $XDG_CONFIG_HOME/kitty
     rm -v $XDG_CONFIG_HOME/lazygit
     rm -v $XDG_CONFIG_HOME/wezterm
     rm -v $XDG_CONFIG_HOME/nvim/init.lua
     rm -v ~/.tmux.conf
-    rm -v ~/.zshrc
+    if [ "$(uname)" == "Darwin" ]; then
+        rm -v ~/.zshrc
+    fi
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
     echo "Ioan's configuration manager"
     echo ""
