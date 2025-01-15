@@ -32,6 +32,7 @@ Commands:
 if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
+    ln -fsv "$PWD/bash/.bashrc" ~/.bashrc
     # ln -fsv "$PWD/fish" $XDG_CONFIG_HOME
     ln -fsv "$PWD/ghostty" $XDG_CONFIG_HOME
 
@@ -48,10 +49,12 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
 
     ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
+    ln -fsv "$PWD/vim" $XDG_CONFIG_HOME
     if [ "$(uname)" == "Darwin" ]; then
         ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
     fi
 elif [ "$CMD_1" = "unlink" ]; then
+    rm -v ~/.bashrc
     # rm -v $XDG_CONFIG_HOME/fish
     rm -v $XDG_CONFIG_HOME/ghostty
 
@@ -64,6 +67,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v $XDG_CONFIG_HOME/wezterm
     rm -v $XDG_CONFIG_HOME/nvim/init.lua
     rm -v ~/.tmux.conf
+    rm -v $XDG_CONFIG_HOME/vim
     if [ "$(uname)" == "Darwin" ]; then
         rm -v ~/.zshrc
     fi

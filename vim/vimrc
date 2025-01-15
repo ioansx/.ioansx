@@ -1,0 +1,31 @@
+let mapleader = " "
+let maplocalleader = " "
+
+set history=500
+
+set number
+
+filetype plugin on
+filetype indent on
+
+syntax enable
+
+set autoread
+set wildmenu
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set magic
+set showmatch
+set smarttab
+set shiftwidth=4
+set tabstop=4
+set autoindent
+set smartindent
+set mouse=a
+set scrolloff=8
+set timeoutlen=300
+set updatetime=250
+set clipboard=unnamedplus
+
