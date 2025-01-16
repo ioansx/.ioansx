@@ -127,3 +127,4 @@ set -o vi
 
 # fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+. "$HOME/.cargo/env"
