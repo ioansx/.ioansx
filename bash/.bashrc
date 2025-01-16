@@ -116,15 +116,16 @@ fi
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:~/bin/neovim/bin
 export PATH=$PATH:~/bin/node/bin
+export PATH=$PATH:~/go/bin
 
 alias l='ls -CF'
 alias la='ls -A'
 alias ll='ls -alF'
 alias man='MANWIDTH=80 man'
+alias lzg='lazygit'
 
 # enable vi bindings
 set -o vi
 
-# fzf
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.fzf.bash ] && source "$HOME/.fzf.bash"
 . "$HOME/.cargo/env"
