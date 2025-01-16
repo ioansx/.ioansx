@@ -103,18 +103,27 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-# if [ -f ~/.bash_aliases ]; then
-#     . ~/.bash_aliases
-# fi
-alias ll='ls -alF'
-alias la='ls -A'
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:~/bin/neovim/bin
+export PATH=$PATH:~/bin/node/bin
+
 alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
 alias man='MANWIDTH=80 man'
 
 # enable vi bindings
 set -o vi
 
+# fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

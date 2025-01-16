@@ -38,6 +38,8 @@ vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
 
+vim.cmd("colorscheme retrobox")
+
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 vim.keymap.set("n", "j", "gj", { silent = true })
@@ -85,14 +87,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    {
-        "rebelot/kanagawa.nvim",
-        opts = {},
-        config = function()
-            vim.cmd("colorscheme kanagawa-wave")
-        end
-    },
-
     'tpope/vim-sleuth',
 
     {
@@ -330,7 +324,7 @@ require("lazy").setup({
                 cssls = {},
                 eslint = {},
                 tailwindcss = {},
-                jsonls = {},
+                -- jsonls = {},
                 lua_ls = {
                     Lua = {
                         workspace = { checkThirdParty = false },
@@ -338,17 +332,17 @@ require("lazy").setup({
                         diagnostics = { disable = { 'missing-fields' } },
                     },
                 },
-                pyright = {
-                    autoImportCompletion = true,
-                    python = {
-                        analysis = {
-                            autoSearchPaths = true,
-                            diagnosticMode = 'openFilesOnly',
-                            useLibraryCodeForTypes = true,
-                            typeCheckingMode = 'off'
-                        }
-                    }
-                },
+                -- pyright = {
+                --     autoImportCompletion = true,
+                --     python = {
+                --         analysis = {
+                --             autoSearchPaths = true,
+                --             diagnosticMode = 'openFilesOnly',
+                --             useLibraryCodeForTypes = true,
+                --             typeCheckingMode = 'off'
+                --         }
+                --     }
+                -- },
                 rust_analyzer = {
                     ["rust-analyzer"] = {
                         completion = {

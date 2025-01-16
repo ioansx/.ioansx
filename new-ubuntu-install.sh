@@ -4,6 +4,7 @@ sudo apt update && apt upgrade
 
 # General
 sudo apt install \
+	cmake \
 	curl \
 	gcc \
 	git \
@@ -11,6 +12,7 @@ sudo apt install \
 	make \
 	tmux \
 	vim \
+	wl-clipboard \
 	-y
 
 # Neovim dependencies
