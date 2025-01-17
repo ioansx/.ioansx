@@ -103,16 +103,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:~/bin/neovim/bin
 export PATH=$PATH:~/bin/node/bin
