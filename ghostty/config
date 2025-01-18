@@ -1,7 +1,9 @@
+cursor-style = block
 font-feature = -calt
 font-size = 13
 macos-option-as-alt = true
 theme = GruvboxDarkHard
+shell-integration-features = no-cursor
 
 # Window width and height will be clamped to max screen size.
 window-height = 9000

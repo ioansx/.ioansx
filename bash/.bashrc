@@ -56,9 +56,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# blinking block cursor
-PROMPT_COMMAND='echo -e "\033[?16;0;200c"'
-PS1='\[\033[01;32m\]\t \[\033[01;34m\]\w\[\033[00m\] $ '
+PS1='\[\033[01;32m\]\t \[\033[01;34m\]\w\[\033[00m\] \$ '
+
+set -o vi
 
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:$HOME/bin/neovim/bin"
@@ -71,8 +71,6 @@ alias la='ls -A'
 alias ll='ls -alF'
 alias man='MANWIDTH=80 man'
 alias lzg='lazygit'
-
-set -o vi
 
 eval "$(fzf --bash)"
 
