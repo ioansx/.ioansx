@@ -1,16 +1,25 @@
 #!/bin/bash
 
-sudo apt update
-sudo apt upgrade
+sudo apt update && apt upgrade
+
+# General
 sudo apt install \
+	cmake \
 	curl \
-	fd-find \
 	gcc \
 	git \
+	htop \
 	make \
-	ripgrep \
 	tmux \
 	vim \
+	wl-clipboard \
+	-y
+
+# Neovim dependencies
+sudo apt install \
+	fd-find \
+	ripgrep \
+	shellcheck \
 	-y
 
 sudo snap install \
