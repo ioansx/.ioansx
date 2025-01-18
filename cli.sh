@@ -33,6 +33,7 @@ if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/bash/.bashrc" ~/.bashrc
+    ln -fsv "$PWD/bash/.inputrc" ~/.inputrc
     # ln -fsv "$PWD/fish" $XDG_CONFIG_HOME
     ln -fsv "$PWD/ghostty" $XDG_CONFIG_HOME
 
@@ -55,6 +56,7 @@ elif [ "$CMD_1" = "link" ]; then
     fi
 elif [ "$CMD_1" = "unlink" ]; then
     rm -v ~/.bashrc
+    rm -v ~/.inputrc
     # rm -v $XDG_CONFIG_HOME/fish
     rm -v $XDG_CONFIG_HOME/ghostty
 
