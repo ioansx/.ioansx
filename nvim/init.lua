@@ -38,7 +38,7 @@ vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
 
-vim.cmd("colorscheme retrobox")
+-- vim.cmd("colorscheme retrobox")
 
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
@@ -87,6 +87,14 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+    {
+        "ellisonleao/gruvbox.nvim",
+        priority = 1000,
+        config = function()
+            vim.cmd([[colorscheme gruvbox]])
+        end
+    },
+
     'tpope/vim-sleuth',
 
     {
