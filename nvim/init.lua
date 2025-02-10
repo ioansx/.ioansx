@@ -175,42 +175,65 @@ require("lazy").setup({
         "folke/snacks.nvim",
         priority = 1000,
         lazy = false,
+        dependencies = { { "echasnovski/mini.icons", opts = {} } },
         opts = {
-            -- bigfile = { enabled = true },
-            -- dashboard = { enabled = true },
-            -- explorer = { enabled = true },
+            bigfile = { enabled = true },
             indent = { enabled = true, animate = { enabled = false } },
-            -- input = { enabled = true },
-            -- notifier = {
-            --     enabled = true,
-            --     timeout = 3000,
-            -- },
-            picker = { enabled = true },
-            -- quickfile = { enabled = true },
-            -- scope = { enabled = true },
-            -- scroll = { enabled = true },
-            -- statuscolumn = { enabled = true },
-            -- words = { enabled = true },
-            -- styles = {
-            --     notification = {
-            --         -- wo = { wrap = true } -- Wrap notifications
-            --     }
-            -- }
+            picker = {
+                enabled = true,
+                layout = {
+                    preview = "main",
+                    layout = {
+                        box = "vertical",
+                        backdrop = false,
+                        width = 0,
+                        height = 0.4,
+                        position = "bottom",
+                        border = "top",
+                        title = " {title} {live} {flags}",
+                        title_pos = "left",
+                        { win = "input", height = 1, border = "bottom" },
+                        {
+                            box = "horizontal",
+                            { win = "list",    border = "none" },
+                            { win = "preview", title = "{preview}", width = 0.6, border = "left" },
+                        },
+                    },
+                },
+            },
+            words = { enabled = true },
         },
         keys = {
-            -- { "<leader><space>", function() Snacks.picker.smart() end,    desc = "Smart Find Files" },
-            { "<leader>/",       function() Snacks.picker.grep() end,               desc = "Grep" },
-            { "<leader><space>", function() Snacks.picker.buffers() end,            desc = "Recent" },
-            { "<leader>f",       function() Snacks.picker.git_files() end,          desc = "Find Git Files" },
-            { "<leader>F",       function() Snacks.picker.files() end,              desc = "Find Files" },
-            { "<leader>hb",      function() Snacks.git.blame_line() end,            desc = "Git Branches" },
-            { "<leader>hd",      function() Snacks.picker.git_diff() end,           desc = "Git Diff (Hunks)" },
-            { "<leader>sD",      function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
-            { "<leader>sf",      function() Snacks.picker.recent() end,             desc = "Recent" },
-            { "<leader>sr",      function() Snacks.picker.resume() end,             desc = "Resume" },
-            { "<leader>sd",      function() Snacks.picker.diagnostics() end,        desc = "Diagnostics" },
-            { "<leader>su",      function() Snacks.picker.undo() end,               desc = "Undo History" },
-            { '<leader>s"',      function() Snacks.picker.registers() end,          desc = "Registers" },
+            { "<leader>/",       function() Snacks.picker.grep() end,                  desc = "Grep" },
+            { "<leader><space>", function() Snacks.picker.smart() end,                 desc = "Smart Find Files" },
+            { "<leader>fb",      function() Snacks.picker.buffers() end,               desc = "Buffers" },
+            { "<leader>ff",      function() Snacks.picker.files() end,                 desc = "Find Files" },
+            { "<leader>fg",      function() Snacks.picker.git_files() end,             desc = "Find Git Files" },
+            { "<leader>fr",      function() Snacks.picker.recent() end,                desc = "Recent" },
+            { "<leader>hL",      function() Snacks.picker.git_log_line() end,          desc = "Git Log Line" },
+            { "<leader>hS",      function() Snacks.picker.git_stash() end,             desc = "Git Stash" },
+            { "<leader>hb",      function() Snacks.git.blame_line() end,               desc = "Git Branches" },
+            { "<leader>hd",      function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
+            { "<leader>hf",      function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
+            { "<leader>hl",      function() Snacks.picker.git_log() end,               desc = "Git Log" },
+            { "<leader>hs",      function() Snacks.picker.git_status() end,            desc = "Git Status" },
+            { "<leader>hx",      function() Snacks.gitbrowse() end,                    desc = "Git Browse",               mode = { "n", "v" } },
+            { "<leader>sD",      function() Snacks.picker.diagnostics_buffer() end,    desc = "Buffer Diagnostics" },
+            { "<leader>sS",      function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
+            { "<leader>s\"",     function() Snacks.picker.registers() end,             desc = "Registers" },
+            { "<leader>sd",      function() Snacks.picker.diagnostics() end,           desc = "Diagnostics" },
+            { "<leader>sh",      function() Snacks.picker.help() end,                  desc = "Help Pages" },
+            { "<leader>sj",      function() Snacks.picker.jumps() end,                 desc = "Jumps" },
+            { "<leader>sm",      function() Snacks.picker.marks() end,                 desc = "Marks" },
+            { "<leader>sq",      function() Snacks.picker.qflist() end,                desc = "Quickfix List" },
+            { "<leader>sr",      function() Snacks.picker.resume() end,                desc = "Resume" },
+            { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
+            { "<leader>su",      function() Snacks.picker.undo() end,                  desc = "Undo History" },
+            { "<leader>sw",      function() Snacks.picker.grep_word() end,             desc = "Visual selection or word", mode = { "n", "x" } },
+            { "gD",              function() Snacks.picker.lsp_declarations() end,      desc = "Goto Declaration" },
+            { "gI",              function() Snacks.picker.lsp_implementations() end,   desc = "Goto Implementation" },
+            { "gd",              function() Snacks.picker.lsp_definitions() end,       desc = "Goto Definition" },
+            { "gr",              function() Snacks.picker.lsp_references() end,        nowait = true,                     desc = "References" },
         }
     },
 
@@ -222,7 +245,11 @@ require("lazy").setup({
     {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        opts = { signs = false }
+        opts = { signs = false },
+        keys = {
+            { "<leader>st", function() Snacks.picker.todo_comments() end,                                          desc = "Todo" },
+            { "<leader>sT", function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end, desc = "Todo/Fix/Fixme" },
+        }
     },
 
     {
@@ -635,18 +662,18 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
                 { desc = "fuzzily search in current buffer", noremap = true })
 
-            vim.keymap.set("n", "<leader>sf", telescope_builtin.oldfiles,
-                { desc = "find recently opened files", noremap = true })
+            -- vim.keymap.set("n", "<leader>sf", telescope_builtin.oldfiles,
+            --     { desc = "find recently opened files", noremap = true })
 
-            vim.keymap.set("n", "<leader>sg", function()
-                telescope_builtin.git_files({ show_untracked = true })
-            end, { desc = "search Git files", noremap = true })
+            -- vim.keymap.set("n", "<leader>sg", function()
+            --     telescope_builtin.git_files({ show_untracked = true })
+            -- end, { desc = "search Git files", noremap = true })
 
-            vim.keymap.set("n", "<leader>hc", telescope_builtin.git_bcommits,
-                { desc = "find buffer commits", noremap = true })
-
-            vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
-                { desc = "search by grep on Git Root", noremap = true })
+            -- vim.keymap.set("n", "<leader>hc", telescope_builtin.git_bcommits,
+            --     { desc = "find buffer commits", noremap = true })
+            --
+            -- vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
+            --     { desc = "search by grep on Git Root", noremap = true })
 
             -- vim.keymap.set("n", "<leader>sd", function()
             --     telescope_builtin.diagnostics({ bufnr = nil })
@@ -662,34 +689,34 @@ require("lazy").setup({
             -- vim.keymap.set("n", "<leader>sR", telescope_builtin.registers,
             --     { desc = "search registers", noremap = true })
 
-            vim.keymap.set("n", "<leader>sh", telescope_builtin.help_tags,
-                { desc = "search help", noremap = true })
+            -- vim.keymap.set("n", "<leader>sh", telescope_builtin.help_tags,
+            --     { desc = "search help", noremap = true })
 
-            vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
-                { desc = "search current word", noremap = true })
+            -- vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
+            --     { desc = "search current word", noremap = true })
 
-            vim.keymap.set("n", "<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
-                { desc = "search workspace symbols" })
+            -- vim.keymap.set("n", "<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
+            --     { desc = "search workspace symbols" })
+            --
+            -- vim.keymap.set("n", "<leader>sS", telescope_builtin.lsp_document_symbols,
+            --     { desc = "search document symbols" })
 
-            vim.keymap.set("n", "<leader>sS", telescope_builtin.lsp_document_symbols,
-                { desc = "search document symbols" })
+            -- vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, { desc = "goto definition" })
 
-            vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, { desc = "goto definition" })
+            -- vim.keymap.set("n", "gs", function()
+            --     telescope_builtin.lsp_type_definitions({ show_line = false })
+            -- end, { desc = "goto type definitions" })
 
-            vim.keymap.set("n", "gs", function()
-                telescope_builtin.lsp_type_definitions({ show_line = false })
-            end, { desc = "goto type definitions" })
+            -- vim.keymap.set("n", "gr", function()
+            --     telescope_builtin.lsp_references({
+            --         include_declaration = false,
+            --         show_line = false,
+            --     })
+            -- end, { desc = "goto references" })
 
-            vim.keymap.set("n", "gr", function()
-                telescope_builtin.lsp_references({
-                    include_declaration = false,
-                    show_line = false,
-                })
-            end, { desc = "goto references" })
-
-            vim.keymap.set("n", "gI", function()
-                telescope_builtin.lsp_implementations({ show_line = false })
-            end, { desc = "goto implementation" })
+            -- vim.keymap.set("n", "gI", function()
+            --     telescope_builtin.lsp_implementations({ show_line = false })
+            -- end, { desc = "goto implementation" })
         end
     },
 }, {})
