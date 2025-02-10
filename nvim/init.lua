@@ -96,16 +96,6 @@ require("lazy").setup({
     'tpope/vim-sleuth',
 
     {
-        'mbbill/undotree',
-        config = function()
-            vim.keymap.set('n', '<leader>u', function()
-                vim.cmd.UndotreeToggle()
-                vim.cmd.UndotreeFocus()
-            end, { desc = "undotree" })
-        end
-    },
-
-    {
         'echasnovski/mini.nvim',
         version = false,
         config = function()
@@ -157,9 +147,7 @@ require("lazy").setup({
 
             require("mini.diff").setup({
                 mappings = {
-                    -- Reset hunks inside a visual/operator region
                     reset = '<leader>hr',
-                    -- Go to hunk range in corresponding direction
                     goto_first = '[H',
                     goto_prev = '[h',
                     goto_next = ']h',
@@ -182,6 +170,7 @@ require("lazy").setup({
             picker = {
                 enabled = true,
                 layout = {
+                    cycle = false,
                     preview = "main",
                     layout = {
                         box = "vertical",
@@ -210,20 +199,22 @@ require("lazy").setup({
             { "<leader>ff",      function() Snacks.picker.files() end,                 desc = "Find Files" },
             { "<leader>fg",      function() Snacks.picker.git_files() end,             desc = "Find Git Files" },
             { "<leader>fr",      function() Snacks.picker.recent() end,                desc = "Recent" },
-            { "<leader>hL",      function() Snacks.picker.git_log_line() end,          desc = "Git Log Line" },
-            { "<leader>hS",      function() Snacks.picker.git_stash() end,             desc = "Git Stash" },
-            { "<leader>hb",      function() Snacks.git.blame_line() end,               desc = "Git Branches" },
-            { "<leader>hd",      function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
-            { "<leader>hf",      function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
-            { "<leader>hl",      function() Snacks.picker.git_log() end,               desc = "Git Log" },
-            { "<leader>hs",      function() Snacks.picker.git_status() end,            desc = "Git Status" },
-            { "<leader>hx",      function() Snacks.gitbrowse() end,                    desc = "Git Browse",               mode = { "n", "v" } },
+            { "<leader>gL",      function() Snacks.picker.git_log_line() end,          desc = "Git Log Line" },
+            { "<leader>gS",      function() Snacks.picker.git_stash() end,             desc = "Git Stash" },
+            { "<leader>gb",      function() Snacks.git.blame_line() end,               desc = "Git Branches" },
+            { "<leader>gd",      function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
+            { "<leader>gf",      function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
+            { "<leader>gg",      function() Snacks.lazygit() end,                      desc = "Lazygit" },
+            { "<leader>gl",      function() Snacks.picker.git_log() end,               desc = "Git Log" },
+            { "<leader>gs",      function() Snacks.picker.git_status() end,            desc = "Git Status" },
+            { "<leader>gx",      function() Snacks.gitbrowse() end,                    desc = "Git Browse",               mode = { "n", "v" } },
             { "<leader>sD",      function() Snacks.picker.diagnostics_buffer() end,    desc = "Buffer Diagnostics" },
             { "<leader>sS",      function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
             { "<leader>s\"",     function() Snacks.picker.registers() end,             desc = "Registers" },
             { "<leader>sd",      function() Snacks.picker.diagnostics() end,           desc = "Diagnostics" },
             { "<leader>sh",      function() Snacks.picker.help() end,                  desc = "Help Pages" },
             { "<leader>sj",      function() Snacks.picker.jumps() end,                 desc = "Jumps" },
+            { "<leader>sk",      function() Snacks.picker.keymaps() end,               desc = "Keymaps" },
             { "<leader>sm",      function() Snacks.picker.marks() end,                 desc = "Marks" },
             { "<leader>sq",      function() Snacks.picker.qflist() end,                desc = "Quickfix List" },
             { "<leader>sr",      function() Snacks.picker.resume() end,                desc = "Resume" },
@@ -360,21 +351,11 @@ require("lazy").setup({
                 vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
                     vim.lsp.buf.format()
                 end, { desc = "format current buffer with LSP" })
-
-                vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format,
-                    { buffer = bufnr, desc = "LSP: format buffer" })
-
-                vim.keymap.set("n", "<leader>cr", ":LspRestart<CR>",
-                    { buffer = bufnr, desc = "LSP restart" })
-
-                vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action,
-                    { buffer = bufnr, desc = "LSP: code action" })
-
-                vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename,
-                    { buffer = bufnr, desc = "LSP: rename symbol" })
-
-                vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help,
-                    { buffer = bufnr, desc = "LSP: signature docs" })
+                vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { buffer = bufnr, desc = "LSP: format buffer" })
+                vim.keymap.set("n", "<leader>cr", ":LspRestart<CR>", { buffer = bufnr, desc = "LSP restart" })
+                vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { buffer = bufnr, desc = "LSP: code action" })
+                vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = bufnr, desc = "LSP: rename symbol" })
+                vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "LSP: signature docs" })
             end
 
             require("mason").setup()
@@ -382,11 +363,9 @@ require("lazy").setup({
 
             local servers = {
                 bashls = {},
-                -- html = {},
                 cssls = {},
                 eslint = {},
                 tailwindcss = {},
-                -- jsonls = {},
                 lua_ls = {
                     Lua = {
                         workspace = { checkThirdParty = false },
@@ -427,7 +406,6 @@ require("lazy").setup({
                 gopls = {},
                 zls = {},
             }
-
 
             local mason_lspconfig = require("mason-lspconfig")
             mason_lspconfig.setup({
@@ -549,174 +527,6 @@ require("lazy").setup({
                     },
                 })
             end, 0)
-        end
-    },
-
-    {
-        "nvim-telescope/telescope.nvim",
-        branch = "0.1.x",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            {
-                "nvim-telescope/telescope-fzf-native.nvim",
-                build = "make",
-                cond = function()
-                    return vim.fn.executable("make") == 1
-                end,
-            },
-        },
-        config = function()
-            require("telescope").setup({
-                defaults = {
-                    layout_strategy = "vertical",
-                    layout_config = {
-                        height = 0.9,
-                        width = 0.9,
-                    },
-                },
-                pickers = {
-                    buffers = { theme = "ivy" },
-                    current_buffer_fuzzy_find = { theme = "ivy" },
-                    diagnostics = { theme = "ivy" },
-                    find_files = { theme = "ivy" },
-                    git_files = { theme = "ivy" },
-                    grep_string = { theme = "ivy" },
-                    help_tags = { theme = "ivy" },
-                    live_grep = { theme = "ivy" },
-                    lsp_definitions = { theme = "ivy" },
-                    lsp_document_symbols = { theme = "ivy" },
-                    lsp_dynamic_workspace_symbols = { theme = "ivy" },
-                    lsp_references = { theme = "ivy" },
-                    lsp_type_definitions = { theme = "ivy" },
-                    oldfiles = { theme = "ivy" },
-                    registers = { theme = "ivy" },
-                    resume = { theme = "ivy" },
-                },
-            })
-
-            vim.cmd("autocmd User TelescopePreviewerLoaded setlocal number")
-
-            -- Enable telescope fzf native, if installed
-            pcall(require("telescope").load_extension, "fzf")
-
-            -- Telescope live_grep in git root
-            -- Function to find the git root directory based on the current buffer's path
-            local function find_git_root()
-                -- Use the current buffer's path as the starting point for the git search
-                local current_file = vim.api.nvim_buf_get_name(0)
-                local current_dir
-                local cwd = vim.fn.getcwd()
-                -- If the buffer is not associated with a file, return nil
-                if current_file == "" then
-                    current_dir = cwd
-                else
-                    -- Extract the directory from the current file's path
-                    current_dir = vim.fn.fnamemodify(current_file, ":h")
-                end
-
-                -- Find the Git root directory from the current file's path
-                local git_root = vim.fn.systemlist("git -C " ..
-                    vim.fn.escape(current_dir, " ") .. " rev-parse --show-toplevel")[1]
-                if vim.v.shell_error ~= 0 then
-                    print("Not a git repository. Searching on current working directory")
-                    return cwd
-                end
-                return git_root
-            end
-
-            local telescope_builtin = require("telescope.builtin")
-
-            -- Custom live_grep function to search in git root
-            local function live_grep_git_root()
-                local git_root = find_git_root()
-                if git_root then
-                    telescope_builtin.live_grep({
-                        search_dirs = { git_root },
-                    })
-                end
-            end
-
-            vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
-
-            -- vim.keymap.set("n", "<leader><leader>", function()
-            --     telescope_builtin.buffers({ sort_mru = true })
-            -- end, { desc = "find existing buffers" })
-
-            -- vim.keymap.set("n", "<leader>f", function()
-            --     telescope_builtin.find_files({
-            --         hidden = true,
-            --     })
-            -- end, { desc = "search files", noremap = true })
-            --
-            -- vim.keymap.set("n", "<leader>F", function()
-            --     telescope_builtin.find_files({
-            --         hidden = true,
-            --         no_ignore = true,
-            --         no_ignore_parent = true,
-            --     })
-            -- end, { desc = "search files", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
-            --     { desc = "search by grep", noremap = true })
-
-            vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
-                { desc = "fuzzily search in current buffer", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sf", telescope_builtin.oldfiles,
-            --     { desc = "find recently opened files", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sg", function()
-            --     telescope_builtin.git_files({ show_untracked = true })
-            -- end, { desc = "search Git files", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>hc", telescope_builtin.git_bcommits,
-            --     { desc = "find buffer commits", noremap = true })
-            --
-            -- vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
-            --     { desc = "search by grep on Git Root", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sd", function()
-            --     telescope_builtin.diagnostics({ bufnr = nil })
-            -- end, { desc = "search diagnostic in workspace", noremap = true })
-            --
-            -- vim.keymap.set("n", "<leader>sD", function()
-            --     telescope_builtin.diagnostics({ bufnr = 0 })
-            -- end, { desc = "search diagnostic", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
-            --     { desc = "search resume", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sR", telescope_builtin.registers,
-            --     { desc = "search registers", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sh", telescope_builtin.help_tags,
-            --     { desc = "search help", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>sw", telescope_builtin.grep_string,
-            --     { desc = "search current word", noremap = true })
-
-            -- vim.keymap.set("n", "<leader>ss", telescope_builtin.lsp_dynamic_workspace_symbols,
-            --     { desc = "search workspace symbols" })
-            --
-            -- vim.keymap.set("n", "<leader>sS", telescope_builtin.lsp_document_symbols,
-            --     { desc = "search document symbols" })
-
-            -- vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, { desc = "goto definition" })
-
-            -- vim.keymap.set("n", "gs", function()
-            --     telescope_builtin.lsp_type_definitions({ show_line = false })
-            -- end, { desc = "goto type definitions" })
-
-            -- vim.keymap.set("n", "gr", function()
-            --     telescope_builtin.lsp_references({
-            --         include_declaration = false,
-            --         show_line = false,
-            --     })
-            -- end, { desc = "goto references" })
-
-            -- vim.keymap.set("n", "gI", function()
-            --     telescope_builtin.lsp_implementations({ show_line = false })
-            -- end, { desc = "goto implementation" })
         end
     },
 }, {})
