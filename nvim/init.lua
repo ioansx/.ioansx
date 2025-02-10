@@ -38,8 +38,6 @@ vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
 
--- vim.cmd("colorscheme retrobox")
-
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 vim.keymap.set("n", "j", "gj", { silent = true })
@@ -96,14 +94,6 @@ require("lazy").setup({
     },
 
     'tpope/vim-sleuth',
-
-    {
-        'tpope/vim-fugitive',
-        config = function()
-            vim.keymap.set("n", "<leader>hb", ":Git blame<CR>", { desc = "Git blame" })
-            vim.keymap.set("n", "<leader>hd", ":Git diff | only<CR>", { desc = "Git diff" })
-        end
-    },
 
     {
         'mbbill/undotree',
@@ -177,16 +167,51 @@ require("lazy").setup({
                 },
             })
 
-            local mini_indentscope = require("mini.indentscope")
-            mini_indentscope.setup({
-                symbol = "▏",
-                draw = {
-                    animation = mini_indentscope.gen_animation.none(),
-                },
-            })
-
             require("mini.trailspace").setup()
         end
+    },
+
+    {
+        "folke/snacks.nvim",
+        priority = 1000,
+        lazy = false,
+        opts = {
+            -- bigfile = { enabled = true },
+            -- dashboard = { enabled = true },
+            -- explorer = { enabled = true },
+            indent = { enabled = true, animate = { enabled = false } },
+            -- input = { enabled = true },
+            -- notifier = {
+            --     enabled = true,
+            --     timeout = 3000,
+            -- },
+            picker = { enabled = true },
+            -- quickfile = { enabled = true },
+            -- scope = { enabled = true },
+            -- scroll = { enabled = true },
+            -- statuscolumn = { enabled = true },
+            -- words = { enabled = true },
+            -- styles = {
+            --     notification = {
+            --         -- wo = { wrap = true } -- Wrap notifications
+            --     }
+            -- }
+        },
+        keys = {
+            -- { "<leader><space>", function() Snacks.picker.smart() end,    desc = "Smart Find Files" },
+            { "<leader>/",       function() Snacks.picker.grep() end,               desc = "Grep" },
+            { "<leader><space>", function() Snacks.picker.buffers() end,            desc = "Recent" },
+            { "<leader>f",       function() Snacks.picker.git_files() end,          desc = "Find Git Files" },
+            { "<leader>F",       function() Snacks.picker.files() end,              desc = "Find Files" },
+            { "<leader>hb",      function() Snacks.git.blame_line() end,            desc = "Git Branches" },
+            { "<leader>hd",      function() Snacks.picker.git_diff() end,           desc = "Git Diff (Hunks)" },
+            { "<leader>sD",      function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
+            { "<leader>sf",      function() Snacks.picker.recent() end,             desc = "Recent" },
+            { "<leader>sr",      function() Snacks.picker.resume() end,             desc = "Resume" },
+            { "<leader>sd",      function() Snacks.picker.diagnostics() end,        desc = "Diagnostics" },
+            { "<leader>su",      function() Snacks.picker.undo() end,               desc = "Undo History" },
+            { '<leader>s"',      function() Snacks.picker.registers() end,          desc = "Registers" },
+        }
     },
 
     {
@@ -241,12 +266,7 @@ require("lazy").setup({
         dependencies = { { "echasnovski/mini.icons", opts = {} } },
         config = function()
             require("oil").setup({
-                columns = {
-                    "icon",
-                    -- "permissions",
-                    -- "size",
-                    -- "mtime",
-                },
+                columns = { "icon" },
                 delete_to_trash = true,
                 view_options = {
                     show_hidden = true,
@@ -254,6 +274,15 @@ require("lazy").setup({
             })
 
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
+
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "OilActionsPost",
+                callback = function(event)
+                    if event.data.actions.type == "move" then
+                        Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url)
+                    end
+                end,
+            })
         end,
     },
 
@@ -265,7 +294,6 @@ require("lazy").setup({
             sources = {
                 default = { 'lsp', 'path', 'buffer' },
                 cmdline = {},
-
             },
             signature = { enabled = true },
             completion = {
@@ -302,7 +330,6 @@ require("lazy").setup({
         },
         config = function(_, opts)
             local on_attach = function(_, bufnr)
-                -- Create a command `:Format` local to the LSP buffer
                 vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
                     vim.lsp.buf.format()
                 end, { desc = "format current buffer with LSP" })
@@ -430,6 +457,7 @@ require("lazy").setup({
                         "go",
                         "html",
                         "javascript",
+                        "jsdoc",
                         "json",
                         "lua",
                         "python",
@@ -583,26 +611,26 @@ require("lazy").setup({
 
             vim.api.nvim_create_user_command("LiveGrepGitRoot", live_grep_git_root, {})
 
-            vim.keymap.set("n", "<leader><leader>", function()
-                telescope_builtin.buffers({ sort_mru = true })
-            end, { desc = "find existing buffers" })
+            -- vim.keymap.set("n", "<leader><leader>", function()
+            --     telescope_builtin.buffers({ sort_mru = true })
+            -- end, { desc = "find existing buffers" })
 
-            vim.keymap.set("n", "<leader>f", function()
-                telescope_builtin.find_files({
-                    hidden = true,
-                })
-            end, { desc = "search files", noremap = true })
+            -- vim.keymap.set("n", "<leader>f", function()
+            --     telescope_builtin.find_files({
+            --         hidden = true,
+            --     })
+            -- end, { desc = "search files", noremap = true })
+            --
+            -- vim.keymap.set("n", "<leader>F", function()
+            --     telescope_builtin.find_files({
+            --         hidden = true,
+            --         no_ignore = true,
+            --         no_ignore_parent = true,
+            --     })
+            -- end, { desc = "search files", noremap = true })
 
-            vim.keymap.set("n", "<leader>F", function()
-                telescope_builtin.find_files({
-                    hidden = true,
-                    no_ignore = true,
-                    no_ignore_parent = true,
-                })
-            end, { desc = "search files", noremap = true })
-
-            vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
-                { desc = "search by grep", noremap = true })
+            -- vim.keymap.set("n", "<leader>/", telescope_builtin.live_grep,
+            --     { desc = "search by grep", noremap = true })
 
             vim.keymap.set("n", "<leader>s/", telescope_builtin.current_buffer_fuzzy_find,
                 { desc = "fuzzily search in current buffer", noremap = true })
@@ -620,19 +648,19 @@ require("lazy").setup({
             vim.keymap.set("n", "<leader>hg", ":LiveGrepGitRoot<CR>",
                 { desc = "search by grep on Git Root", noremap = true })
 
-            vim.keymap.set("n", "<leader>sd", function()
-                telescope_builtin.diagnostics({ bufnr = nil })
-            end, { desc = "search diagnostic in workspace", noremap = true })
+            -- vim.keymap.set("n", "<leader>sd", function()
+            --     telescope_builtin.diagnostics({ bufnr = nil })
+            -- end, { desc = "search diagnostic in workspace", noremap = true })
+            --
+            -- vim.keymap.set("n", "<leader>sD", function()
+            --     telescope_builtin.diagnostics({ bufnr = 0 })
+            -- end, { desc = "search diagnostic", noremap = true })
 
-            vim.keymap.set("n", "<leader>sD", function()
-                telescope_builtin.diagnostics({ bufnr = 0 })
-            end, { desc = "search diagnostic", noremap = true })
+            -- vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
+            --     { desc = "search resume", noremap = true })
 
-            vim.keymap.set("n", "<leader>sr", telescope_builtin.resume,
-                { desc = "search resume", noremap = true })
-
-            vim.keymap.set("n", "<leader>sR", telescope_builtin.registers,
-                { desc = "search registers", noremap = true })
+            -- vim.keymap.set("n", "<leader>sR", telescope_builtin.registers,
+            --     { desc = "search registers", noremap = true })
 
             vim.keymap.set("n", "<leader>sh", telescope_builtin.help_tags,
                 { desc = "search help", noremap = true })

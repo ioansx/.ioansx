@@ -1,6 +1,6 @@
 cursor-style = block
 font-feature = -calt
-font-size = 13
+font-size = 12
 macos-option-as-alt = true
 theme = GruvboxDarkHard
 shell-integration-features = no-cursor
