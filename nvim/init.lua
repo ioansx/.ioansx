@@ -225,6 +225,7 @@ require("lazy").setup({
             { "gD",              function() Snacks.picker.lsp_declarations() end,      desc = "Goto Declaration" },
             { "gI",              function() Snacks.picker.lsp_implementations() end,   desc = "Goto Implementation" },
             { "gd",              function() Snacks.picker.lsp_definitions() end,       desc = "Goto Definition" },
+            { "gs",              function() Snacks.picker.lsp_type_definitions() end,  desc = "Goto Type Definition" },
             { "gr",              function() Snacks.picker.lsp_references() end,        nowait = true,                     desc = "References" },
         }
     },
