@@ -147,7 +147,7 @@ require("lazy").setup({
 
             require("mini.diff").setup({
                 mappings = {
-                    reset = '<leader>hr',
+                    reset = '<leader>gr',
                     goto_first = '[H',
                     goto_prev = '[h',
                     goto_next = ']h',
@@ -192,38 +192,174 @@ require("lazy").setup({
             words = { enabled = true },
         },
         keys = {
-            { "<leader>/",       function() Snacks.picker.grep() end,                  desc = "Grep" },
-            { "<leader><space>", function() Snacks.picker.buffers() end,               desc = "Buffers" },
-            { "<leader>ff",      function() Snacks.picker.files() end,                 desc = "Find Files" },
-            { "<leader>fg",      function() Snacks.picker.git_files() end,             desc = "Find Git Files" },
-            { "<leader>fr",      function() Snacks.picker.recent() end,                desc = "Recent" },
-            { "<leader>gL",      function() Snacks.picker.git_log_line() end,          desc = "Git Log Line" },
-            { "<leader>gS",      function() Snacks.picker.git_stash() end,             desc = "Git Stash" },
-            { "<leader>gb",      function() Snacks.git.blame_line() end,               desc = "Git Branches" },
-            { "<leader>gd",      function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
-            { "<leader>gf",      function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
-            { "<leader>gg",      function() Snacks.lazygit() end,                      desc = "Lazygit" },
-            { "<leader>gl",      function() Snacks.picker.git_log() end,               desc = "Git Log" },
-            { "<leader>gs",      function() Snacks.picker.git_status() end,            desc = "Git Status" },
-            { "<leader>gx",      function() Snacks.gitbrowse() end,                    desc = "Git Browse",               mode = { "n", "v" } },
-            { "<leader>sD",      function() Snacks.picker.diagnostics_buffer() end,    desc = "Buffer Diagnostics" },
-            { "<leader>sS",      function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
-            { "<leader>s\"",     function() Snacks.picker.registers() end,             desc = "Registers" },
-            { "<leader>sd",      function() Snacks.picker.diagnostics() end,           desc = "Diagnostics" },
-            { "<leader>sh",      function() Snacks.picker.help() end,                  desc = "Help Pages" },
-            { "<leader>sj",      function() Snacks.picker.jumps() end,                 desc = "Jumps" },
-            { "<leader>sk",      function() Snacks.picker.keymaps() end,               desc = "Keymaps" },
-            { "<leader>sm",      function() Snacks.picker.marks() end,                 desc = "Marks" },
-            { "<leader>sq",      function() Snacks.picker.qflist() end,                desc = "Quickfix List" },
-            { "<leader>sr",      function() Snacks.picker.resume() end,                desc = "Resume" },
-            { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
-            { "<leader>su",      function() Snacks.picker.undo() end,                  desc = "Undo History" },
-            { "<leader>sw",      function() Snacks.picker.grep_word() end,             desc = "Visual selection or word", mode = { "n", "x" } },
-            { "gD",              function() Snacks.picker.lsp_declarations() end,      desc = "Goto Declaration" },
-            { "gI",              function() Snacks.picker.lsp_implementations() end,   desc = "Goto Implementation" },
-            { "gd",              function() Snacks.picker.lsp_definitions() end,       desc = "Goto Definition" },
-            { "gs",              function() Snacks.picker.lsp_type_definitions() end,  desc = "Goto Type Definition" },
-            { "gr",              function() Snacks.picker.lsp_references() end,        desc = "References",               nowait = true },
+            {
+                "<leader>/",
+                function() Snacks.picker.grep() end,
+                desc = "Grep",
+            },
+            {
+                "<leader><space>",
+                function() Snacks.picker.buffers() end,
+                desc = "Buffers",
+            },
+            {
+                "<leader>fa",
+                function() Snacks.picker.files({ hidden = true, ignored = true }) end,
+                desc = "Find Files",
+            },
+            {
+                "<leader>ff",
+                function() Snacks.picker.files() end,
+                desc = "Find Files",
+            },
+            {
+                "<leader>fg",
+                function() Snacks.picker.git_files() end,
+                desc = "Find Git Files",
+            },
+            {
+                "<leader>fr",
+                function() Snacks.picker.recent() end,
+                desc = "Recent",
+            },
+            {
+                "<leader>gL",
+                function() Snacks.picker.git_log_line() end,
+                desc = "Git Log Line",
+            },
+            {
+                "<leader>gS",
+                function() Snacks.picker.git_stash() end,
+                desc = "Git Stash"
+            },
+            {
+                "<leader>gb",
+                function() Snacks.git.blame_line() end,
+                desc = "Git Branches",
+            },
+            {
+                "<leader>gd",
+                function() Snacks.picker.git_diff() end,
+                desc = "Git Diff (Hunks)",
+            },
+            {
+                "<leader>gf",
+                function() Snacks.picker.git_log_file() end,
+                desc = "Git Log File",
+            },
+            {
+                "<leader>gg",
+                function() Snacks.lazygit() end,
+                desc = "Lazygit",
+            },
+            {
+                "<leader>gl",
+                function() Snacks.picker.git_log() end,
+                desc = "Git Log",
+            },
+            {
+                "<leader>gs",
+                function() Snacks.picker.git_status() end,
+                desc = "Git Status",
+            },
+            {
+                "<leader>gx",
+                function() Snacks.gitbrowse() end,
+                desc = "Git Browse",
+                mode = { "n", "v" },
+            },
+            {
+                "<leader>sD",
+                function() Snacks.picker.diagnostics_buffer() end,
+                desc = "Buffer Diagnostics",
+            },
+            {
+                "<leader>sS",
+                function() Snacks.picker.lsp_symbols() end,
+                desc = "LSP Symbols",
+            },
+            {
+                "<leader>s\"",
+                function() Snacks.picker.registers() end,
+                desc = "Registers",
+            },
+            {
+                "<leader>sd",
+                function() Snacks.picker.diagnostics() end,
+                desc = "Diagnostics",
+            },
+            {
+                "<leader>sh",
+                function() Snacks.picker.help() end,
+                desc = "Help Pages",
+            },
+            {
+                "<leader>sj",
+                function() Snacks.picker.jumps() end,
+                desc = "Jumps",
+            },
+            {
+                "<leader>sk",
+                function() Snacks.picker.keymaps() end,
+                desc = "Keymaps",
+            },
+            {
+                "<leader>sm",
+                function() Snacks.picker.marks() end,
+                desc = "Marks",
+            },
+            {
+                "<leader>sq",
+                function() Snacks.picker.qflist() end,
+                desc = "Quickfix List"
+            },
+            {
+                "<leader>sr",
+                function() Snacks.picker.resume() end,
+                desc = "Resume"
+            },
+            {
+                "<leader>ss",
+                function() Snacks.picker.lsp_workspace_symbols() end,
+                desc = "LSP Workspace Symbols"
+            },
+            {
+                "<leader>su",
+                function() Snacks.picker.undo() end,
+                desc = "Undo History"
+            },
+            {
+                "<leader>sw",
+                function() Snacks.picker.grep_word() end,
+                desc = "Visual selection or word",
+                mode = { "n", "x" }
+            },
+            {
+                "gD",
+                function() Snacks.picker.lsp_declarations() end,
+                desc = "Goto Declaration"
+            },
+            {
+                "gI",
+                function() Snacks.picker.lsp_implementations() end,
+                desc = "Goto Implementation"
+            },
+            {
+                "gd",
+                function() Snacks.picker.lsp_definitions() end,
+                desc = "Goto Definition"
+            },
+            {
+                "gs",
+                function() Snacks.picker.lsp_type_definitions() end,
+                desc = "Goto Type Definition"
+            },
+            {
+                "gr",
+                function() Snacks.picker.lsp_references() end,
+                desc = "References",
+                nowait = true
+            },
         }
     },
 
