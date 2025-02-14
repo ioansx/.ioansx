@@ -285,7 +285,19 @@ require("lazy").setup({
             },
             {
                 "<leader>sd",
-                function() Snacks.picker.diagnostics() end,
+                function()
+                    Snacks.picker.diagnostics({
+                        sort = {
+                            fields = {
+                                "severity",
+                                "is_current",
+                                "is_cwd",
+                                "file",
+                                "lnum",
+                            },
+                        },
+                    })
+                end,
                 desc = "Diagnostics",
             },
             {
