@@ -368,6 +368,16 @@ require("lazy").setup({
             },
             {
                 "gr",
+                function()
+                    Snacks.picker.lsp_references({
+                        include_declaration = false
+                    })
+                end,
+                desc = "References",
+                nowait = true
+            },
+            {
+                "gR",
                 function() Snacks.picker.lsp_references() end,
                 desc = "References",
                 nowait = true
@@ -385,8 +395,16 @@ require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" },
         opts = { signs = false },
         keys = {
-            { "<leader>st", function() Snacks.picker.todo_comments() end,                                          desc = "Todo" },
-            { "<leader>sT", function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end, desc = "Todo/Fix/Fixme" },
+            {
+                "<leader>sT",
+                function() Snacks.picker.todo_comments() end,
+                desc = "Todo"
+            },
+            {
+                "<leader>st",
+                function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end,
+                desc = "Todo/Fix/Fixme"
+            },
         }
     },
 
