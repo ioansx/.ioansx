@@ -199,7 +199,14 @@ require("lazy").setup({
             },
             {
                 "<leader><space>",
-                function() Snacks.picker.buffers() end,
+                function()
+                    Snacks.picker.buffers({
+                        hidden = true,
+                        unloaded = true,
+                        current = true,
+                        sort_lastused = true,
+                    })
+                end,
                 desc = "Buffers",
             },
             {
@@ -473,11 +480,9 @@ require("lazy").setup({
         'saghen/blink.cmp',
         version = 'v0.*',
         opts = {
-            keymap = { preset = 'super-tab' },
-            sources = {
-                default = { 'lsp', 'path', 'buffer' },
-                cmdline = {},
-            },
+            keymap = { preset = "default" },
+            cmdline = { sources = {} },
+            sources = { default = { "lsp", "path", "buffer" } },
             signature = { enabled = true },
             completion = {
                 documentation = {
