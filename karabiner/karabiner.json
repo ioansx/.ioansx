@@ -157,14 +157,6 @@
           },
           "simple_modifications": [
             {
-              "from": { "key_code": "caps_lock" },
-              "to": [{ "key_code": "escape" }]
-            },
-            {
-              "from": { "key_code": "escape" },
-              "to": [{ "key_code": "caps_lock" }]
-            },
-            {
               "from": { "key_code": "non_us_backslash" },
               "to": [{ "key_code": "grave_accent_and_tilde" }]
             }
@@ -184,16 +176,7 @@
             "product_id": 591,
             "vendor_id": 1452
           },
-          "simple_modifications": [
-            {
-              "from": { "key_code": "caps_lock" },
-              "to": [{ "key_code": "escape" }]
-            },
-            {
-              "from": { "key_code": "escape" },
-              "to": [{ "key_code": "caps_lock" }]
-            }
-          ]
+          "simple_modifications": []
         }
       ],
       "name": "Default",
