@@ -60,6 +60,11 @@ PS1='\[\033[01;32m\]\t \[\033[01;34m\]\w\[\033[00m\] \$ '
 
 set -o vi
 
+bind '"\t":menu-complete'
+bind "set show-all-if-ambiguous on"
+bind "set completion-ignore-case on"
+bind "set menu-complete-display-prefix on"
+
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:$HOME/bin/neovim/bin"
 export PATH="$PATH:$HOME/bin/node/bin"
