@@ -76,6 +76,7 @@ alias la='ls -A'
 alias ll='ls -alF'
 alias man='MANWIDTH=80 man'
 alias lzg='lazygit'
+alias nav='cd $(~/.ioansx/bash/bin/important-directories)'
 
 eval "$(fzf --bash)"
 
