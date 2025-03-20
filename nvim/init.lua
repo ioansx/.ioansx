@@ -494,6 +494,15 @@ require("lazy").setup({
     },
 
     {
+        'github/copilot.vim',
+        opts = {},
+        config = function()
+            vim.g.copilot_enabled = false
+            vim.keymap.set('i', '<C-H>', '<Plug>(copilot-suggest)')
+        end
+    },
+
+    {
         "folke/lazydev.nvim",
         ft = "lua", -- only load on lua files
         opts = {
