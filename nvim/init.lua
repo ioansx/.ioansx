@@ -498,7 +498,11 @@ require("lazy").setup({
         opts = {},
         config = function()
             vim.g.copilot_enabled = false
-            vim.keymap.set('i', '<C-H>', '<Plug>(copilot-suggest)')
+            vim.keymap.set('n', '<leader>tc', function()
+                local copilot_enabled = vim.g.copilot_enabled or false
+                vim.g.copilot_enabled = not copilot_enabled
+                print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
+            end, { noremap = true, silent = true, desc = "Toggle Copilot" })
         end
     },
 
