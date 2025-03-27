@@ -38,6 +38,8 @@ vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
 
+vim.o.background = "light"
+
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 vim.keymap.set("n", "j", "gj", { silent = true })
@@ -86,10 +88,11 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
-        "ellisonleao/gruvbox.nvim",
+        "folke/tokyonight.nvim",
+        lazy = false,
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme gruvbox]])
+            vim.cmd([[colorscheme tokyonight]])
         end
     },
 
@@ -570,16 +573,11 @@ require("lazy").setup({
                 rust_analyzer = {
                     ["rust-analyzer"] = {
                         completion = {
-                            -- fullFunctionSignatures = { enable = true },
                             postfix = { enable = false },
                         },
-                        cargo = {
-                            allTargets = false,
-                        },
                         check = {
-                            command = "check",
-                            -- command = "clippy",
-                            -- workspace = false,
+                            -- command = "check",
+                            command = "clippy",
                         },
                     }
                 },
