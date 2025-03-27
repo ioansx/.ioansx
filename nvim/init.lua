@@ -88,11 +88,11 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
-        "folke/tokyonight.nvim",
+        "miikanissi/modus-themes.nvim",
         lazy = false,
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme tokyonight]])
+            vim.cmd([[colorscheme modus]])
         end
     },
 
@@ -145,8 +145,6 @@ require("lazy").setup({
                     },
                 },
             })
-
-            require("mini.cursorword").setup()
 
             require("mini.diff").setup({
                 mappings = {
@@ -484,10 +482,13 @@ require("lazy").setup({
         version = 'v0.*',
         opts = {
             keymap = { preset = "default" },
-            cmdline = { sources = {} },
-            sources = { default = { "lsp", "path", "buffer" } },
+            cmdline = { enabled = false },
             signature = { enabled = true },
+            sources = { default = { "lsp", "path", "buffer" } },
             completion = {
+                accept = {
+                    auto_brackets = { enabled = true },
+                },
                 documentation = {
                     auto_show = true,
                     auto_show_delay_ms = 0,
