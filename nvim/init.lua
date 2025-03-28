@@ -577,8 +577,8 @@ require("lazy").setup({
                             postfix = { enable = false },
                         },
                         check = {
-                            -- command = "check",
-                            command = "clippy",
+                            command = "check",
+                            -- command = "clippy",
                         },
                     }
                 },
