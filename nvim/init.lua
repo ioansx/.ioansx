@@ -38,8 +38,6 @@ vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
 
-vim.o.background = "light"
-
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 vim.keymap.set("n", "j", "gj", { silent = true })
@@ -88,11 +86,12 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
-        "miikanissi/modus-themes.nvim",
+        "lifepillar/vim-gruvbox8",
         lazy = false,
+        branch = "neovim",
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme modus]])
+            vim.cmd([[colorscheme gruvbox8_hard]])
         end
     },
 
