@@ -38,8 +38,8 @@ vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
 
+-- Smart movements
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
-
 vim.keymap.set("n", "j", "gj", { silent = true })
 vim.keymap.set("n", "k", "gk", { silent = true })
 vim.keymap.set("n", "n", "nzz", { silent = true })
@@ -49,23 +49,42 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 
+-- Toggle
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
+-- Smart paste
 vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
 
+-- File yank
 vim.keymap.set("n", "<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
 vim.keymap.set("n", "<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
     { desc = "yank relative file path:line" })
 vim.keymap.set("n", "<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
 vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
+-- Diagnostics
+vim.diagnostic.config({ virtual_text = true })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
 
+-- LSP
+vim.keymap.set("n", "<leader>cr", function()
+    vim.lsp.stop_client(vim.lsp.get_clients())
+    -- TODO: This doesn't work.
+    vim.cmd([[edit]])
+end, { desc = "LSP restart" })
+vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "LSP: code action" })
+vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "LSP: rename symbol" })
+vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "LSP: format buffer" })
+vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to definition" })
+vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
+vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
+
+-- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking text',
     group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
@@ -104,29 +123,20 @@ require("lazy").setup({
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {
-                    -- Leader triggers
                     { mode = 'n', keys = '<Leader>' },
                     { mode = 'x', keys = '<Leader>' },
-                    { mode = 'n', keys = '[' },
-                    { mode = 'n', keys = ']' },
-                    -- Built-in completion
                     { mode = 'i', keys = '<C-x>' },
-                    -- `g` key
                     { mode = 'n', keys = 'g' },
                     { mode = 'x', keys = 'g' },
-                    -- Marks
                     { mode = 'n', keys = "'" },
                     { mode = 'n', keys = '`' },
                     { mode = 'x', keys = "'" },
                     { mode = 'x', keys = '`' },
-                    -- Registers
                     { mode = 'n', keys = '"' },
                     { mode = 'x', keys = '"' },
                     { mode = 'i', keys = '<C-r>' },
                     { mode = 'c', keys = '<C-r>' },
-                    -- Window commands
                     { mode = 'n', keys = '<C-w>' },
-                    -- `z` key
                     { mode = 'n', keys = 'z' },
                     { mode = 'x', keys = 'z' },
                 },
@@ -192,11 +202,7 @@ require("lazy").setup({
             words = { enabled = true },
         },
         keys = {
-            {
-                "<leader>/",
-                function() Snacks.picker.grep() end,
-                desc = "Grep",
-            },
+            { "<leader>/",  function() Snacks.picker.grep() end,      desc = "Grep" },
             {
                 "<leader><space>",
                 function()
@@ -214,61 +220,25 @@ require("lazy").setup({
                 function() Snacks.picker.files({ hidden = true, ignored = true }) end,
                 desc = "Find Files",
             },
-            {
-                "<leader>ff",
-                function() Snacks.picker.files() end,
-                desc = "Find Files",
-            },
-            {
-                "<leader>fg",
-                function() Snacks.picker.git_files() end,
-                desc = "Find Git Files",
-            },
-            {
-                "<leader>fr",
-                function() Snacks.picker.recent() end,
-                desc = "Recent",
-            },
+            { "<leader>ff", function() Snacks.picker.files() end,     desc = "Find Files" },
+            { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
+            { "<leader>fr", function() Snacks.picker.recent() end,    desc = "Recent" },
             {
                 "<leader>gL",
                 function() Snacks.picker.git_log_line() end,
                 desc = "Git Log Line",
             },
-            {
-                "<leader>gS",
-                function() Snacks.picker.git_stash() end,
-                desc = "Git Stash"
-            },
-            {
-                "<leader>gb",
-                function() Snacks.git.blame_line() end,
-                desc = "Git Branches",
-            },
-            {
-                "<leader>gd",
-                function() Snacks.picker.git_diff() end,
-                desc = "Git Diff (Hunks)",
-            },
+            { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
+            { "<leader>gb", function() Snacks.git.blame_line() end,   desc = "Git Branches" },
+            { "<leader>gd", function() Snacks.picker.git_diff() end,  desc = "Git Diff (Hunks)" },
             {
                 "<leader>gf",
                 function() Snacks.picker.git_log_file() end,
                 desc = "Git Log File",
             },
-            {
-                "<leader>gg",
-                function() Snacks.lazygit() end,
-                desc = "Lazygit",
-            },
-            {
-                "<leader>gl",
-                function() Snacks.picker.git_log() end,
-                desc = "Git Log",
-            },
-            {
-                "<leader>gs",
-                function() Snacks.picker.git_status() end,
-                desc = "Git Status",
-            },
+            { "<leader>gg", function() Snacks.lazygit() end,           desc = "Lazygit" },
+            { "<leader>gl", function() Snacks.picker.git_log() end,    desc = "Git Log" },
+            { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
             {
                 "<leader>gx",
                 function() Snacks.gitbrowse() end,
@@ -278,18 +248,10 @@ require("lazy").setup({
             {
                 "<leader>sD",
                 function() Snacks.picker.diagnostics_buffer() end,
-                desc = "Buffer Diagnostics",
+                desc = "Buffer Diagnostics"
             },
-            {
-                "<leader>sS",
-                function() Snacks.picker.lsp_symbols() end,
-                desc = "LSP Symbols",
-            },
-            {
-                "<leader>s\"",
-                function() Snacks.picker.registers() end,
-                desc = "Registers",
-            },
+            { "<leader>sS",  function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
+            { "<leader>s\"", function() Snacks.picker.registers() end,   desc = "Registers" },
             {
                 "<leader>sd",
                 function()
@@ -307,87 +269,23 @@ require("lazy").setup({
                 end,
                 desc = "Diagnostics",
             },
-            {
-                "<leader>sh",
-                function() Snacks.picker.help() end,
-                desc = "Help Pages",
-            },
-            {
-                "<leader>sj",
-                function() Snacks.picker.jumps() end,
-                desc = "Jumps",
-            },
-            {
-                "<leader>sk",
-                function() Snacks.picker.keymaps() end,
-                desc = "Keymaps",
-            },
-            {
-                "<leader>sm",
-                function() Snacks.picker.marks() end,
-                desc = "Marks",
-            },
-            {
-                "<leader>sq",
-                function() Snacks.picker.qflist() end,
-                desc = "Quickfix List"
-            },
-            {
-                "<leader>sr",
-                function() Snacks.picker.resume() end,
-                desc = "Resume"
-            },
+            { "<leader>sh", function() Snacks.picker.help() end,    desc = "Help Pages" },
+            { "<leader>sj", function() Snacks.picker.jumps() end,   desc = "Jumps" },
+            { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
+            { "<leader>sm", function() Snacks.picker.marks() end,   desc = "Marks" },
+            { "<leader>sq", function() Snacks.picker.qflist() end,  desc = "Quickfix List" },
+            { "<leader>sr", function() Snacks.picker.resume() end,  desc = "Resume" },
             {
                 "<leader>ss",
                 function() Snacks.picker.lsp_workspace_symbols() end,
                 desc = "LSP Workspace Symbols"
             },
-            {
-                "<leader>su",
-                function() Snacks.picker.undo() end,
-                desc = "Undo History"
-            },
+            { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
             {
                 "<leader>sw",
                 function() Snacks.picker.grep_word() end,
                 desc = "Visual selection or word",
                 mode = { "n", "x" }
-            },
-            {
-                "gD",
-                function() Snacks.picker.lsp_declarations() end,
-                desc = "Goto Declaration"
-            },
-            {
-                "gI",
-                function() Snacks.picker.lsp_implementations() end,
-                desc = "Goto Implementation"
-            },
-            {
-                "gd",
-                function() Snacks.picker.lsp_definitions() end,
-                desc = "Goto Definition"
-            },
-            {
-                "gs",
-                function() Snacks.picker.lsp_type_definitions() end,
-                desc = "Goto Type Definition"
-            },
-            {
-                "gr",
-                function()
-                    Snacks.picker.lsp_references({
-                        include_declaration = false
-                    })
-                end,
-                desc = "References",
-                nowait = true
-            },
-            {
-                "gR",
-                function() Snacks.picker.lsp_references() end,
-                desc = "References",
-                nowait = true
             },
         }
     },
@@ -401,18 +299,18 @@ require("lazy").setup({
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
         opts = { signs = false },
-        keys = {
-            {
-                "<leader>st",
-                function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end,
-                desc = "Todo/Fix/Fixme"
-            },
-            {
-                "<leader>sT",
-                function() Snacks.picker.todo_comments() end,
-                desc = "Todo"
-            },
-        }
+        -- keys = {
+        --     {
+        --         "<leader>st",
+        --         function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end,
+        --         desc = "Todo/Fix/Fixme"
+        --     },
+        --     {
+        --         "<leader>sT",
+        --         function() Snacks.picker.todo_comments() end,
+        --         desc = "Todo"
+        --     },
+        -- }
     },
 
     {
@@ -424,17 +322,13 @@ require("lazy").setup({
             },
             formatters_by_ft = {
                 ["javascript"] = { "prettier" },
-                ["javascriptreact"] = { "prettier" },
                 ["typescript"] = { "prettier" },
-                ["typescriptreact"] = { "prettier" },
                 ["vue"] = { "prettier" },
                 ["svelte"] = { "prettier" },
                 ["css"] = { "prettier" },
                 ["scss"] = { "prettier" },
-                ["less"] = { "prettier" },
                 ["html"] = { "prettier" },
                 ["json"] = { "prettier" },
-                ["jsonc"] = { "prettier" },
                 ["yaml"] = { "prettier" },
             },
         },
@@ -464,7 +358,6 @@ require("lazy").setup({
             })
 
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
-
             vim.api.nvim_create_autocmd("User", {
                 pattern = "OilActionsPost",
                 callback = function(event)
@@ -533,17 +426,6 @@ require("lazy").setup({
             { "j-hui/fidget.nvim",       opts = {} },
         },
         config = function(_, opts)
-            local on_attach = function(_, bufnr)
-                vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
-                    vim.lsp.buf.format()
-                end, { desc = "format current buffer with LSP" })
-                vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { buffer = bufnr, desc = "LSP: format buffer" })
-                vim.keymap.set("n", "<leader>cr", ":LspRestart<CR>", { buffer = bufnr, desc = "LSP restart" })
-                vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { buffer = bufnr, desc = "LSP: code action" })
-                vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = bufnr, desc = "LSP: rename symbol" })
-                vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "LSP: signature docs" })
-            end
-
             require("mason").setup()
             require("mason-lspconfig").setup()
 
@@ -585,7 +467,6 @@ require("lazy").setup({
                 ts_ls = {},
                 svelte = {},
                 gopls = {},
-                zls = {},
             }
 
             local mason_lspconfig = require("mason-lspconfig")
@@ -596,7 +477,6 @@ require("lazy").setup({
             mason_lspconfig.setup_handlers({
                 function(server_name)
                     require("lspconfig")[server_name].setup({
-                        on_attach = on_attach,
                         settings = servers[server_name],
                         filetypes = (servers[server_name] or {}).filetypes,
                     })
@@ -619,8 +499,6 @@ require("lazy").setup({
                     return default_diagnostic_handler(err, result, context, config)
                 end
             end
-
-            vim.g.zig_fmt_parse_errors = 0
         end
     },
 
