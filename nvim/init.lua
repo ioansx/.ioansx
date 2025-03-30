@@ -93,6 +93,54 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
+-- MRU buffer switching
+local function CompleteBuffersMRU()
+    local cwd = vim.fn.getcwd()
+    if not cwd or cwd == '' then return {} end
+
+    -- Normalize CWD path
+    local sep = package.config:sub(1, 1)
+    if not cwd:match(sep .. '$') then cwd = cwd .. sep end
+
+    local current_bufnr = vim.fn.bufnr('%')
+    local buffers = vim.fn.getbufinfo({ listed = 1 })
+    buffers = vim.tbl_filter(function(buf)
+        local is_named = buf.name and buf.name ~= ''
+        if not is_named then return false end
+
+        local is_in_cwd = vim.startswith(buf.name, cwd)
+        if not is_in_cwd then return false end
+
+        local is_not_current = buf.bufnr ~= current_bufnr
+        return is_not_current
+    end, buffers)
+
+    table.sort(buffers, function(a, b)
+        return (a.lastused or 0) > (b.lastused or 0)
+    end)
+
+    local buffer_relative_names = vim.tbl_map(function(buf)
+        return vim.fn.fnamemodify(buf.name, ':.')
+    end, buffers)
+
+    return buffer_relative_names
+end
+
+vim.api.nvim_create_user_command(
+    'BufferMRU',
+    function(opts)
+        vim.cmd('buffer' .. (opts.args and #opts.args > 0 and (' ' .. opts.args) or ''))
+    end,
+    {
+        nargs = '?',
+        complete = CompleteBuffersMRU,
+        desc = 'Switch buffer (MRU completion)',
+        force = true,
+    }
+)
+
+vim.keymap.set('n', '<leader><space>', ':BufferMRU ', { noremap = true, silent = true, desc = "Switch buffer (MRU)" })
+
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking text',
@@ -102,6 +150,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
+-- Lazy plugins
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -211,18 +260,6 @@ require("lazy").setup({
         },
         keys = {
             { "<leader>/",  function() Snacks.picker.grep() end,      desc = "Grep" },
-            {
-                "<leader><space>",
-                function()
-                    Snacks.picker.buffers({
-                        hidden = true,
-                        unloaded = true,
-                        current = true,
-                        sort_lastused = true,
-                    })
-                end,
-                desc = "Buffers",
-            },
             {
                 "<leader>fa",
                 function() Snacks.picker.files({ hidden = true, ignored = true }) end,
@@ -408,12 +445,6 @@ require("lazy").setup({
                     })
                 end,
             })
-
-            local lspconfig = require('lspconfig')
-            for server, config in pairs(opts.servers or {}) do
-                config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-                lspconfig[server].setup(config)
-            end
 
             -- https://github.com/neovim/neovim/issues/30985#issuecomment-2447329525
             -- for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
