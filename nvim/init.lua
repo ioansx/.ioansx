@@ -37,6 +37,7 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
+vim.opt.magic = true
 
 -- Smart movements
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
@@ -67,22 +68,32 @@ vim.keymap.set("n", "<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank 
 vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
 -- Diagnostics
-vim.diagnostic.config({ virtual_text = true })
-vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "open floating diagnostic" })
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "open diagnostic list" })
+vim.diagnostic.config({ severity_sort = true, virtual_text = true })
+vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "floating diagnostic" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
+vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
 -- LSP
 vim.keymap.set("n", "<leader>cr", function()
     vim.lsp.stop_client(vim.lsp.get_clients())
     -- TODO: This doesn't work.
     vim.cmd([[edit]])
-end, { desc = "LSP restart" })
+end, { desc = "LSP: restart" })
 vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "LSP: code action" })
 vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "LSP: rename symbol" })
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "LSP: format buffer" })
 vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to definition" })
 vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
 vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(ev)
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if client ~= nil and client:supports_method('textDocument/completion') then
+            vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+        end
+    end,
+})
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -105,12 +116,11 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
-        "lifepillar/vim-gruvbox8",
+        "ellisonleao/gruvbox.nvim",
         lazy = false,
-        branch = "neovim",
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme gruvbox8_hard]])
+            vim.cmd([[colorscheme gruvbox]])
         end
     },
 
@@ -245,36 +255,14 @@ require("lazy").setup({
                 desc = "Git Browse",
                 mode = { "n", "v" },
             },
-            {
-                "<leader>sD",
-                function() Snacks.picker.diagnostics_buffer() end,
-                desc = "Buffer Diagnostics"
-            },
             { "<leader>sS",  function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
             { "<leader>s\"", function() Snacks.picker.registers() end,   desc = "Registers" },
-            {
-                "<leader>sd",
-                function()
-                    Snacks.picker.diagnostics({
-                        sort = {
-                            fields = {
-                                "severity",
-                                "is_current",
-                                "is_cwd",
-                                "file",
-                                "lnum",
-                            },
-                        },
-                    })
-                end,
-                desc = "Diagnostics",
-            },
-            { "<leader>sh", function() Snacks.picker.help() end,    desc = "Help Pages" },
-            { "<leader>sj", function() Snacks.picker.jumps() end,   desc = "Jumps" },
-            { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
-            { "<leader>sm", function() Snacks.picker.marks() end,   desc = "Marks" },
-            { "<leader>sq", function() Snacks.picker.qflist() end,  desc = "Quickfix List" },
-            { "<leader>sr", function() Snacks.picker.resume() end,  desc = "Resume" },
+            { "<leader>sh",  function() Snacks.picker.help() end,        desc = "Help Pages" },
+            { "<leader>sj",  function() Snacks.picker.jumps() end,       desc = "Jumps" },
+            { "<leader>sk",  function() Snacks.picker.keymaps() end,     desc = "Keymaps" },
+            { "<leader>sm",  function() Snacks.picker.marks() end,       desc = "Marks" },
+            { "<leader>sq",  function() Snacks.picker.qflist() end,      desc = "Quickfix List" },
+            { "<leader>sr",  function() Snacks.picker.resume() end,      desc = "Resume" },
             {
                 "<leader>ss",
                 function() Snacks.picker.lsp_workspace_symbols() end,
@@ -293,24 +281,6 @@ require("lazy").setup({
     {
         'numToStr/Comment.nvim',
         opts = {}
-    },
-
-    {
-        "folke/todo-comments.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        opts = { signs = false },
-        -- keys = {
-        --     {
-        --         "<leader>st",
-        --         function() Snacks.picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME" } }) end,
-        --         desc = "Todo/Fix/Fixme"
-        --     },
-        --     {
-        --         "<leader>sT",
-        --         function() Snacks.picker.todo_comments() end,
-        --         desc = "Todo"
-        --     },
-        -- }
     },
 
     {
@@ -369,25 +339,25 @@ require("lazy").setup({
         end,
     },
 
-    {
-        'saghen/blink.cmp',
-        version = 'v0.*',
-        opts = {
-            keymap = { preset = "default" },
-            cmdline = { enabled = false },
-            signature = { enabled = true },
-            sources = { default = { "lsp", "path", "buffer" } },
-            completion = {
-                accept = {
-                    auto_brackets = { enabled = true },
-                },
-                documentation = {
-                    auto_show = true,
-                    auto_show_delay_ms = 0,
-                }
-            }
-        }
-    },
+    -- {
+    --     'saghen/blink.cmp',
+    --     version = 'v0.*',
+    --     opts = {
+    --         keymap = { preset = "default" },
+    --         cmdline = { enabled = false },
+    --         signature = { enabled = true },
+    --         sources = { default = { "lsp", "path", "buffer" } },
+    --         completion = {
+    --             accept = {
+    --                 auto_brackets = { enabled = true },
+    --             },
+    --             documentation = {
+    --                 auto_show = true,
+    --                 auto_show_delay_ms = 0,
+    --             }
+    --         }
+    --     }
+    -- },
 
     {
         'github/copilot.vim',
@@ -404,7 +374,7 @@ require("lazy").setup({
 
     {
         "folke/lazydev.nvim",
-        ft = "lua", -- only load on lua files
+        ft = "lua",
         opts = {
             library = {
                 { path = "luvit-meta/library", words = { "vim%.uv" } },
@@ -423,7 +393,7 @@ require("lazy").setup({
         dependencies = {
             { "williamboman/mason.nvim", config = true },
             "williamboman/mason-lspconfig.nvim",
-            { "j-hui/fidget.nvim",       opts = {} },
+            -- { "j-hui/fidget.nvim",       opts = {} },
         },
         config = function(_, opts)
             require("mason").setup()
