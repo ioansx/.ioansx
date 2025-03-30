@@ -276,10 +276,10 @@ require("lazy").setup({
         }
     },
 
-    {
-        'numToStr/Comment.nvim',
-        opts = {}
-    },
+    -- {
+    --     'numToStr/Comment.nvim',
+    --     opts = {}
+    -- },
 
     {
         'stevearc/conform.nvim',
