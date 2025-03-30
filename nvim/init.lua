@@ -24,7 +24,7 @@ vim.opt.smartindent = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
-vim.opt.completeopt = "menu,menuone,noinsert"
+vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
 vim.opt.scrolloff = 8
@@ -76,9 +76,7 @@ vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostic
 -- LSP
 vim.keymap.set("n", "<leader>cr", function()
     vim.lsp.stop_client(vim.lsp.get_clients())
-    -- TODO: This doesn't work.
-    vim.cmd([[edit]])
-end, { desc = "LSP: restart" })
+end, { desc = "LSP: stop clients" })
 vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "LSP: code action" })
 vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "LSP: rename symbol" })
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "LSP: format buffer" })
@@ -115,6 +113,8 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+    'tpope/vim-sleuth',
+
     {
         "ellisonleao/gruvbox.nvim",
         lazy = false,
@@ -123,8 +123,6 @@ require("lazy").setup({
             vim.cmd([[colorscheme gruvbox]])
         end
     },
-
-    'tpope/vim-sleuth',
 
     {
         'echasnovski/mini.nvim',
@@ -302,17 +300,6 @@ require("lazy").setup({
                 ["yaml"] = { "prettier" },
             },
         },
-    },
-
-    {
-        "nvim-pack/nvim-spectre",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
-        opts = {},
-        config = function()
-            vim.keymap.set("n", "<leader>S", ":Spectre<CR>", { desc = "Spectre" })
-        end
     },
 
     {
