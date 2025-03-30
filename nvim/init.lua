@@ -313,7 +313,6 @@ require("lazy").setup({
                     show_hidden = true,
                 },
             })
-
             vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
             vim.api.nvim_create_autocmd("User", {
                 pattern = "OilActionsPost",
@@ -326,26 +325,6 @@ require("lazy").setup({
         end,
     },
 
-    -- {
-    --     'saghen/blink.cmp',
-    --     version = 'v0.*',
-    --     opts = {
-    --         keymap = { preset = "default" },
-    --         cmdline = { enabled = false },
-    --         signature = { enabled = true },
-    --         sources = { default = { "lsp", "path", "buffer" } },
-    --         completion = {
-    --             accept = {
-    --                 auto_brackets = { enabled = true },
-    --             },
-    --             documentation = {
-    --                 auto_show = true,
-    --                 auto_show_delay_ms = 0,
-    --             }
-    --         }
-    --     }
-    -- },
-
     {
         'github/copilot.vim',
         opts = {},
@@ -357,16 +336,6 @@ require("lazy").setup({
                 print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
             end, { noremap = true, silent = true, desc = "Toggle Copilot" })
         end
-    },
-
-    {
-        "folke/lazydev.nvim",
-        ft = "lua",
-        opts = {
-            library = {
-                { path = "luvit-meta/library", words = { "vim%.uv" } },
-            }
-        }
     },
 
     {
@@ -544,5 +513,15 @@ require("lazy").setup({
                 })
             end, 0)
         end
+    },
+
+    {
+        "folke/lazydev.nvim",
+        ft = "lua",
+        opts = {
+            library = {
+                { path = "luvit-meta/library", words = { "vim%.uv" } },
+            }
+        }
     },
 }, {})
