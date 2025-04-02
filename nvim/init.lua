@@ -164,6 +164,10 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     'tpope/vim-sleuth',
 
+    { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
+
+    { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
+
     {
         "ellisonleao/gruvbox.nvim",
         lazy = false,
@@ -313,11 +317,6 @@ require("lazy").setup({
         }
     },
 
-    -- {
-    --     'numToStr/Comment.nvim',
-    --     opts = {}
-    -- },
-
     {
         'stevearc/conform.nvim',
         opts = {
@@ -373,12 +372,6 @@ require("lazy").setup({
                 print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
             end, { noremap = true, silent = true, desc = "Toggle Copilot" })
         end
-    },
-
-    {
-        "Saecki/crates.nvim",
-        event = { "BufRead Cargo.toml" },
-        opts = {},
     },
 
     {
@@ -445,17 +438,6 @@ require("lazy").setup({
                     })
                 end,
             })
-
-            -- https://github.com/neovim/neovim/issues/30985#issuecomment-2447329525
-            -- for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
-            --     local default_diagnostic_handler = vim.lsp.handlers[method]
-            --     vim.lsp.handlers[method] = function(err, result, context, config)
-            --         if err ~= nil and err.code == -32802 then
-            --             return
-            --         end
-            --         return default_diagnostic_handler(err, result, context, config)
-            --     end
-            -- end
         end
     },
 
@@ -499,18 +481,6 @@ require("lazy").setup({
                     indent = { enable = true },
                     incremental_selection = { enable = false },
                     textobjects = {
-                        select = {
-                            enable = true,
-                            lookahead = true,
-                            keymaps = {
-                                ["aa"] = "@parameter.outer",
-                                ["ia"] = "@parameter.inner",
-                                ["af"] = "@function.outer",
-                                ["if"] = "@function.inner",
-                                ["ac"] = "@class.outer",
-                                ["ic"] = "@class.inner",
-                            },
-                        },
                         move = {
                             enable = true,
                             set_jumps = true,
@@ -533,26 +503,12 @@ require("lazy").setup({
                         },
                         swap = {
                             enable = true,
-                            swap_next = {
-                                ["<leader>cs"] = "@parameter.inner",
-                            },
-                            swap_previous = {
-                                ["<leader>cS"] = "@parameter.inner",
-                            },
+                            swap_next = { ["<leader>cs"] = "@parameter.inner" },
+                            swap_previous = { ["<leader>cS"] = "@parameter.inner" },
                         },
                     },
                 })
             end, 0)
         end
-    },
-
-    {
-        "folke/lazydev.nvim",
-        ft = "lua",
-        opts = {
-            library = {
-                { path = "luvit-meta/library", words = { "vim%.uv" } },
-            }
-        }
     },
 }, {})
