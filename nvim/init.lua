@@ -37,7 +37,6 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes"
 
 vim.opt.clipboard = "unnamedplus"
-vim.opt.magic = true
 
 -- Smart movements
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
@@ -170,7 +169,6 @@ require("lazy").setup({
 
     {
         "ellisonleao/gruvbox.nvim",
-        lazy = false,
         priority = 1000,
         config = function()
             vim.cmd([[colorscheme gruvbox]])
