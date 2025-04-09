@@ -54,6 +54,10 @@ elif [ "$CMD_1" = "link" ]; then
     if [ "$(uname)" == "Darwin" ]; then
         ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
     fi
+
+    ensure_dir_exists $XDG_CONFIG_HOME/zed
+    ln -fsv "$PWD/zed/keymap.json" $XDG_CONFIG_HOME/zed/keymap.json
+    ln -fsv "$PWD/zed/settings.json" $XDG_CONFIG_HOME/zed/settings.json
 elif [ "$CMD_1" = "unlink" ]; then
     rm -v ~/.bashrc
     rm -v ~/.inputrc
@@ -73,6 +77,8 @@ elif [ "$CMD_1" = "unlink" ]; then
     if [ "$(uname)" == "Darwin" ]; then
         rm -v ~/.zshrc
     fi
+    rm -v $XDG_CONFIG_HOME/zed/keymap.json
+    rm -v $XDG_CONFIG_HOME/zed/settings.json
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
     echo "Ioan's configuration manager"
     echo ""

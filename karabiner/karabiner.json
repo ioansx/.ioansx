@@ -22,7 +22,7 @@
                   {
                     "software_function": {
                       "open_application": {
-                        "bundle_identifier": "com.apple.Finder"
+                        "file_path": "/Applications/Zed.app"
                       }
                     }
                   }
@@ -45,7 +45,7 @@
                   {
                     "software_function": {
                       "open_application": {
-                        "file_path": "/Applications/Brave Browser.app"
+                        "file_path": "/Applications/Ghostty.app"
                       }
                     }
                   }
@@ -68,7 +68,7 @@
                   {
                     "software_function": {
                       "open_application": {
-                        "file_path": "/Applications/Ghostty.app"
+                        "file_path": "/Applications/Brave Browser.app"
                       }
                     }
                   }

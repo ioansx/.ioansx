@@ -55,6 +55,13 @@ vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
+vim.keymap.set('n', '<leader>tq', function()
+    if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
+        vim.cmd('cclose')
+    else
+        vim.cmd('copen')
+    end
+end, { noremap = true, silent = true })
 
 -- Smart paste
 vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
@@ -73,15 +80,16 @@ vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnosti
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
 -- LSP
+vim.keymap.set("n", "cd", vim.lsp.buf.rename, { desc = "rename symbol" })
+vim.keymap.set("n", "g.", vim.lsp.buf.code_action, { desc = "code action" })
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
+vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
+vim.keymap.set("n", "gI", vim.lsp.buf.implementation, { desc = "jump to implementation" })
+vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "format buffer" })
 vim.keymap.set("n", "<leader>cr", function()
     vim.lsp.stop_client(vim.lsp.get_clients())
 end, { desc = "LSP: stop clients" })
-vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "LSP: code action" })
-vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "LSP: rename symbol" })
-vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "LSP: format buffer" })
-vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to definition" })
-vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
-vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
