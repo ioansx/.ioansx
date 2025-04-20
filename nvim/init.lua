@@ -80,14 +80,13 @@ vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnosti
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
 -- LSP
-vim.keymap.set("n", "cd", vim.lsp.buf.rename, { desc = "rename symbol" })
-vim.keymap.set("n", "g.", vim.lsp.buf.code_action, { desc = "code action" })
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
-vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
-vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
-vim.keymap.set("n", "gI", vim.lsp.buf.implementation, { desc = "jump to implementation" })
-vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "format buffer" })
-vim.keymap.set("n", "<leader>cr", function()
+-- vim.keymap.set("n", "g.", vim.lsp.buf.code_action, { desc = "code action" })
+-- vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
+vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
+vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to type definition" })
+vim.keymap.set("n", "grb", vim.lsp.buf.format, { desc = "format buffer" })
+vim.keymap.set("n", "grk", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
+vim.keymap.set("n", "grX", function()
     vim.lsp.stop_client(vim.lsp.get_clients())
 end, { desc = "LSP: stop clients" })
 

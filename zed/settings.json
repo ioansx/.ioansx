@@ -20,6 +20,12 @@
     "light": "Gruvbox Light Hard",
     "dark": "Gruvbox Dark Hard"
   },
+  "ui_font_features": {
+    "calt": false
+  },
+  "buffer_font_features": {
+    "calt": false
+  },
   "base_keymap": "JetBrains",
   "vim_mode": true,
   "ui_font_size": 16,
