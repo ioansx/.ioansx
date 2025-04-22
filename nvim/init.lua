@@ -61,7 +61,7 @@ vim.keymap.set('n', '<leader>tq', function()
     else
         vim.cmd('copen')
     end
-end, { noremap = true, silent = true })
+end, { noremap = true, silent = true, desc = "toggle quickfix list" })
 
 -- Smart paste
 vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
@@ -80,12 +80,10 @@ vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnosti
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
 -- LSP
--- vim.keymap.set("n", "g.", vim.lsp.buf.code_action, { desc = "code action" })
--- vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
 vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to type definition" })
 vim.keymap.set("n", "grb", vim.lsp.buf.format, { desc = "format buffer" })
-vim.keymap.set("n", "grk", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
+vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
 vim.keymap.set("n", "grX", function()
     vim.lsp.stop_client(vim.lsp.get_clients())
 end, { desc = "LSP: stop clients" })
