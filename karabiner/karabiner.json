@@ -22,7 +22,7 @@
                   {
                     "software_function": {
                       "open_application": {
-                        "file_path": "/Applications/Zed.app"
+                        "bundle_identifier": "com.apple.Finder"
                       }
                     }
                   }
