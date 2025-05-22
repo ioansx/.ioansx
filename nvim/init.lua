@@ -82,11 +82,8 @@ vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostic
 -- LSP
 vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to type definition" })
-vim.keymap.set("n", "grb", vim.lsp.buf.format, { desc = "format buffer" })
 vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
-vim.keymap.set("n", "grX", function()
-    vim.lsp.stop_client(vim.lsp.get_clients())
-end, { desc = "LSP: stop clients" })
+vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
@@ -123,6 +120,8 @@ require("lazy").setup({
     { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
 
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
+
+    { "j-hui/fidget.nvim",  opts = {} },
 
     {
         "ellisonleao/gruvbox.nvim",
@@ -337,67 +336,52 @@ require("lazy").setup({
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            { "williamboman/mason.nvim", config = true },
-            "williamboman/mason-lspconfig.nvim",
-            { "j-hui/fidget.nvim",       opts = {} },
+            { "williamboman/mason.nvim",           config = true },
+            { "williamboman/mason-lspconfig.nvim", config = true },
         },
         config = function()
             require("mason").setup()
-            require("mason-lspconfig").setup()
+            require("mason-lspconfig").setup({
+                ensure_installed = {
+                    "bashls",
+                    "cssls",
+                    "eslint",
+                    "tailwindcss",
+                    "lua_ls",
+                    "rust_analyzer",
+                    "taplo",
+                    "ts_ls",
+                    "svelte",
+                    "gopls",
+                },
+                automatic_enable = true
+            })
 
-            local servers = {
-                bashls = {},
-                cssls = {},
-                eslint = {},
-                tailwindcss = {},
-                lua_ls = {
+            vim.lsp.config["lua_ls"] = {
+                settings = {
                     Lua = {
                         workspace = { checkThirdParty = false },
                         telemetry = { enable = false },
                         diagnostics = { disable = { 'missing-fields' } },
-                    },
-                },
-                -- pyright = {
-                --     autoImportCompletion = true,
-                --     python = {
-                --         analysis = {
-                --             autoSearchPaths = true,
-                --             diagnosticMode = 'openFilesOnly',
-                --             useLibraryCodeForTypes = true,
-                --             typeCheckingMode = 'off'
-                --         }
-                --     }
-                -- },
-                rust_analyzer = {
+                    }
+                }
+            }
+            vim.lsp.enable('lua_ls')
+
+            vim.lsp.config["rust_analyzer"] = {
+                settings = {
                     ["rust-analyzer"] = {
                         completion = {
                             postfix = { enable = false },
                         },
                         check = {
                             command = "check",
-                            -- command = "clippy",
                         },
                     }
-                },
-                taplo = {},
-                ts_ls = {},
-                svelte = {},
-                gopls = {},
+                }
+
             }
-
-            local mason_lspconfig = require("mason-lspconfig")
-            mason_lspconfig.setup({
-                ensure_installed = vim.tbl_keys(servers),
-            })
-
-            mason_lspconfig.setup_handlers({
-                function(server_name)
-                    require("lspconfig")[server_name].setup({
-                        settings = servers[server_name],
-                        filetypes = (servers[server_name] or {}).filetypes,
-                    })
-                end,
-            })
+            vim.lsp.enable("rust_analyzer")
         end
     },
 
@@ -427,6 +411,7 @@ require("lazy").setup({
                         "racket",
                         "ron",
                         "rust",
+                        "sql",
                         "svelte",
                         "toml",
                         "typescript",
@@ -435,6 +420,8 @@ require("lazy").setup({
                         "xml",
                         "yaml",
                     },
+                    modules = {},
+                    auto_install = true,
                     ignore_install = {},
                     sync_install = false,
                     highlight = { enable = true },
@@ -446,25 +433,16 @@ require("lazy").setup({
                             set_jumps = true,
                             goto_next_start = {
                                 ["]f"] = "@function.outer",
-                                ["]c"] = "@class.outer",
                             },
                             goto_next_end = {
                                 ["]F"] = "@function.outer",
-                                ["]C"] = "@class.outer",
                             },
                             goto_previous_start = {
                                 ["[f"] = "@function.outer",
-                                ["[c"] = "@class.outer",
                             },
                             goto_previous_end = {
                                 ["[F"] = "@function.outer",
-                                ["[C"] = "@class.outer",
                             },
-                        },
-                        swap = {
-                            enable = true,
-                            swap_next = { ["<leader>cs"] = "@parameter.inner" },
-                            swap_previous = { ["<leader>cS"] = "@parameter.inner" },
                         },
                     },
                 })
