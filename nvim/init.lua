@@ -116,11 +116,8 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     'tpope/vim-sleuth',
-
     { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
-
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
-
     { "j-hui/fidget.nvim",  opts = {} },
 
     {
