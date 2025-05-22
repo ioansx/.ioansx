@@ -334,25 +334,25 @@ require("lazy").setup({
     },
 
     {
-        "neovim/nvim-lspconfig",
+        "mason-org/mason-lspconfig.nvim",
+        opts = {},
         dependencies = {
-            { "williamboman/mason.nvim",           config = true },
-            { "williamboman/mason-lspconfig.nvim", config = true },
+            { "mason-org/mason.nvim", opts = {} },
+            "neovim/nvim-lspconfig",
         },
         config = function()
-            require("mason").setup()
             require("mason-lspconfig").setup({
                 ensure_installed = {
                     "bashls",
                     "cssls",
                     "eslint",
-                    "tailwindcss",
+                    "gopls",
                     "lua_ls",
                     "rust_analyzer",
+                    "svelte",
+                    "tailwindcss",
                     "taplo",
                     "ts_ls",
-                    "svelte",
-                    "gopls",
                 },
                 automatic_enable = true
             })
@@ -366,7 +366,6 @@ require("lazy").setup({
                     }
                 }
             }
-            vim.lsp.enable('lua_ls')
 
             vim.lsp.config["rust_analyzer"] = {
                 settings = {
@@ -381,7 +380,6 @@ require("lazy").setup({
                 }
 
             }
-            vim.lsp.enable("rust_analyzer")
         end
     },
 
@@ -420,7 +418,6 @@ require("lazy").setup({
                         "xml",
                         "yaml",
                     },
-                    modules = {},
                     auto_install = true,
                     ignore_install = {},
                     sync_install = false,
