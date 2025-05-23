@@ -46,22 +46,27 @@ vim.keymap.set("n", "n", "nzz", { silent = true })
 vim.keymap.set("n", "N", "Nzz", { silent = true })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
 
 -- Toggle
 vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
-vim.keymap.set("n", "<leader>tl", ":set rnu!<CR>", { desc = "toggle relativenumber" })
-vim.keymap.set('n', '<leader>tq', function()
+vim.keymap.set("n", "<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
+vim.keymap.set("n", '<leader>tq', function()
     if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
         vim.cmd('cclose')
     else
         vim.cmd('copen')
     end
 end, { noremap = true, silent = true, desc = "toggle quickfix list" })
+vim.keymap.set("n", '<leader>tl', function()
+    if vim.fn.getloclist(0).winid ~= 0 then
+        vim.cmd('lclose')
+    else
+        vim.cmd('lopen')
+    end
+end, { noremap = true, silent = true, desc = "toggle location list" })
 
 -- Smart paste
 vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
@@ -116,9 +121,9 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     'tpope/vim-sleuth',
+    { "j-hui/fidget.nvim",  opts = {} },
     { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
-    { "j-hui/fidget.nvim",  opts = {} },
 
     {
         "ellisonleao/gruvbox.nvim",
@@ -233,9 +238,8 @@ require("lazy").setup({
                 function() Snacks.picker.git_log_line() end,
                 desc = "Git Log Line",
             },
-            { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
-            { "<leader>gb", function() Snacks.git.blame_line() end,   desc = "Git Branches" },
-            { "<leader>gd", function() Snacks.picker.git_diff() end,  desc = "Git Diff (Hunks)" },
+            { "<leader>gb", function() Snacks.git.blame_line() end,  desc = "Git Branches" },
+            { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
             {
                 "<leader>gf",
                 function() Snacks.picker.git_log_file() end,
@@ -250,14 +254,8 @@ require("lazy").setup({
                 desc = "Git Browse",
                 mode = { "n", "v" },
             },
-            { "<leader>sS",  function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
-            { "<leader>s\"", function() Snacks.picker.registers() end,   desc = "Registers" },
-            { "<leader>sh",  function() Snacks.picker.help() end,        desc = "Help Pages" },
-            { "<leader>sj",  function() Snacks.picker.jumps() end,       desc = "Jumps" },
-            { "<leader>sk",  function() Snacks.picker.keymaps() end,     desc = "Keymaps" },
-            { "<leader>sm",  function() Snacks.picker.marks() end,       desc = "Marks" },
-            { "<leader>sq",  function() Snacks.picker.qflist() end,      desc = "Quickfix List" },
-            { "<leader>sr",  function() Snacks.picker.resume() end,      desc = "Resume" },
+            { "<leader>sS", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
+            { "<leader>sr", function() Snacks.picker.resume() end,      desc = "Resume" },
             {
                 "<leader>ss",
                 function() Snacks.picker.lsp_workspace_symbols() end,
@@ -283,7 +281,6 @@ require("lazy").setup({
             formatters_by_ft = {
                 ["javascript"] = { "prettier" },
                 ["typescript"] = { "prettier" },
-                ["vue"] = { "prettier" },
                 ["svelte"] = { "prettier" },
                 ["css"] = { "prettier" },
                 ["scss"] = { "prettier" },
