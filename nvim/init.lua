@@ -53,6 +53,7 @@ vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
+
 vim.keymap.set("n", '<leader>tq', function()
     if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
         vim.cmd('cclose')
@@ -60,6 +61,7 @@ vim.keymap.set("n", '<leader>tq', function()
         vim.cmd('copen')
     end
 end, { noremap = true, silent = true, desc = "toggle quickfix list" })
+
 vim.keymap.set("n", '<leader>tl', function()
     if vim.fn.getloclist(0).winid ~= 0 then
         vim.cmd('lclose')
@@ -90,6 +92,7 @@ vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to type defini
 vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
+-- LSP completion https://neovim.io/doc/user/lsp.html#lsp-attach
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -108,7 +111,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
--- Lazy plugins
+-- Lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -165,11 +168,7 @@ require("lazy").setup({
                     mini_clue.gen_clues.windows(),
                     mini_clue.gen_clues.z(),
                 },
-                window = {
-                    config = {
-                        width = "auto",
-                    },
-                },
+                window = { config = { width = "auto" } },
             })
 
             require("mini.diff").setup({
@@ -200,68 +199,35 @@ require("lazy").setup({
                 ui_select = false,
                 layout = {
                     cycle = true,
-                    layout = {
-                        backdrop = true,
-                        width = 0.8,
-                        min_width = 80,
-                        height = 0.9,
-                        min_height = 30,
-                        box = "vertical",
-                        border = "rounded",
-                        title = "{title} {live} {flags}",
-                        title_pos = "center",
-                        { win = "preview", title = "{preview}", height = 0.6,     border = "bottom" },
-                        { win = "input",   height = 1,          border = "bottom" },
-                        { win = "list",    border = "hpad" },
-                    },
+                    layout = { backdrop = true, width = 0.90 },
                 },
             },
             words = { enabled = true },
         },
         keys = {
-            { "<leader>/",  function() Snacks.picker.grep() end,      desc = "Grep" },
-            {
-                "<leader>fa",
-                function() Snacks.picker.files({ hidden = true, ignored = true }) end,
-                desc = "Find Files",
-            },
-            {
-                "<leader><space>",
-                function() Snacks.picker.buffers({ sort_lastused = true }) end,
-                desc = "Find Buffers",
-            },
-            { "<leader>ff", function() Snacks.picker.files() end,     desc = "Find Files" },
-            { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
-            { "<leader>fr", function() Snacks.picker.recent() end,    desc = "Recent" },
-            {
-                "<leader>gL",
-                function() Snacks.picker.git_log_line() end,
-                desc = "Git Log Line",
-            },
-            { "<leader>gb", function() Snacks.git.blame_line() end,  desc = "Git Branches" },
-            { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
-            {
-                "<leader>gf",
-                function() Snacks.picker.git_log_file() end,
-                desc = "Git Log File",
-            },
-            { "<leader>gg", function() Snacks.lazygit() end,           desc = "Lazygit" },
-            { "<leader>gl", function() Snacks.picker.git_log() end,    desc = "Git Log" },
-            { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+            { "<leader>/",       function() Snacks.picker.grep() end,                                   desc = "Grep" },
+            { "<leader>fa",      function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files" },
+            { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
+            { "<leader>ff",      function() Snacks.picker.files() end,                                  desc = "Find Files" },
+            { "<leader>fg",      function() Snacks.picker.git_files() end,                              desc = "Find Git Files" },
+            { "<leader>fr",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
+            { "<leader>gL",      function() Snacks.picker.git_log_line() end,                           desc = "Git Log Line" },
+            { "<leader>gb",      function() Snacks.git.blame_line() end,                                desc = "Git Branches" },
+            { "<leader>gd",      function() Snacks.picker.git_diff() end,                               desc = "Git Diff (Hunks)" },
+            { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
+            { "<leader>gg",      function() Snacks.lazygit() end,                                       desc = "Lazygit" },
+            { "<leader>gl",      function() Snacks.picker.git_log() end,                                desc = "Git Log" },
+            { "<leader>gs",      function() Snacks.picker.git_status() end,                             desc = "Git Status" },
             {
                 "<leader>gx",
                 function() Snacks.gitbrowse() end,
                 desc = "Git Browse",
                 mode = { "n", "v" },
             },
-            { "<leader>sS", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
-            { "<leader>sr", function() Snacks.picker.resume() end,      desc = "Resume" },
-            {
-                "<leader>ss",
-                function() Snacks.picker.lsp_workspace_symbols() end,
-                desc = "LSP Workspace Symbols"
-            },
-            { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
+            { "<leader>sS", function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
+            { "<leader>sr", function() Snacks.picker.resume() end,                desc = "Resume" },
+            { "<leader>ss", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
+            { "<leader>su", function() Snacks.picker.undo() end,                  desc = "Undo History" },
             {
                 "<leader>sw",
                 function() Snacks.picker.grep_word() end,
@@ -274,10 +240,8 @@ require("lazy").setup({
     {
         'stevearc/conform.nvim',
         opts = {
-            format_on_save = {
-                timeout_ms = 500,
-                lsp_fallback = true,
-            },
+            default_format_opts = { lsp_format = "fallback" },
+            format_on_save = { timeout_ms = 500 },
             formatters_by_ft = {
                 ["javascript"] = { "prettier" },
                 ["typescript"] = { "prettier" },
@@ -354,8 +318,6 @@ require("lazy").setup({
             vim.lsp.config["lua_ls"] = {
                 settings = {
                     Lua = {
-                        workspace = { checkThirdParty = false },
-                        telemetry = { enable = false },
                         diagnostics = { disable = { 'missing-fields' } },
                     }
                 }
@@ -422,18 +384,10 @@ require("lazy").setup({
                         move = {
                             enable = true,
                             set_jumps = true,
-                            goto_next_start = {
-                                ["]f"] = "@function.outer",
-                            },
-                            goto_next_end = {
-                                ["]F"] = "@function.outer",
-                            },
-                            goto_previous_start = {
-                                ["[f"] = "@function.outer",
-                            },
-                            goto_previous_end = {
-                                ["[F"] = "@function.outer",
-                            },
+                            goto_next_start = { ["]f"] = "@function.outer" },
+                            goto_next_end = { ["]F"] = "@function.outer" },
+                            goto_previous_start = { ["[f"] = "@function.outer" },
+                            goto_previous_end = { ["[F"] = "@function.outer" },
                         },
                     },
                 })
