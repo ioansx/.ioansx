@@ -93,14 +93,14 @@ vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type d
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- LSP completion https://neovim.io/doc/user/lsp.html#lsp-attach
-vim.api.nvim_create_autocmd('LspAttach', {
-    callback = function(ev)
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        if client ~= nil and client:supports_method('textDocument/completion') then
-            vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-        end
-    end,
-})
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--     callback = function(ev)
+--         local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--         if client ~= nil and client:supports_method('textDocument/completion') then
+--             vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+--         end
+--     end,
+-- })
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -279,8 +279,17 @@ require("lazy").setup({
     },
 
     {
-        'github/copilot.vim',
-        opts = {},
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        opts = {
+            suggestion = { enabled = false },
+            panel = { enabled = false },
+            filetypes = {
+                markdown = true,
+                help = true,
+            },
+        },
         config = function()
             vim.g.copilot_enabled = false
             vim.keymap.set('n', '<leader>tc', function()
@@ -289,6 +298,44 @@ require("lazy").setup({
                 print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
             end, { noremap = true, silent = true, desc = "Toggle Copilot" })
         end
+    },
+
+    {
+        'saghen/blink.cmp',
+        dependencies = { "fang2hou/blink-copilot" },
+        version = '1.*',
+        opts = {
+            keymap = { preset = 'default' },
+            cmdline = { enabled = false },
+            signature = { enabled = true },
+            appearance = { nerd_font_variant = 'mono' },
+            completion = {
+                documentation = {
+                    auto_show = true,
+                    auto_show_delay_ms = 0,
+                },
+                accept = {
+                    auto_brackets = { enabled = false },
+                },
+            },
+            sources = {
+                default = { 'lsp', 'path', 'buffer', 'copilot' },
+                providers = {
+                    copilot = {
+                        name = "copilot",
+                        module = "blink-copilot",
+                        score_offset = 100,
+                        async = true,
+                        opts = {
+                            max_completions = 1,
+                            max_attempts = 2,
+                        }
+                    },
+                },
+            },
+            fuzzy = { implementation = "prefer_rust_with_warning" }
+        },
+        opts_extend = { "sources.default" },
     },
 
     {
