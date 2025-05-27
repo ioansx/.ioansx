@@ -92,16 +92,6 @@ vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to type defini
 vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
--- LSP completion https://neovim.io/doc/user/lsp.html#lsp-attach
--- vim.api.nvim_create_autocmd('LspAttach', {
---     callback = function(ev)
---         local client = vim.lsp.get_client_by_id(ev.data.client_id)
---         if client ~= nil and client:supports_method('textDocument/completion') then
---             vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
---         end
---     end,
--- })
-
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking text',
@@ -199,7 +189,20 @@ require("lazy").setup({
                 ui_select = false,
                 layout = {
                     cycle = true,
-                    layout = { backdrop = true, width = 0.90 },
+                    layout = {
+                        backdrop = true,
+                        width = 0.8,
+                        min_width = 80,
+                        height = 0.9,
+                        min_height = 30,
+                        box = "vertical",
+                        border = "rounded",
+                        title = "{title} {live} {flags}",
+                        title_pos = "center",
+                        { win = "preview", title = "{preview}", height = 0.6,     border = "bottom" },
+                        { win = "input",   height = 1,          border = "bottom" },
+                        { win = "list",    border = "hpad" },
+                    }
                 },
             },
             words = { enabled = true },
