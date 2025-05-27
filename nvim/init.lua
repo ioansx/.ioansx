@@ -54,7 +54,7 @@ vim.keymap.set("n", "<leader>tk", function()
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 
-vim.keymap.set("n", '<leader>tq', function()
+vim.keymap.set("n", '<leader>tc', function()
     if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
         vim.cmd('cclose')
     else
@@ -84,7 +84,7 @@ vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank 
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
-vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
+vim.keymap.set("n", "<leader>dc", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
 -- LSP
 vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
@@ -295,7 +295,7 @@ require("lazy").setup({
         },
         config = function()
             vim.g.copilot_enabled = false
-            vim.keymap.set('n', '<leader>tc', function()
+            vim.keymap.set('n', '<leader>ti', function()
                 local copilot_enabled = vim.g.copilot_enabled or false
                 vim.g.copilot_enabled = not copilot_enabled
                 print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
