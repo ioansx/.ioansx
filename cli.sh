@@ -51,9 +51,10 @@ elif [ "$CMD_1" = "link" ]; then
 
     ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
     ln -fsv "$PWD/vim" $XDG_CONFIG_HOME
-    if [ "$(uname)" == "Darwin" ]; then
-        ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
-    fi
+
+    # if [ "$(uname)" == "Darwin" ]; then
+    ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
+    # fi
 
     ensure_dir_exists $XDG_CONFIG_HOME/zed
     ln -fsv "$PWD/zed/keymap.json" $XDG_CONFIG_HOME/zed/keymap.json
@@ -74,9 +75,11 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v $XDG_CONFIG_HOME/nvim/init.lua
     rm -v ~/.tmux.conf
     rm -v $XDG_CONFIG_HOME/vim
-    if [ "$(uname)" == "Darwin" ]; then
-        rm -v ~/.zshrc
-    fi
+
+    # if [ "$(uname)" == "Darwin" ]; then
+    rm -v ~/.zshrc
+    # fi
+
     rm -v $XDG_CONFIG_HOME/zed/keymap.json
     rm -v $XDG_CONFIG_HOME/zed/settings.json
 elif [[ $CMD_1 = "help" || $CMD_1 = "-h" || $CMD_1 = "--help" ]]; then
