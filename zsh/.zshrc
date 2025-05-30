@@ -1,7 +1,8 @@
+# My zsh config.
+
 autoload -Uz promptinit
 promptinit
-
-PS1='%F{yellow}(%?)%f %F{cyan}%*%f %F{green}%~%f %# '
+PS1='%F{yellow}(%?)%f %F{green}%*%f %B%F{blue}%~%f%b %# '
 
 setopt histignorealldups sharehistory
 
@@ -51,8 +52,6 @@ alias lzg="lazygit"
 alias lzd="lazydocker"
 alias nav='cd $(important-directories)'
 alias man='MANWIDTH=80 man'
-
-export XDG_CONFIG_HOME="$HOME/.config"
 
 . "$HOME/.cargo/env"
 if [ -f '/Users/ioan/google-cloud-sdk/path.zsh.inc' ]; then
