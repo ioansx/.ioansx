@@ -320,6 +320,7 @@ require("lazy").setup({
                 accept = {
                     auto_brackets = { enabled = false },
                 },
+                list = { selection = { auto_insert = false } }
             },
             sources = {
                 default = { 'lsp', 'path', 'buffer', 'copilot' },
