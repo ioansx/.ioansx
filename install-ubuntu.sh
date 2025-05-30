@@ -12,6 +12,7 @@ sudo apt install \
 	make \
 	tmux \
 	vim \
+	zoxide \
 	wl-clipboard \
 	-y
 
