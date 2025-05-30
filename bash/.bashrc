@@ -79,5 +79,6 @@ alias lzg='lazygit'
 alias nav='cd $(~/.ioansx/bash/bin/important-directories)'
 
 eval "$(fzf --bash)"
+eval "$(zoxide init bash)"
 
 . "$HOME/.cargo/env"
