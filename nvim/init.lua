@@ -209,9 +209,8 @@ require("lazy").setup({
         },
         keys = {
             { "<leader>/",       function() Snacks.picker.grep() end,                                   desc = "Grep" },
-            { "<leader>fa",      function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files" },
+            { "<leader>ff",      function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files" },
             { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
-            { "<leader>ff",      function() Snacks.picker.files() end,                                  desc = "Find Files" },
             { "<leader>fg",      function() Snacks.picker.git_files() end,                              desc = "Find Git Files" },
             { "<leader>fr",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
             { "<leader>gL",      function() Snacks.picker.git_log_line() end,                           desc = "Git Log Line" },
@@ -317,9 +316,7 @@ require("lazy").setup({
                     auto_show = true,
                     auto_show_delay_ms = 0,
                 },
-                accept = {
-                    auto_brackets = { enabled = false },
-                },
+                accept = { auto_brackets = { enabled = false } },
                 list = { selection = { auto_insert = false } }
             },
             sources = {
@@ -392,9 +389,6 @@ require("lazy").setup({
 
     {
         "nvim-treesitter/nvim-treesitter",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter-textobjects",
-        },
         opts = {},
         build = ":TSUpdate",
         config = function()
@@ -405,6 +399,7 @@ require("lazy").setup({
                         "c",
                         "commonlisp",
                         "css",
+                        "csv",
                         "fish",
                         "go",
                         "html",
@@ -431,16 +426,6 @@ require("lazy").setup({
                     highlight = { enable = true },
                     indent = { enable = true },
                     incremental_selection = { enable = false },
-                    textobjects = {
-                        move = {
-                            enable = true,
-                            set_jumps = true,
-                            goto_next_start = { ["]f"] = "@function.outer" },
-                            goto_next_end = { ["]F"] = "@function.outer" },
-                            goto_previous_start = { ["[f"] = "@function.outer" },
-                            goto_previous_end = { ["[F"] = "@function.outer" },
-                        },
-                    },
                 })
             end, 0)
         end
