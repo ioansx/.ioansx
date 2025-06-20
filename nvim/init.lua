@@ -285,21 +285,21 @@ require("lazy").setup({
         cmd = "Copilot",
         event = "InsertEnter",
         opts = {
-            suggestion = { enabled = false },
+            suggestion = { enabled = true },
             panel = { enabled = false },
             filetypes = {
                 markdown = true,
                 help = true,
             },
         },
-        config = function()
-            vim.g.copilot_enabled = false
-            vim.keymap.set('n', '<leader>ti', function()
-                local copilot_enabled = vim.g.copilot_enabled or false
-                vim.g.copilot_enabled = not copilot_enabled
-                print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
-            end, { noremap = true, silent = true, desc = "Toggle Copilot" })
-        end
+        -- config = function()
+        --     -- vim.g.copilot_enabled = false
+        --     vim.keymap.set('n', '<leader>ti', function()
+        --         local copilot_enabled = vim.g.copilot_enabled or false
+        --         vim.g.copilot_enabled = not copilot_enabled
+        --         print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
+        --     end, { noremap = true, silent = true, desc = "Toggle Copilot" })
+        -- end
     },
 
     {
