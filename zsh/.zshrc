@@ -54,9 +54,14 @@ alias nav='cd $(important-directories)'
 alias man='MANWIDTH=80 man'
 
 . "$HOME/.cargo/env"
+
 if [ -f '/Users/ioan/google-cloud-sdk/path.zsh.inc' ]; then
     source '/Users/ioan/google-cloud-sdk/path.zsh.inc';
 fi
 
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
