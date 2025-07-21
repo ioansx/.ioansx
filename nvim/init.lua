@@ -87,7 +87,7 @@ vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnosti
 vim.keymap.set("n", "<leader>dc", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
 -- LSP
-vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
