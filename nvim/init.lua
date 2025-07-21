@@ -88,8 +88,7 @@ vim.keymap.set("n", "<leader>dc", vim.diagnostic.setqflist, { desc = "diagnostic
 
 -- LSP
 vim.keymap.set("n", "grD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
-vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "jump to type definition" })
-vim.keymap.set("n", "grs", vim.lsp.buf.type_definition, { desc = "jump to type definition" })
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- Highlight on yank
@@ -292,14 +291,6 @@ require("lazy").setup({
                 help = true,
             },
         },
-        -- config = function()
-        --     -- vim.g.copilot_enabled = false
-        --     vim.keymap.set('n', '<leader>ti', function()
-        --         local copilot_enabled = vim.g.copilot_enabled or false
-        --         vim.g.copilot_enabled = not copilot_enabled
-        --         print("Copilot " .. (vim.g.copilot_enabled and "enabled" or "disabled"))
-        --     end, { noremap = true, silent = true, desc = "Toggle Copilot" })
-        -- end
     },
 
     {
