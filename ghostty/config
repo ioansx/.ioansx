@@ -8,5 +8,3 @@ shell-integration-features = no-cursor
 # Window width and height will be clamped to max screen size.
 window-height = 9000
 window-width = 9000
-
-window-new-tab-position = end

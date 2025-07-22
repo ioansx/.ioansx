@@ -53,7 +53,6 @@ vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
-
 vim.keymap.set("n", '<leader>tc', function()
     if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
         vim.cmd('cclose')
@@ -61,7 +60,6 @@ vim.keymap.set("n", '<leader>tc', function()
         vim.cmd('copen')
     end
 end, { noremap = true, silent = true, desc = "toggle quickfix list" })
-
 vim.keymap.set("n", '<leader>tl', function()
     if vim.fn.getloclist(0).winid ~= 0 then
         vim.cmd('lclose')
@@ -117,12 +115,22 @@ require("lazy").setup({
     { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
+    -- {
+    --     "ellisonleao/gruvbox.nvim",
+    --     priority = 1000,
+    --     config = function()
+    --         vim.cmd([[colorscheme gruvbox]])
+    --     end
+    -- },
+
     {
-        "ellisonleao/gruvbox.nvim",
+        'ribru17/bamboo.nvim',
+        lazy = false,
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme gruvbox]])
-        end
+            require('bamboo').setup({ style = 'vulgaris' })
+            require('bamboo').load()
+        end,
     },
 
     {
@@ -207,22 +215,29 @@ require("lazy").setup({
             words = { enabled = true },
         },
         keys = {
-            { "<leader>/",       function() Snacks.picker.grep() end,                                   desc = "Grep" },
-            { "<leader>f",       function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files" },
-            { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
-            { "<leader>gL",      function() Snacks.picker.git_log_line() end,                           desc = "Git Log Line" },
-            { "<leader>gb",      function() Snacks.git.blame_line() end,                                desc = "Git Branches" },
-            { "<leader>gd",      function() Snacks.picker.git_diff() end,                               desc = "Git Diff (Hunks)" },
-            { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
-            { "<leader>gg",      function() Snacks.lazygit() end,                                       desc = "Lazygit" },
-            { "<leader>gl",      function() Snacks.picker.git_log() end,                                desc = "Git Log" },
-            { "<leader>gs",      function() Snacks.picker.git_status() end,                             desc = "Git Status" },
             {
-                "<leader>gx",
-                function() Snacks.gitbrowse() end,
-                desc = "Git Browse",
-                mode = { "n", "v" },
+                "<leader>/",
+                function() Snacks.picker.grep() end,
+                desc = "Grep",
             },
+            {
+                "<leader>f",
+                function() Snacks.picker.files({ hidden = true, ignored = true }) end,
+                desc = "Find Files",
+            },
+            {
+                "<leader><space>",
+                function() Snacks.picker.buffers({ sort_lastused = true }) end,
+                desc = "Find Buffers",
+            },
+            { "<leader>gL", function() Snacks.picker.git_log_line() end,          desc = "Git Log Line" },
+            { "<leader>gb", function() Snacks.git.blame_line() end,               desc = "Git Branches" },
+            { "<leader>gd", function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
+            { "<leader>gf", function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
+            { "<leader>gg", function() Snacks.lazygit() end,                      desc = "Lazygit" },
+            { "<leader>gl", function() Snacks.picker.git_log() end,               desc = "Git Log" },
+            { "<leader>gs", function() Snacks.picker.git_status() end,            desc = "Git Status" },
+            { "<leader>gx", function() Snacks.gitbrowse() end,                    desc = "Git Browse",           mode = { "n", "v" } },
             { "<leader>sg", function() Snacks.picker.git_files() end,             desc = "Find Git Files" },
             { "<leader>se", function() Snacks.picker.recent() end,                desc = "Recent" },
             { "<leader>sS", function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
