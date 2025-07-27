@@ -115,22 +115,12 @@ require("lazy").setup({
     { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
-    -- {
-    --     "ellisonleao/gruvbox.nvim",
-    --     priority = 1000,
-    --     config = function()
-    --         vim.cmd([[colorscheme gruvbox]])
-    --     end
-    -- },
-
     {
-        'ribru17/bamboo.nvim',
-        lazy = false,
+        "ellisonleao/gruvbox.nvim",
         priority = 1000,
         config = function()
-            require('bamboo').setup({ style = 'vulgaris' })
-            require('bamboo').load()
-        end,
+            vim.cmd([[colorscheme gruvbox]])
+        end
     },
 
     {
@@ -222,8 +212,13 @@ require("lazy").setup({
             },
             {
                 "<leader>f",
-                function() Snacks.picker.files({ hidden = true, ignored = true }) end,
+                function() Snacks.picker.files({ hidden = true }) end,
                 desc = "Find Files",
+            },
+            {
+                "<leader>F",
+                function() Snacks.picker.files({ hidden = true, ignored = true }) end,
+                desc = "Find Files (incl. ignored)",
             },
             {
                 "<leader><space>",
