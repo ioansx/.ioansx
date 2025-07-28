@@ -187,7 +187,7 @@ require("lazy").setup({
                     cycle = true,
                     layout = {
                         backdrop = true,
-                        width = 0.8,
+                        width = 0.9,
                         min_width = 80,
                         height = 0.9,
                         min_height = 30,

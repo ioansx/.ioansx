@@ -44,6 +44,7 @@ else
 fi
 
 export PATH="$PATH:$HOME/.ioansx/bin"
+export XDG_CONFIG_HOME="$HOME/.config"
 
 alias l='ls -CF'
 alias la='ls -A'
