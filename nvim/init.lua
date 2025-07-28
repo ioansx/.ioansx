@@ -112,7 +112,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     'tpope/vim-sleuth',
     { "j-hui/fidget.nvim",  opts = {} },
-    { "folke/lazydev.nvim", ft = "lua",                       opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
@@ -168,6 +167,7 @@ require("lazy").setup({
                 },
             })
 
+            require("mini.icons").setup()
             require("mini.trailspace").setup()
         end
     },
@@ -176,7 +176,6 @@ require("lazy").setup({
         "folke/snacks.nvim",
         priority = 1000,
         lazy = false,
-        dependencies = { { "echasnovski/mini.icons", opts = {} } },
         opts = {
             bigfile = { enabled = true },
             image = { enabled = true },
@@ -205,46 +204,20 @@ require("lazy").setup({
             words = { enabled = true },
         },
         keys = {
-            {
-                "<leader>/",
-                function() Snacks.picker.grep() end,
-                desc = "Grep",
-            },
-            {
-                "<leader>f",
-                function() Snacks.picker.files({ hidden = true }) end,
-                desc = "Find Files",
-            },
-            {
-                "<leader>F",
-                function() Snacks.picker.files({ hidden = true, ignored = true }) end,
-                desc = "Find Files (incl. ignored)",
-            },
-            {
-                "<leader><space>",
-                function() Snacks.picker.buffers({ sort_lastused = true }) end,
-                desc = "Find Buffers",
-            },
-            { "<leader>gL", function() Snacks.picker.git_log_line() end,          desc = "Git Log Line" },
-            { "<leader>gb", function() Snacks.git.blame_line() end,               desc = "Git Branches" },
-            { "<leader>gd", function() Snacks.picker.git_diff() end,              desc = "Git Diff (Hunks)" },
-            { "<leader>gf", function() Snacks.picker.git_log_file() end,          desc = "Git Log File" },
-            { "<leader>gg", function() Snacks.lazygit() end,                      desc = "Lazygit" },
-            { "<leader>gl", function() Snacks.picker.git_log() end,               desc = "Git Log" },
-            { "<leader>gs", function() Snacks.picker.git_status() end,            desc = "Git Status" },
-            { "<leader>gx", function() Snacks.gitbrowse() end,                    desc = "Git Browse",           mode = { "n", "v" } },
-            { "<leader>sg", function() Snacks.picker.git_files() end,             desc = "Find Git Files" },
-            { "<leader>se", function() Snacks.picker.recent() end,                desc = "Recent" },
-            { "<leader>sS", function() Snacks.picker.lsp_symbols() end,           desc = "LSP Symbols" },
-            { "<leader>sr", function() Snacks.picker.resume() end,                desc = "Resume" },
-            { "<leader>ss", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
-            { "<leader>su", function() Snacks.picker.undo() end,                  desc = "Undo History" },
-            {
-                "<leader>sw",
-                function() Snacks.picker.grep_word() end,
-                desc = "Visual selection or word",
-                mode = { "n", "x" }
-            },
+            { "<leader>/",       function() Snacks.picker.grep() end,                                   desc = "Grep" },
+            { "<leader>f",       function() Snacks.picker.files({ hidden = true }) end,                 desc = "Find Files" },
+            { "<leader>F",       function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files (incl. ignored)" },
+            { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
+            { "<leader>gb",      function() Snacks.git.blame_line() end,                                desc = "Git Branches" },
+            { "<leader>gd",      function() Snacks.picker.git_diff() end,                               desc = "Git Diff (Hunks)" },
+            { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
+            { "<leader>gg",      function() Snacks.lazygit() end,                                       desc = "Lazygit" },
+            { "<leader>se",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
+            { "<leader>sS",      function() Snacks.picker.lsp_symbols() end,                            desc = "LSP Symbols" },
+            { "<leader>sr",      function() Snacks.picker.resume() end,                                 desc = "Resume" },
+            { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end,                  desc = "LSP Workspace Symbols" },
+            { "<leader>su",      function() Snacks.picker.undo() end,                                   desc = "Undo History" },
+            { "<leader>sw",      function() Snacks.picker.grep_word() end,                              desc = "Visual selection or word" },
         }
     },
 
@@ -268,7 +241,6 @@ require("lazy").setup({
 
     {
         'stevearc/oil.nvim',
-        dependencies = { { "echasnovski/mini.icons", opts = {} } },
         config = function()
             require("oil").setup({
                 columns = { "icon" },
@@ -367,7 +339,10 @@ require("lazy").setup({
             vim.lsp.config["lua_ls"] = {
                 settings = {
                     Lua = {
-                        diagnostics = { disable = { 'missing-fields' } },
+                        diagnostics = {
+                            disable = { 'missing-fields' },
+                            globals = { "vim", "Snacks" },
+                        },
                     }
                 }
             }
@@ -390,7 +365,8 @@ require("lazy").setup({
 
     {
         "nvim-treesitter/nvim-treesitter",
-        opts = {},
+        branch = 'master',
+        lazy = false,
         build = ":TSUpdate",
         config = function()
             vim.defer_fn(function()
@@ -410,7 +386,6 @@ require("lazy").setup({
                         "lua",
                         "python",
                         "racket",
-                        "ron",
                         "rust",
                         "sql",
                         "svelte",
@@ -422,11 +397,9 @@ require("lazy").setup({
                         "yaml",
                     },
                     auto_install = true,
-                    ignore_install = {},
                     sync_install = false,
                     highlight = { enable = true },
                     indent = { enable = true },
-                    incremental_selection = { enable = false },
                 })
             end, 0)
         end
