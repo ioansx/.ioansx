@@ -28,6 +28,7 @@ vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
 vim.opt.scrolloff = 8
+vim.opt.sidescrolloff = 8
 vim.opt.termguicolors = true
 vim.opt.undofile = true
 
@@ -42,8 +43,8 @@ vim.opt.clipboard = "unnamedplus"
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 vim.keymap.set("n", "j", "gj", { silent = true })
 vim.keymap.set("n", "k", "gk", { silent = true })
-vim.keymap.set("n", "n", "nzz", { silent = true })
-vim.keymap.set("n", "N", "Nzz", { silent = true })
+vim.keymap.set("n", "n", "nzzzv", { silent = true })
+vim.keymap.set("n", "N", "Nzzzv", { silent = true })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
@@ -94,7 +95,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking text',
     group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
     callback = function()
-        vim.highlight.on_yank()
+        vim.hl.on_yank()
     end,
 })
 
