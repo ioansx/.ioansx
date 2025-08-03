@@ -112,13 +112,21 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     'tpope/vim-sleuth',
-    { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
         "ellisonleao/gruvbox.nvim",
         priority = 1000,
         config = function()
+            require('gruvbox').setup({
+                italic = {
+                    strings = false,
+                    emphasis = false,
+                    comments = false,
+                    operators = false,
+                    folds = false,
+                },
+            })
             vim.cmd([[colorscheme gruvbox]])
         end
     },
@@ -170,6 +178,7 @@ require("lazy").setup({
 
             require("mini.icons").setup()
             require("mini.trailspace").setup()
+            require("mini.notify").setup()
         end
     },
 
