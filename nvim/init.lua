@@ -1,5 +1,6 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.have_nerd_font = true
@@ -7,16 +8,14 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.gdefault = true
 
-vim.opt.expandtab = true
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
+-- vim.opt.expandtab = true
+vim.opt.softtabstop = 8
+vim.opt.shiftwidth = 8
+vim.opt.tabstop = 8
 
 vim.opt.breakindent = true
 vim.opt.smartindent = true
@@ -32,10 +31,8 @@ vim.opt.sidescrolloff = 8
 vim.opt.termguicolors = true
 vim.opt.undofile = true
 
-vim.opt.timeoutlen = 300
-vim.opt.updatetime = 250
 vim.opt.wrap = false
-vim.wo.signcolumn = "yes"
+vim.wo.signcolumn = "yes:2"
 
 vim.opt.clipboard = "unnamedplus"
 
@@ -165,8 +162,11 @@ require("lazy").setup({
                 },
                 window = { config = { width = "auto" } },
             })
-
             require("mini.diff").setup({
+                view = {
+                    style = 'sign',
+                    signs = { add = '▒', change = '▒', delete = '▒' },
+                },
                 mappings = {
                     reset = '<leader>gr',
                     goto_first = '[H',
@@ -175,7 +175,6 @@ require("lazy").setup({
                     goto_last = ']H',
                 },
             })
-
             require("mini.icons").setup()
             require("mini.trailspace").setup()
             require("mini.notify").setup()
