@@ -33,6 +33,7 @@ vim.opt.undofile = true
 
 vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
+vim.opt.winborder = "rounded"
 
 vim.opt.clipboard = "unnamedplus"
 
@@ -109,6 +110,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     'tpope/vim-sleuth',
+    { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
@@ -177,7 +179,6 @@ require("lazy").setup({
             })
             require("mini.icons").setup()
             require("mini.trailspace").setup()
-            require("mini.notify").setup()
         end
     },
 
