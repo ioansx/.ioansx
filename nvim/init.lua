@@ -96,6 +96,28 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
+local project_only_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
+vim.api.nvim_create_autocmd("BufReadPost", {
+    group = project_only_group,
+    pattern = "*",
+    callback = function()
+        local file_path = vim.fn.expand('%:p')
+        if file_path == "" then
+            return
+        end
+
+        local cwd = vim.fn.getcwd()
+        -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
+        -- we ensure the CWD path is followed by a path separator.
+        local cwd_prefix = cwd .. (cwd:sub(-1) == '/' and '' or '/')
+
+        if not (file_path:find(cwd_prefix, 1, true) or file_path == cwd) then
+            vim.bo.readonly = true
+            vim.notify("File is outside CWD, opened as read-only.", vim.log.levels.INFO)
+        end
+    end,
+})
+
 -- Lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -363,7 +385,7 @@ require("lazy").setup({
                             postfix = { enable = false },
                         },
                         check = {
-                            command = "check",
+                            command = "clippy",
                         },
                     }
                 }
