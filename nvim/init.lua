@@ -96,6 +96,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
+-- Non-CWD files are read-only.
 local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
 vim.api.nvim_create_autocmd("BufReadPost", {
     group = project_only_writable_group,
@@ -113,7 +114,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
         if not (file_path:find(cwd_prefix, 1, true) or file_path == cwd) then
             vim.bo.readonly = true
-            vim.notify("File is outside CWD, opened as read-only.", vim.log.levels.INFO)
         end
     end,
 })
