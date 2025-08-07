@@ -96,9 +96,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
-local project_only_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
+local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
 vim.api.nvim_create_autocmd("BufReadPost", {
-    group = project_only_group,
+    group = project_only_writable_group,
     pattern = "*",
     callback = function()
         local file_path = vim.fn.expand('%:p')
