@@ -160,6 +160,8 @@ require("lazy").setup({
                 triggers = {
                     { mode = 'n', keys = '<Leader>' },
                     { mode = 'x', keys = '<Leader>' },
+                    { mode = 'n', keys = '[' },
+                    { mode = 'n', keys = ']' },
                     { mode = 'i', keys = '<C-x>' },
                     { mode = 'n', keys = 'g' },
                     { mode = 'x', keys = 'g' },
@@ -176,6 +178,7 @@ require("lazy").setup({
                     { mode = 'x', keys = 'z' },
                 },
                 clues = {
+                    mini_clue.gen_clues.square_brackets(),
                     mini_clue.gen_clues.builtin_completion(),
                     mini_clue.gen_clues.g(),
                     mini_clue.gen_clues.marks(),
@@ -385,7 +388,7 @@ require("lazy").setup({
                             postfix = { enable = false },
                         },
                         check = {
-                            command = "clippy",
+                            command = "check",
                         },
                     }
                 }
