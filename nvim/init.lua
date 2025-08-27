@@ -85,6 +85,11 @@ vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostic
 -- LSP
 vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
+vim.keymap.set('n', 'K', function()
+    vim.lsp.buf.hover({
+        close_events = { "BufWinLeave", "CursorMoved", "CursorMovedI", "InsertEnter" }
+    })
+end, { desc = "show LSP documentation" })
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- Highlight on yank
