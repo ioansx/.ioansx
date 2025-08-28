@@ -371,6 +371,7 @@ require("lazy").setup({
                     "tailwindcss",
                     "taplo",
                     "ts_ls",
+                    "zls",
                 },
                 automatic_enable = true
             })
