@@ -157,7 +157,7 @@ require("lazy").setup({
     },
 
     {
-        'echasnovski/mini.nvim',
+        'nvim-mini/mini.nvim',
         version = false,
         config = function()
             local mini_clue = require("mini.clue")
