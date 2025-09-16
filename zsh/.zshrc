@@ -36,20 +36,23 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 export LANG=en_US.UTF-8
 
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim --clean'
-fi
-export VISUAL='nvim --clean'
-export FCEDIT="$EDITOR"
+export EDITOR='nvim'
+export VISUAL="$EDITOR"
+export FCEDIT='vim'
+
+bindkey -v
 
 autoload -Uz edit-command-line
 zle -N edit-command-line
 
-bindkey -v
-bindkey -M vicmd 'v' edit-command-line
-bindkey -M viins '^X^E' edit-command-line
+function edit-command-line-clean() {
+  local -x VISUAL="vim" EDITOR="vim"
+  zle edit-command-line
+}
+
+zle -N edit-command-line-clean
+bindkey -M vicmd 'v' edit-command-line-clean
+bindkey -M viins '^X^E' edit-command-line-clean
 
 export PATH="$PATH:$HOME/.ioansx/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
