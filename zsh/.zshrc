@@ -39,9 +39,9 @@ export LANG=en_US.UTF-8
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  export EDITOR='nvim'
+  export EDITOR='nvim --clean'
 fi
-export VISUAL=nvim
+export VISUAL='nvim --clean'
 export FCEDIT="$EDITOR"
 
 autoload -Uz edit-command-line
