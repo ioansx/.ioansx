@@ -6,7 +6,6 @@ PS1='%F{yellow}(%?)%f %F{green}%*%f %B%F{blue}%~%f%b %# '
 
 setopt histignorealldups sharehistory
 
-bindkey -v
 export KEYTIMEOUT=5
 
 # Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
@@ -42,6 +41,15 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
+export VISUAL=nvim
+export FCEDIT="$EDITOR"
+
+autoload -Uz edit-command-line
+zle -N edit-command-line
+
+bindkey -v
+bindkey -M vicmd 'v' edit-command-line
+bindkey -M viins '^X^E' edit-command-line
 
 export PATH="$PATH:$HOME/.ioansx/bin"
 export XDG_CONFIG_HOME="$HOME/.config"
