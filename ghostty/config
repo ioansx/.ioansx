@@ -2,7 +2,7 @@ cursor-style = block
 font-feature = -calt
 font-size = 12
 macos-option-as-alt = true
-theme = dark:GruvboxDarkHard,light:GruvboxLight
+theme = dark:Gruvbox Dark Hard,light:Gruvbox Light
 shell-integration-features = no-cursor
 
 # Window width and height will be clamped to max screen size.
