@@ -46,7 +46,6 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
 -- Toggle
-vim.keymap.set("n", "<leader>th", ":noh<CR>", { desc = "toggle highlight off" })
 vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
@@ -106,7 +105,11 @@ local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWrit
 vim.api.nvim_create_autocmd("BufReadPost", {
     group = project_only_writable_group,
     pattern = "*",
-    callback = function()
+    callback = function(args)
+        if vim.bo[args.buf].buftype ~= "" then -- ignore non-file buffers
+            return
+        end
+
         local file_path = vim.fn.expand('%:p')
         if file_path == "" then
             return
@@ -114,11 +117,11 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
         local cwd = vim.fn.getcwd()
         -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
-        -- we ensure the CWD path is followed by a path separator.
+        -- ensure the CWD path is followed by a path separator.
         local cwd_prefix = cwd .. (cwd:sub(-1) == '/' and '' or '/')
 
-        if not (file_path:find(cwd_prefix, 1, true) or file_path == cwd) then
-            vim.bo.readonly = true
+        if not (vim.startswith(file_path, cwd_prefix) or file_path == cwd) then
+            vim.bo[args.buf].readonly = true
         end
     end,
 })
@@ -250,9 +253,7 @@ require("lazy").setup({
             { "<leader>gb",      function() Snacks.git.blame_line() end,                                desc = "Git Branches" },
             { "<leader>gd",      function() Snacks.picker.git_diff() end,                               desc = "Git Diff (Hunks)" },
             { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
-            { "<leader>gg",      function() Snacks.lazygit() end,                                       desc = "Lazygit" },
             { "<leader>se",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
-            { "<leader>sS",      function() Snacks.picker.lsp_symbols() end,                            desc = "LSP Symbols" },
             { "<leader>sr",      function() Snacks.picker.resume() end,                                 desc = "Resume" },
             { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end,                  desc = "LSP Workspace Symbols" },
             { "<leader>su",      function() Snacks.picker.undo() end,                                   desc = "Undo History" },
@@ -396,6 +397,9 @@ require("lazy").setup({
                         check = {
                             command = "check",
                         },
+                        cargo = {
+                            targetDir = true,
+                        }
                     }
                 }
 
@@ -427,3 +431,78 @@ require("lazy").setup({
         end
     },
 }, {})
+
+-- LazyGit floating terminal
+local LazyGitState = { win = nil, buf = nil }
+
+local function get_git_root()
+    -- Use current buffer's directory when possible, else fallback to cwd
+    local bufname = vim.api.nvim_buf_get_name(0)
+    local dir = (bufname ~= '' and vim.fn.fnamemodify(bufname, ':p:h')) or vim.loop.cwd()
+
+    -- Try git toplevel (robust even if .git is not directly in path)
+    local result = vim.fn.systemlist({ 'git', '-C', dir, 'rev-parse', '--show-toplevel' })
+    if vim.v.shell_error == 0 and result[1] and result[1] ~= '' then
+        return result[1]
+    end
+
+    -- Fallback: search for a .git directory upwards
+    local git_dir = vim.fs and vim.fs.find and vim.fs.find('.git', { upward = true, path = dir })[1] or nil
+    if git_dir and vim.fs and vim.fs.dirname then
+        return vim.fs.dirname(git_dir)
+    end
+
+    -- Last resort: use current working directory
+    return dir
+end
+
+function _G.LazyGitToggle()
+    if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+        pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+        LazyGitState.win = nil
+        return
+    end
+
+    if vim.fn.executable('lazygit') ~= 1 then
+        vim.notify('lazygit not found in PATH', vim.log.levels.ERROR)
+        return
+    end
+
+    local scale = 0.95
+    local width = math.max(10, math.floor(vim.o.columns * scale))
+    local height = math.max(5, math.floor(vim.o.lines * scale))
+    local col = math.floor((vim.o.columns - width) / 2)
+    local row = math.floor((vim.o.lines - height) / 2)
+
+    LazyGitState.buf = vim.api.nvim_create_buf(false, true)
+    LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
+        relative = 'editor',
+        width = width,
+        height = height,
+        col = col,
+        row = row,
+        border = 'rounded',
+        style = 'minimal',
+        noautocmd = true,
+    })
+
+    pcall(vim.api.nvim_buf_set_option, LazyGitState.buf, 'filetype', 'lazygit')
+    pcall(vim.api.nvim_win_set_option, LazyGitState.win, 'winblend', 0)
+
+    local root = get_git_root()
+    vim.fn.termopen('lazygit', {
+        cwd = root,
+        on_exit = function()
+            if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+                pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+            end
+            LazyGitState.win = nil
+            LazyGitState.buf = nil
+        end,
+    })
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set('n', '<leader>gg', _G.LazyGitToggle, { desc = 'LazyGit (float)' })
+vim.api.nvim_create_user_command('LazyGitFloat', function() _G.LazyGitToggle() end, {})
