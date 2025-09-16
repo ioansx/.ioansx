@@ -1,3 +1,6 @@
+-- -------
+-- Options
+-- -------
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -36,7 +39,9 @@ vim.opt.winborder = "rounded"
 
 vim.opt.clipboard = "unnamedplus"
 
+-- ---------------
 -- Smart movements
+-- ---------------
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 vim.keymap.set("n", "j", "gj", { silent = true })
 vim.keymap.set("n", "k", "gk", { silent = true })
@@ -45,7 +50,9 @@ vim.keymap.set("n", "N", "Nzzzv", { silent = true })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
+-- ------
 -- Toggle
+-- ------
 vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
@@ -65,23 +72,31 @@ vim.keymap.set("n", '<leader>tl', function()
     end
 end, { noremap = true, silent = true, desc = "toggle location list" })
 
+-- -----------
 -- Smart paste
+-- -----------
 vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
 
+-- ---------
 -- File yank
+-- ---------
 vim.keymap.set("n", "<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
 vim.keymap.set("n", "<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
     { desc = "yank relative file path:line" })
 vim.keymap.set("n", "<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
 vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
+-- -----------
 -- Diagnostics
+-- -----------
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
 
+-- ---
 -- LSP
+-- ---
 vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
 vim.keymap.set('n', 'K', function()
@@ -91,42 +106,9 @@ vim.keymap.set('n', 'K', function()
 end, { desc = "show LSP documentation" })
 vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
--- Highlight on yank
-vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Highlight when yanking text',
-    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
-    callback = function()
-        vim.hl.on_yank()
-    end,
-})
-
--- Non-CWD files are read-only.
-local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
-vim.api.nvim_create_autocmd("BufReadPost", {
-    group = project_only_writable_group,
-    pattern = "*",
-    callback = function(args)
-        if vim.bo[args.buf].buftype ~= "" then -- ignore non-file buffers
-            return
-        end
-
-        local file_path = vim.fn.expand('%:p')
-        if file_path == "" then
-            return
-        end
-
-        local cwd = vim.fn.getcwd()
-        -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
-        -- ensure the CWD path is followed by a path separator.
-        local cwd_prefix = cwd .. (cwd:sub(-1) == '/' and '' or '/')
-
-        if not (vim.startswith(file_path, cwd_prefix) or file_path == cwd) then
-            vim.bo[args.buf].readonly = true
-        end
-    end,
-})
-
+-- ----
 -- Lazy
+-- ----
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -211,6 +193,17 @@ require("lazy").setup({
             })
             require("mini.icons").setup()
             require("mini.trailspace").setup()
+            -- require("mini.pick").setup()
+            -- require("mini.extra").setup()
+            --
+            -- vim.keymap.set("n", "<leader>/", function() MiniPick.builtin.grep_live() end, { desc = "grep live" })
+            -- vim.keymap.set("n", "<leader>f", function() MiniExtra.pickers.git_files() end, { desc = "pick files" })
+            -- vim.keymap.set("n", "<leader><space>", function() MiniPick.builtin.buffers() end, { desc = "pick buffers" })
+            -- vim.keymap.set("n", "<leader>ss", function() MiniExtra.pickers.lsp({ scope = "workspace_symbol" }) end,
+            --     { desc = "pick buffers" })
+            -- vim.keymap.set("n", "<leader>sw",
+            --     function() MiniPick.builtin.grep({ pattern = vim.fn.expand('<cword>') }) end,
+            --     { desc = "pick cursor word" })
         end
     },
 
@@ -382,7 +375,7 @@ require("lazy").setup({
                     Lua = {
                         diagnostics = {
                             disable = { 'missing-fields' },
-                            globals = { "vim", "Snacks" },
+                            globals = { "vim", "Snacks", "MiniPick", "MiniExtra" },
                         },
                     }
                 }
@@ -431,6 +424,45 @@ require("lazy").setup({
         end
     },
 }, {})
+
+-- -----------------
+-- Highlight on yank
+-- -----------------
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking text',
+    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+    callback = function()
+        vim.hl.on_yank()
+    end,
+})
+
+-- ---------------------------
+-- Non-CWD files are read-only
+-- ---------------------------
+local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
+vim.api.nvim_create_autocmd("BufReadPost", {
+    group = project_only_writable_group,
+    pattern = "*",
+    callback = function(args)
+        if vim.bo[args.buf].buftype ~= "" then -- ignore non-file buffers
+            return
+        end
+
+        local file_path = vim.fn.expand('%:p')
+        if file_path == "" then
+            return
+        end
+
+        local cwd = vim.fn.getcwd()
+        -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
+        -- ensure the CWD path is followed by a path separator.
+        local cwd_prefix = cwd .. (cwd:sub(-1) == '/' and '' or '/')
+
+        if not (vim.startswith(file_path, cwd_prefix) or file_path == cwd) then
+            vim.bo[args.buf].readonly = true
+        end
+    end,
+})
 
 -- -------------------------
 -- LazyGit floating terminal
