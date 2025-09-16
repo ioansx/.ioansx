@@ -432,7 +432,9 @@ require("lazy").setup({
     },
 }, {})
 
+-- -------------------------
 -- LazyGit floating terminal
+-- -------------------------
 local LazyGitState = { win = nil, buf = nil }
 
 local function get_git_root()
@@ -468,26 +470,19 @@ function _G.LazyGitToggle()
         return
     end
 
-    local scale = 0.95
-    local width = math.max(10, math.floor(vim.o.columns * scale))
-    local height = math.max(5, math.floor(vim.o.lines * scale))
-    local col = math.floor((vim.o.columns - width) / 2)
-    local row = math.floor((vim.o.lines - height) / 2)
-
     LazyGitState.buf = vim.api.nvim_create_buf(false, true)
     LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
         relative = 'editor',
-        width = width,
-        height = height,
-        col = col,
-        row = row,
-        border = 'rounded',
+        width = vim.o.columns,
+        height = vim.o.lines - 1, -- -1 for the command line
+        col = 0,
+        row = 0,
+        border = 'none',
         style = 'minimal',
         noautocmd = true,
     })
 
     pcall(vim.api.nvim_buf_set_option, LazyGitState.buf, 'filetype', 'lazygit')
-    pcall(vim.api.nvim_win_set_option, LazyGitState.win, 'winblend', 0)
 
     local root = get_git_root()
     vim.fn.termopen('lazygit', {
