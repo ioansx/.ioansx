@@ -92,10 +92,10 @@ vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank 
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
-vim.keymap.set("n", "<leader>dq", function()
+vim.keymap.set("n", "<leader>de", function()
     vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
 end, { desc = "diagnostics copen errors" })
-vim.keymap.set("n", "<leader>dQ", vim.diagnostic.setqflist { desc = "diagnostics copen all" })
+vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostics copen all" })
 
 -- ---
 -- LSP
