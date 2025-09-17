@@ -92,7 +92,10 @@ vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank 
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
-vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "diagnostics copen" })
+vim.keymap.set("n", "<leader>dq", function()
+    vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
+end, { desc = "diagnostics copen errors" })
+vim.keymap.set("n", "<leader>dQ", vim.diagnostic.setqflist { desc = "diagnostics copen all" })
 
 -- ---
 -- LSP
@@ -193,17 +196,6 @@ require("lazy").setup({
             })
             require("mini.icons").setup()
             require("mini.trailspace").setup()
-            -- require("mini.pick").setup()
-            -- require("mini.extra").setup()
-            --
-            -- vim.keymap.set("n", "<leader>/", function() MiniPick.builtin.grep_live() end, { desc = "grep live" })
-            -- vim.keymap.set("n", "<leader>f", function() MiniExtra.pickers.git_files() end, { desc = "pick files" })
-            -- vim.keymap.set("n", "<leader><space>", function() MiniPick.builtin.buffers() end, { desc = "pick buffers" })
-            -- vim.keymap.set("n", "<leader>ss", function() MiniExtra.pickers.lsp({ scope = "workspace_symbol" }) end,
-            --     { desc = "pick buffers" })
-            -- vim.keymap.set("n", "<leader>sw",
-            --     function() MiniPick.builtin.grep({ pattern = vim.fn.expand('<cword>') }) end,
-            --     { desc = "pick cursor word" })
         end
     },
 
@@ -375,7 +367,7 @@ require("lazy").setup({
                     Lua = {
                         diagnostics = {
                             disable = { 'missing-fields' },
-                            globals = { "vim", "Snacks", "MiniPick", "MiniExtra" },
+                            globals = { "vim", "Snacks" },
                         },
                     }
                 }
