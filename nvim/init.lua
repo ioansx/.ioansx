@@ -39,6 +39,11 @@ vim.opt.winborder = "rounded"
 
 vim.opt.clipboard = "unnamedplus"
 
+-- -----------
+-- Colorscheme
+-- -----------
+vim.cmd([[colorscheme retrobox]])
+
 -- ---------------
 -- Smart movements
 -- ---------------
@@ -128,23 +133,6 @@ require("lazy").setup({
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
-        "ellisonleao/gruvbox.nvim",
-        priority = 1000,
-        config = function()
-            require('gruvbox').setup({
-                italic = {
-                    strings = false,
-                    emphasis = false,
-                    comments = false,
-                    operators = false,
-                    folds = false,
-                },
-            })
-            vim.cmd([[colorscheme gruvbox]])
-        end
-    },
-
-    {
         'nvim-mini/mini.nvim',
         version = false,
         config = function()
@@ -228,7 +216,6 @@ require("lazy").setup({
                     }
                 },
             },
-            words = { enabled = true },
         },
         keys = {
             { "<leader>/",       function() Snacks.picker.grep() end,                                   desc = "Grep" },
