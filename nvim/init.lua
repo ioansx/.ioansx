@@ -25,6 +25,7 @@ vim.opt.smartindent = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+vim.opt.clipboard = "unnamedplus"
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
 vim.opt.mouse = "a"
@@ -36,13 +37,6 @@ vim.opt.undofile = true
 vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "rounded"
-
-vim.opt.clipboard = "unnamedplus"
-
--- -----------
--- Colorscheme
--- -----------
-vim.cmd([[colorscheme retrobox]])
 
 -- ---------------
 -- Smart movements
@@ -136,6 +130,16 @@ require("lazy").setup({
         'nvim-mini/mini.nvim',
         version = false,
         config = function()
+            -- -----------
+            -- Colorscheme
+            -- Depends on mini.base16.
+            -- -----------
+            if vim.o.background == "dark" then
+                vim.cmd([[colorscheme base16-sandcastle]])
+            else
+                vim.cmd([[colorscheme base16-tokyonight-light]])
+            end
+
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {

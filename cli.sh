@@ -48,6 +48,7 @@ elif [ "$CMD_1" = "link" ]; then
 
     ensure_dir_exists $XDG_CONFIG_HOME/nvim
     ln -fsv "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
+    ln -fsv "$PWD/nvim/colors" $XDG_CONFIG_HOME/nvim/colors
 
     ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
     ln -fsv "$PWD/vim" $XDG_CONFIG_HOME
@@ -73,6 +74,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v $XDG_CONFIG_HOME/lazygit
     rm -v $XDG_CONFIG_HOME/wezterm
     rm -v $XDG_CONFIG_HOME/nvim/init.lua
+    rm -v $XDG_CONFIG_HOME/nvim/colors
     rm -v ~/.tmux.conf
     rm -v $XDG_CONFIG_HOME/vim
 
