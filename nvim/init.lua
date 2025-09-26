@@ -135,7 +135,7 @@ require("lazy").setup({
             -- Depends on mini.base16.
             -- -----------
             if vim.o.background == "dark" then
-                vim.cmd([[colorscheme base16-sandcastle]])
+                vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
             else
                 vim.cmd([[colorscheme base16-tokyonight-light]])
             end
