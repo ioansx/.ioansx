@@ -56,18 +56,18 @@ vim.keymap.set("n", "<leader>tk", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
 end, { desc = "toggle inlay hints" })
 vim.keymap.set("n", "<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
-vim.keymap.set("n", '<leader>tq', function()
+vim.keymap.set("n", "<leader>tq", function()
     if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
-        vim.cmd('cclose')
+        vim.cmd("cclose")
     else
-        vim.cmd('copen')
+        vim.cmd("copen")
     end
 end, { noremap = true, silent = true, desc = "toggle quickfix list" })
-vim.keymap.set("n", '<leader>tl', function()
+vim.keymap.set("n", "<leader>tl", function()
     if vim.fn.getloclist(0).winid ~= 0 then
-        vim.cmd('lclose')
+        vim.cmd("lclose")
     else
-        vim.cmd('lopen')
+        vim.cmd("lopen")
     end
 end, { noremap = true, silent = true, desc = "toggle location list" })
 
@@ -101,7 +101,7 @@ vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostic
 -- ---
 vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
-vim.keymap.set('n', 'K', function()
+vim.keymap.set("n", "K", function()
     vim.lsp.buf.hover({
         close_events = { "BufWinLeave", "CursorMoved", "CursorMovedI", "InsertEnter" }
     })
@@ -122,12 +122,12 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    'tpope/vim-sleuth',
+    "tpope/vim-sleuth",
     { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
-        'nvim-mini/mini.nvim',
+        "nvim-mini/mini.nvim",
         version = false,
         config = function()
             -- -----------
@@ -143,24 +143,24 @@ require("lazy").setup({
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {
-                    { mode = 'n', keys = '<Leader>' },
-                    { mode = 'x', keys = '<Leader>' },
-                    { mode = 'n', keys = '[' },
-                    { mode = 'n', keys = ']' },
-                    { mode = 'i', keys = '<C-x>' },
-                    { mode = 'n', keys = 'g' },
-                    { mode = 'x', keys = 'g' },
-                    { mode = 'n', keys = "'" },
-                    { mode = 'n', keys = '`' },
-                    { mode = 'x', keys = "'" },
-                    { mode = 'x', keys = '`' },
-                    { mode = 'n', keys = '"' },
-                    { mode = 'x', keys = '"' },
-                    { mode = 'i', keys = '<C-r>' },
-                    { mode = 'c', keys = '<C-r>' },
-                    { mode = 'n', keys = '<C-w>' },
-                    { mode = 'n', keys = 'z' },
-                    { mode = 'x', keys = 'z' },
+                    { mode = "n", keys = "<Leader>" },
+                    { mode = "x", keys = "<Leader>" },
+                    { mode = "n", keys = "[" },
+                    { mode = "n", keys = "]" },
+                    { mode = "i", keys = "<C-x>" },
+                    { mode = "n", keys = "g" },
+                    { mode = "x", keys = "g" },
+                    { mode = "n", keys = "'" },
+                    { mode = "n", keys = "`" },
+                    { mode = "x", keys = "'" },
+                    { mode = "x", keys = "`" },
+                    { mode = "n", keys = '"' },
+                    { mode = "x", keys = '"' },
+                    { mode = "i", keys = "<C-r>" },
+                    { mode = "c", keys = "<C-r>" },
+                    { mode = "n", keys = "<C-w>" },
+                    { mode = "n", keys = "z" },
+                    { mode = "x", keys = "z" },
                 },
                 clues = {
                     mini_clue.gen_clues.square_brackets(),
@@ -175,15 +175,15 @@ require("lazy").setup({
             })
             require("mini.diff").setup({
                 view = {
-                    style = 'sign',
-                    signs = { add = '▒', change = '▒', delete = '▒' },
+                    style = "sign",
+                    signs = { add = "▒", change = "▒", delete = "▒" },
                 },
                 mappings = {
-                    reset = '<leader>gr',
-                    goto_first = '[H',
-                    goto_prev = '[h',
-                    goto_next = ']h',
-                    goto_last = ']H',
+                    reset = "<leader>gr",
+                    goto_first = "[H",
+                    goto_prev = "[h",
+                    goto_next = "]h",
+                    goto_last = "]H",
                 },
             })
             require("mini.icons").setup()
@@ -238,7 +238,7 @@ require("lazy").setup({
     },
 
     {
-        'stevearc/conform.nvim',
+        "stevearc/conform.nvim",
         opts = {
             default_format_opts = { lsp_format = "fallback" },
             format_on_save = { timeout_ms = 500 },
@@ -256,7 +256,7 @@ require("lazy").setup({
     },
 
     {
-        'stevearc/oil.nvim',
+        "stevearc/oil.nvim",
         config = function()
             require("oil").setup({
                 columns = { "icon" },
@@ -292,14 +292,14 @@ require("lazy").setup({
     },
 
     {
-        'saghen/blink.cmp',
+        "saghen/blink.cmp",
         dependencies = { "fang2hou/blink-copilot" },
-        version = '1.*',
+        version = "1.*",
         opts = {
-            keymap = { preset = 'default' },
+            keymap = { preset = "default" },
             cmdline = { enabled = false },
             signature = { enabled = true },
-            appearance = { nerd_font_variant = 'mono' },
+            appearance = { nerd_font_variant = "mono" },
             completion = {
                 documentation = {
                     auto_show = true,
@@ -309,7 +309,7 @@ require("lazy").setup({
                 list = { selection = { auto_insert = false } }
             },
             sources = {
-                default = { 'lsp', 'path', 'buffer', 'copilot' },
+                default = { "lsp", "path", "buffer", "copilot" },
                 providers = {
                     copilot = {
                         name = "copilot",
@@ -357,7 +357,7 @@ require("lazy").setup({
                 settings = {
                     Lua = {
                         diagnostics = {
-                            disable = { 'missing-fields' },
+                            disable = { "missing-fields" },
                             globals = { "vim", "Snacks" },
                         },
                     }
@@ -385,7 +385,7 @@ require("lazy").setup({
 
     {
         "nvim-treesitter/nvim-treesitter",
-        branch = 'master',
+        branch = "master",
         lazy = false,
         build = ":TSUpdate",
         config = function()
@@ -411,9 +411,9 @@ require("lazy").setup({
 -- -----------------
 -- Highlight on yank
 -- -----------------
-vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Highlight when yanking text',
-    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+vim.api.nvim_create_autocmd("TextYankPost", {
+    desc = "Highlight when yanking text",
+    group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
     callback = function()
         vim.hl.on_yank()
     end,
@@ -431,7 +431,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
             return
         end
 
-        local file_path = vim.fn.expand('%:p')
+        local file_path = vim.fn.expand("%:p")
         if file_path == "" then
             return
         end
@@ -439,7 +439,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
         local cwd = vim.fn.getcwd()
         -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
         -- ensure the CWD path is followed by a path separator.
-        local cwd_prefix = cwd .. (cwd:sub(-1) == '/' and '' or '/')
+        local cwd_prefix = cwd .. (cwd:sub(-1) == "/" and "" or "/")
 
         if not (vim.startswith(file_path, cwd_prefix) or file_path == cwd) then
             vim.bo[args.buf].readonly = true
@@ -455,16 +455,16 @@ local LazyGitState = { win = nil, buf = nil }
 local function get_git_root()
     -- Use current buffer's directory when possible, else fallback to cwd
     local bufname = vim.api.nvim_buf_get_name(0)
-    local dir = (bufname ~= '' and vim.fn.fnamemodify(bufname, ':p:h')) or vim.loop.cwd()
+    local dir = (bufname ~= "" and vim.fn.fnamemodify(bufname, ":p:h")) or vim.loop.cwd()
 
     -- Try git toplevel (robust even if .git is not directly in path)
-    local result = vim.fn.systemlist({ 'git', '-C', dir, 'rev-parse', '--show-toplevel' })
-    if vim.v.shell_error == 0 and result[1] and result[1] ~= '' then
+    local result = vim.fn.systemlist({ "git", "-C", dir, "rev-parse", "--show-toplevel" })
+    if vim.v.shell_error == 0 and result[1] and result[1] ~= "" then
         return result[1]
     end
 
     -- Fallback: search for a .git directory upwards
-    local git_dir = vim.fs and vim.fs.find and vim.fs.find('.git', { upward = true, path = dir })[1] or nil
+    local git_dir = vim.fs and vim.fs.find and vim.fs.find(".git", { upward = true, path = dir })[1] or nil
     if git_dir and vim.fs and vim.fs.dirname then
         return vim.fs.dirname(git_dir)
     end
@@ -480,27 +480,27 @@ function _G.LazyGitToggle()
         return
     end
 
-    if vim.fn.executable('lazygit') ~= 1 then
-        vim.notify('lazygit not found in PATH', vim.log.levels.ERROR)
+    if vim.fn.executable("lazygit") ~= 1 then
+        vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
         return
     end
 
     LazyGitState.buf = vim.api.nvim_create_buf(false, true)
     LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
-        relative = 'editor',
+        relative = "editor",
         width = vim.o.columns,
         height = vim.o.lines - 1, -- -1 for the command line
         col = 0,
         row = 0,
-        border = 'none',
-        style = 'minimal',
+        border = "none",
+        style = "minimal",
         noautocmd = true,
     })
 
-    pcall(vim.api.nvim_buf_set_option, LazyGitState.buf, 'filetype', 'lazygit')
+    pcall(vim.api.nvim_buf_set_option, LazyGitState.buf, "filetype", "lazygit")
 
     local root = get_git_root()
-    vim.fn.termopen('lazygit', {
+    vim.fn.termopen("lazygit", {
         cwd = root,
         on_exit = function()
             if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
@@ -514,5 +514,5 @@ function _G.LazyGitToggle()
     vim.cmd.startinsert()
 end
 
-vim.keymap.set('n', '<leader>gg', _G.LazyGitToggle, { desc = 'LazyGit (float)' })
-vim.api.nvim_create_user_command('LazyGitFloat', function() _G.LazyGitToggle() end, {})
+vim.keymap.set("n", "<leader>gg", _G.LazyGitToggle, { desc = "LazyGit (float)" })
+vim.api.nvim_create_user_command("LazyGitFloat", function() _G.LazyGitToggle() end, {})
