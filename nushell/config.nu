@@ -50,3 +50,6 @@ $env.PROMPT_COMMAND = {||
 $env.PROMPT_COMMAND_RIGHT = { $"(date now | format date '%Y-%d-%m %H:%M:%S%.3f')" }
 $env.PROMPT_INDICATOR_VI_INSERT = ": "
 $env.PROMPT_INDICATOR_VI_NORMAL = "# "
+
+alias ll = ls -a
+alias lg = lazygit
