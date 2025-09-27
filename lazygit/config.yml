@@ -1,2 +1,9 @@
 gui:
+  border: single
+  expandFocusedSidePanel: true
+  mainPanelSplitMode: flexible
+  nerdFontVersion: "3"
+  screenMode: full
+  showBottomLine: false
+  showRandomTip: false
   sidePanelWidth: 0.4
