@@ -54,4 +54,4 @@ $env.PROMPT_INDICATOR_VI_NORMAL = "# "
 alias ll = ls -a
 alias lg = lazygit
 
-source $"($env.XDG_CONFIG_HOME)/nushell/.zoxide.nu"
+source ~/.config/nushell/.zoxide.nu

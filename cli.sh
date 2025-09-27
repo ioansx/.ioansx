@@ -47,7 +47,7 @@ elif [ "$CMD_1" = "link" ]; then
 
     ensure_dir_exists $XDG_CONFIG_HOME/nvim
     ln -fsv "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
-    ln -fsv "$PWD/nvim/colors" $XDG_CONFIG_HOME/nvim/colors
+    ln -fsv "$PWD/nvim/colors" $XDG_CONFIG_HOME/nvim
 
     ln -fsv "$PWD/nushell/config.nu" $XDG_CONFIG_HOME/nushell/config.nu
     ln -fsv "$PWD/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
