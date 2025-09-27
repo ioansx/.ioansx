@@ -3,8 +3,10 @@ gui:
   expandFocusedSidePanel: true
   mainPanelSplitMode: flexible
   nerdFontVersion: "3"
-  screenMode: full
+  screenMode: half
   showBottomLine: false
   showDivergenceFromBaseBranch: arrowAndNumber
   showRandomTip: false
   sidePanelWidth: 0.4
+  statusPanelView: allBranchesLog
+notARepository: 'skip'
