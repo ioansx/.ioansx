@@ -5,5 +5,6 @@ gui:
   nerdFontVersion: "3"
   screenMode: full
   showBottomLine: false
+  showDivergenceFromBaseBranch: arrowAndNumber
   showRandomTip: false
   sidePanelWidth: 0.4
