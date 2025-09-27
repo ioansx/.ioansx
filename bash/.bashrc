@@ -65,6 +65,10 @@ bind "set show-all-if-ambiguous on"
 bind "set completion-ignore-case on"
 bind "set menu-complete-display-prefix on"
 
+export EDITOR='nvim'
+export VISUAL="$EDITOR"
+export FCEDIT='vim'
+
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:$HOME/bin/neovim/bin"
 export PATH="$PATH:$HOME/bin/node/bin"
