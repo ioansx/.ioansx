@@ -2,7 +2,6 @@
 
 CMD_1="$1"
 
-DOTHOME=~/.ioansx
 PWD=$(pwd)
 XDG_CONFIG_HOME=~/.config
 
@@ -51,6 +50,7 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/nvim/colors" $XDG_CONFIG_HOME/nvim/colors
 
     ln -fsv "$PWD/nushell/config.nu" $XDG_CONFIG_HOME/nushell/config.nu
+    ln -fsv "$PWD/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
 
     ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
     ln -fsv "$PWD/vim" $XDG_CONFIG_HOME
@@ -78,6 +78,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v $XDG_CONFIG_HOME/nvim/init.lua
     rm -v $XDG_CONFIG_HOME/nvim/colors
     rm -v $XDG_CONFIG_HOME/nushell/config.nu
+    rm -v $XDG_CONFIG_HOME/nushell/.zoxide.nu
     rm -v ~/.tmux.conf
     rm -v $XDG_CONFIG_HOME/vim
 
