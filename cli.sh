@@ -33,7 +33,10 @@ if [ -z "$CMD_1" ]; then
 elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/bash/.bashrc" ~/.bashrc
     ln -fsv "$PWD/bash/.inputrc" ~/.inputrc
-    # ln -fsv "$PWD/fish" $XDG_CONFIG_HOME
+
+    ensure_dir_exists $XDG_CONFIG_HOME/fish
+    ln -fsv "$PWD/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
+
     ln -fsv "$PWD/ghostty" $XDG_CONFIG_HOME
 
     if [ "$(uname)" == "Darwin" ]; then
@@ -65,7 +68,7 @@ elif [ "$CMD_1" = "link" ]; then
 elif [ "$CMD_1" = "unlink" ]; then
     rm -v ~/.bashrc
     rm -v ~/.inputrc
-    # rm -v $XDG_CONFIG_HOME/fish
+    rm -v $XDG_CONFIG_HOME/fish/config.fish
     rm -v $XDG_CONFIG_HOME/ghostty
 
     if [ "$(uname)" == "Darwin" ]; then
