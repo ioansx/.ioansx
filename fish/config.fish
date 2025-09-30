@@ -6,7 +6,7 @@ fish_vi_key_bindings
 # set fish_command_timer_time_format '%a %d %H:%M'
 
 
-alias lg="lazygit"
+alias lzg="lazygit"
 alias man='MANWIDTH=80 man'
 
 set -x XDG_CONFIG_HOME "$HOME/.config"
