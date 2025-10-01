@@ -6,7 +6,6 @@ vim.g.maplocalleader = " "
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
-vim.g.have_nerd_font = true
 
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -31,12 +30,11 @@ vim.opt.cursorline = true
 vim.opt.mouse = "a"
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
-vim.opt.termguicolors = true
 vim.opt.undofile = true
 
 vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
-vim.opt.winborder = "rounded"
+vim.opt.winborder = "single"
 
 -- ---------------
 -- Smart movements
@@ -130,16 +128,6 @@ require("lazy").setup({
         "nvim-mini/mini.nvim",
         version = false,
         config = function()
-            -- -----------
-            -- Colorscheme
-            -- Depends on mini.base16.
-            -- -----------
-            if vim.o.background == "dark" then
-                -- vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
-            else
-                vim.cmd([[colorscheme base16-tokyonight-light]])
-            end
-
             local mini_clue = require("mini.clue")
             mini_clue.setup({
                 triggers = {
