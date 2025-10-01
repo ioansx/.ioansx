@@ -56,7 +56,9 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
 
     ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
-    ln -fsv "$PWD/vim" $XDG_CONFIG_HOME
+
+    ensure_dir_exists $XDG_CONFIG_HOME/vim
+    ln -fsv "$PWD/vim/vimrc" $XDG_CONFIG_HOME/vim/vimrc
 
     # if [ "$(uname)" == "Darwin" ]; then
     ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
@@ -83,7 +85,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v $XDG_CONFIG_HOME/nushell/config.nu
     rm -v $XDG_CONFIG_HOME/nushell/.zoxide.nu
     rm -v ~/.tmux.conf
-    rm -v $XDG_CONFIG_HOME/vim
+    rm -v $XDG_CONFIG_HOME/vim/vimrc
 
     # if [ "$(uname)" == "Darwin" ]; then
     rm -v ~/.zshrc
