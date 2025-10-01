@@ -87,7 +87,6 @@ vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank 
 -- Diagnostics
 -- -----------
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
-vim.keymap.set("n", "<leader>df", vim.diagnostic.open_float, { desc = "floating diagnostic" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
 vim.keymap.set("n", "<leader>de", function()
     vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
