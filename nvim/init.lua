@@ -225,24 +225,6 @@ require("lazy").setup({
     },
 
     {
-        "stevearc/conform.nvim",
-        opts = {
-            default_format_opts = { lsp_format = "fallback" },
-            format_on_save = { timeout_ms = 500 },
-            formatters_by_ft = {
-                ["javascript"] = { "prettier" },
-                ["typescript"] = { "prettier" },
-                ["svelte"] = { "prettier" },
-                ["css"] = { "prettier" },
-                ["scss"] = { "prettier" },
-                ["html"] = { "prettier" },
-                ["json"] = { "prettier" },
-                ["yaml"] = { "prettier" },
-            },
-        },
-    },
-
-    {
         "stevearc/oil.nvim",
         config = function()
             require("oil").setup({
@@ -329,12 +311,14 @@ require("lazy").setup({
                     "cssls",
                     "eslint",
                     "gopls",
+                    "jsonls",
                     "lua_ls",
                     "rust_analyzer",
                     "svelte",
                     "tailwindcss",
                     "taplo",
                     "ts_ls",
+                    "yamlls",
                     "zls",
                 },
                 automatic_enable = true
@@ -403,6 +387,26 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
     callback = function()
         vim.hl.on_yank()
+    end,
+})
+
+-- -------------------------------------
+-- Auto-format ("lint") on save fallback
+-- -------------------------------------
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("my.lsp.fmt", {}),
+    callback = function(args)
+        local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+        if not client:supports_method('textDocument/willSaveWaitUntil')
+            and client:supports_method('textDocument/formatting') then
+            vim.api.nvim_create_autocmd('BufWritePre', {
+                group = vim.api.nvim_create_augroup('my.lsp.fmt', { clear = false }),
+                buffer = args.buf,
+                callback = function()
+                    vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 500 })
+                end,
+            })
+        end
     end,
 })
 
