@@ -36,38 +36,48 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
+local function nmap(lhs, rhs, opts)
+    vim.keymap.set("n", lhs, rhs, opts)
+end
+
 -- ---------------
 -- Smart movements
 -- ---------------
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
-vim.keymap.set("n", "j", "gj", { silent = true })
-vim.keymap.set("n", "k", "gk", { silent = true })
-vim.keymap.set("n", "n", "nzzzv", { silent = true })
-vim.keymap.set("n", "N", "Nzzzv", { silent = true })
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
+nmap("j", "gj", { silent = true })
+nmap("k", "gk", { silent = true })
+nmap("n", "nzzzv", { silent = true })
+nmap("N", "Nzzzv", { silent = true })
+nmap("<C-d>", "<C-d>zz")
+nmap("<C-u>", "<C-u>zz")
 
 -- ------
 -- Toggle
 -- ------
-vim.keymap.set("n", "<leader>tk", function()
+local function toggle_inlay_hints()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(nil))
-end, { desc = "toggle inlay hints" })
-vim.keymap.set("n", "<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
-vim.keymap.set("n", "<leader>tq", function()
+end
+
+local function toggle_quickfix_list()
     if vim.fn.getqflist({ winid = 0 }).winid ~= 0 then
         vim.cmd("cclose")
     else
         vim.cmd("copen")
     end
-end, { noremap = true, silent = true, desc = "toggle quickfix list" })
-vim.keymap.set("n", "<leader>tl", function()
+end
+
+local function toggle_location_list()
     if vim.fn.getloclist(0).winid ~= 0 then
         vim.cmd("lclose")
     else
         vim.cmd("lopen")
     end
-end, { noremap = true, silent = true, desc = "toggle location list" })
+end
+
+nmap("<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
+nmap("<leader>tk", toggle_inlay_hints, { desc = "toggle inlay hints" })
+nmap("<leader>tq", toggle_quickfix_list, { noremap = true, silent = true, desc = "toggle quickfix list" })
+nmap("<leader>tl", toggle_location_list, { noremap = true, silent = true, desc = "toggle location list" })
 
 -- -----------
 -- Smart paste
@@ -77,33 +87,38 @@ vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
 -- ---------
 -- File yank
 -- ---------
-vim.keymap.set("n", "<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
-vim.keymap.set("n", "<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>",
-    { desc = "yank relative file path:line" })
-vim.keymap.set("n", "<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
-vim.keymap.set("n", "<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
+nmap("<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
+nmap("<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>", { desc = "yank relative file path:line" })
+nmap("<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
+nmap("<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
 -- -----------
 -- Diagnostics
 -- -----------
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
-vim.keymap.set("n", "<leader>de", function()
+
+local function diagnostic_copen_errors()
     vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
-end, { desc = "diagnostics copen errors" })
+end
+
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
+vim.keymap.set("n", "<leader>de", diagnostic_copen_errors, { desc = "diagnostics copen errors" })
 vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostics copen all" })
 
 -- ---
 -- LSP
 -- ---
-vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "jump to definition" })
-vim.keymap.set("n", "K", function()
+local function show_lsp_documentation()
+    -- The default hover isn't always closed on jumps.
     vim.lsp.buf.hover({
         close_events = { "BufWinLeave", "CursorMoved", "CursorMovedI", "InsertEnter" }
     })
-end, { desc = "show LSP documentation" })
-vim.keymap.set("n", "grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
+end
+
+nmap("gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
+nmap("gd", vim.lsp.buf.definition, { desc = "jump to definition" })
+nmap("K", show_lsp_documentation, { desc = "show LSP documentation" })
+nmap("grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- ----
 -- Lazy
@@ -234,7 +249,7 @@ require("lazy").setup({
                     show_hidden = true,
                 },
             })
-            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "open parent directory" })
+            nmap("-", "<CMD>Oil<CR>", { desc = "open parent directory" })
             vim.api.nvim_create_autocmd("User", {
                 pattern = "OilActionsPost",
                 callback = function(event)
@@ -403,7 +418,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
                 group = vim.api.nvim_create_augroup('my.lsp.fmt', { clear = false }),
                 buffer = args.buf,
                 callback = function()
-                    vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 500 })
+                    vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
                 end,
             })
         end
@@ -464,7 +479,7 @@ local function get_git_root()
     return dir
 end
 
-function _G.LazyGitToggle()
+local function LazyGitToggle()
     if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
         pcall(vim.api.nvim_win_close, LazyGitState.win, true)
         LazyGitState.win = nil
@@ -505,5 +520,4 @@ function _G.LazyGitToggle()
     vim.cmd.startinsert()
 end
 
-vim.keymap.set("n", "<leader>gg", _G.LazyGitToggle, { desc = "LazyGit (float)" })
-vim.api.nvim_create_user_command("LazyGitFloat", function() _G.LazyGitToggle() end, {})
+nmap("<leader>gg", LazyGitToggle, { desc = "LazyGit (float)" })
