@@ -36,7 +36,7 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
--- Quick normal mode maps.
+-- Quick normal mode mapping.
 local function nmap(lhs, rhs, opts)
 	vim.keymap.set("n", lhs, rhs, opts)
 end
@@ -110,15 +110,16 @@ vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostic
 -- LSP
 -- ---
 local function show_lsp_documentation()
-	-- The default hover isn't always closed on jumps.
+	-- The default hover is only closed on cursor move by default.
 	vim.lsp.buf.hover({
 		close_events = { "BufWinLeave", "CursorMoved", "CursorMovedI", "InsertEnter" }
 	})
 end
 
-nmap("gD", vim.lsp.buf.declaration, { desc = "jump to declaration" })
-nmap("gd", vim.lsp.buf.definition, { desc = "jump to definition" })
-nmap("K", show_lsp_documentation, { desc = "show LSP documentation" })
+nmap("gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration()" })
+nmap("gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()" })
+nmap("grs", vim.lsp.buf.workspace_symbol, { desc = "vim.lsp.buf.workspace_symbol()" })
+nmap("K", show_lsp_documentation, { desc = "vim.lsp.buf.hover()" })
 nmap("grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- ----
@@ -217,7 +218,7 @@ require("lazy").setup({
 						border = "rounded",
 						title = "{title} {live} {flags}",
 						title_pos = "center",
-						{ win = "preview", title = "{preview}", height = 0.6,     border = "bottom" },
+						{ win = "preview", title = "{preview}", height = 0.55,    border = "bottom" },
 						{ win = "input",   height = 1,          border = "bottom" },
 						{ win = "list",    border = "hpad" },
 					}
@@ -246,9 +247,7 @@ require("lazy").setup({
 			require("oil").setup({
 				columns = { "icon" },
 				delete_to_trash = true,
-				view_options = {
-					show_hidden = true,
-				},
+				view_options = { show_hidden = true },
 			})
 			nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
 			vim.api.nvim_create_autocmd("User", {
@@ -377,10 +376,29 @@ require("lazy").setup({
 		build = ":TSUpdate",
 		config = function()
 			local langs = {
-				"bash", "c", "commonlisp", "css", "csv", "fish", "go", "html",
-				"javascript", "jsdoc", "json", "lua", "python", "racket",
-				"rust", "sql", "svelte", "toml", "typescript", "vim", "vimdoc",
-				"xml", "yaml",
+				"bash",
+				"c",
+				"commonlisp",
+				"css",
+				"csv",
+				"fish",
+				"go",
+				"html",
+				"javascript",
+				"jsdoc",
+				"json",
+				"lua",
+				"python",
+				"racket",
+				"rust",
+				"sql",
+				"svelte",
+				"toml",
+				"typescript",
+				"vim",
+				"vimdoc",
+				"xml",
+				"yaml",
 			};
 			vim.defer_fn(function()
 				require("nvim-treesitter.configs").setup({
