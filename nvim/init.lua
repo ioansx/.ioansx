@@ -456,30 +456,8 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- -------------------------
 -- LazyGit floating terminal
 -- -------------------------
-local LazyGitState = { win = nil, buf = nil }
-
-local function get_git_root()
-	-- Use current buffer's directory when possible, else fallback to cwd
-	local bufname = vim.api.nvim_buf_get_name(0)
-	local dir = (bufname ~= "" and vim.fn.fnamemodify(bufname, ":p:h")) or vim.loop.cwd()
-
-	-- Try git toplevel (robust even if .git is not directly in path)
-	local result = vim.fn.systemlist({ "git", "-C", dir, "rev-parse", "--show-toplevel" })
-	if vim.v.shell_error == 0 and result[1] and result[1] ~= "" then
-		return result[1]
-	end
-
-	-- Fallback: search for a .git directory upwards
-	local git_dir = vim.fs and vim.fs.find and vim.fs.find(".git", { upward = true, path = dir })[1] or nil
-	if git_dir and vim.fs and vim.fs.dirname then
-		return vim.fs.dirname(git_dir)
-	end
-
-	-- Last resort: use current working directory
-	return dir
-end
-
-local function LazyGitToggle()
+local function LazyGitOpen()
+	local LazyGitState = { win = nil, buf = nil }
 	if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
 		pcall(vim.api.nvim_win_close, LazyGitState.win, true)
 		LazyGitState.win = nil
@@ -505,9 +483,8 @@ local function LazyGitToggle()
 
 	pcall(vim.api.nvim_buf_set_option, LazyGitState.buf, "filetype", "lazygit")
 
-	local root = get_git_root()
-	vim.fn.termopen("lazygit", {
-		cwd = root,
+	vim.fn.jobstart("lazygit", {
+		term = true,
 		on_exit = function()
 			if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
 				pcall(vim.api.nvim_win_close, LazyGitState.win, true)
@@ -520,4 +497,4 @@ local function LazyGitToggle()
 	vim.cmd.startinsert()
 end
 
-nmap("<leader>gg", LazyGitToggle, { desc = "LazyGit (float)" })
+nmap("<leader>gg", LazyGitOpen, { desc = "LazyGit (float)" })
