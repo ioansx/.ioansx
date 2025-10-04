@@ -191,6 +191,16 @@ require("lazy").setup({
 				},
 			})
 			require("mini.icons").setup()
+			local mini_indentscope = require("mini.indentscope")
+			mini_indentscope.setup({
+				draw = {
+					delay = 0,
+					animation = mini_indentscope.gen_animation.none(),
+				},
+				options = { indent_at_cursor = false },
+				symbol = '│',
+			})
+			require("mini.splitjoin").setup()
 			require("mini.trailspace").setup()
 		end
 	},
@@ -202,7 +212,7 @@ require("lazy").setup({
 		opts = {
 			bigfile = { enabled = true },
 			image = { enabled = true },
-			indent = { enabled = true, animate = { enabled = false } },
+			-- indent = { enabled = true, animate = { enabled = false } },
 			picker = {
 				enabled = true,
 				ui_select = false,
@@ -437,7 +447,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup('my.lsp.fmt', { clear = false }),
 				buffer = args.buf,
 				callback = function()
-					vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
+					vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 50 })
 				end,
 			})
 		end
