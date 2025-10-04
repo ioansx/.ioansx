@@ -36,6 +36,7 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
+-- Quick normal mode maps.
 local function nmap(lhs, rhs, opts)
 	vim.keymap.set("n", lhs, rhs, opts)
 end
@@ -249,7 +250,7 @@ require("lazy").setup({
 					show_hidden = true,
 				},
 			})
-			nmap("-", "<CMD>Oil<CR>", { desc = "open parent directory" })
+			nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
 			vim.api.nvim_create_autocmd("User", {
 				pattern = "OilActionsPost",
 				callback = function(event)
