@@ -136,13 +136,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    {
-        "NMAC427/guess-indent.nvim",
-        opts = {
-            on_tab_options = { ["expandtab"] = false },
-            on_space_options = { ["expandtab"] = true },
-        }
-    },
+    'tpope/vim-sleuth',
     { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
