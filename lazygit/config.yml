@@ -2,10 +2,14 @@ gui:
   border: single
   expandFocusedSidePanel: true
   mainPanelSplitMode: flexible
-  nerdFontVersion: "3"
+  nerdFontsVersion: "3"
   screenMode: full
   showBottomLine: true
   showDivergenceFromBaseBranch: arrowAndNumber
+  showFileIcons: true
   showRandomTip: false
   statusPanelView: allBranchesLog
-notARepository: "skip"
+  theme:
+    selectedLineBgColor:
+      - underline
+notARepository: skip
