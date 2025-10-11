@@ -3,8 +3,6 @@ if status is-interactive
 end
 
 fish_vi_key_bindings
-# set fish_command_timer_time_format '%a %d %H:%M'
-
 
 alias lzg="lazygit"
 alias man='MANWIDTH=80 man'
@@ -17,6 +15,7 @@ if [ -f '/Users/ioan/google-cloud-sdk/path.fish.inc' ]; . '/Users/ioan/google-cl
 
 fzf --fish | source
 zoxide init fish | source
+mise activate fish | source
 
 function humantime --argument-names ms --description "Turn milliseconds into a human-readable string"
     set --query ms[1] || return
@@ -61,5 +60,5 @@ function fish_prompt --description 'Write out the prompt'
         set -l statusb_color (set_color $bold_flag $fish_color_status)
         set -l prompt_status (__fish_print_pipestatus "[" "]" "|" "$status_color" "$statusb_color" $last_pipestatus)
 
-        echo -n -s (humantime $CMD_DURATION) (set_color $color_cwd) " [" (date "+%Y-%m-%d %T") "] " (prompt_pwd --full-length-dirs 13) $normal " "$prompt_status $suffix " "
+        echo -n -s (humantime $CMD_DURATION) (set_color $color_cwd) " [" (date "+%T") "] " (prompt_pwd --full-length-dirs 13) $normal " "$prompt_status $suffix " "
 end
