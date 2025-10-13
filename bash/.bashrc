@@ -75,9 +75,8 @@ export PATH="$PATH:$HOME/bin/node/bin"
 export PATH="$PATH:$HOME/go/bin"
 export PATH="$PATH:$HOME/src/fzf/bin"
 
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -alF'
+alias la='ls -lahFC'
+alias ll='ls -alhFC'
 alias man='MANWIDTH=80 man'
 alias lzg='lazygit'
 alias nav='cd $(~/.ioansx/bash/bin/important-directories)'

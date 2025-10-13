@@ -5,7 +5,6 @@ end
 fish_vi_key_bindings
 
 alias lzg="lazygit"
-alias man='MANWIDTH=80 man'
 
 set -x XDG_CONFIG_HOME "$HOME/.config"
 set -U fish_user_paths $HOME/.cargo/bin $fish_user_paths
