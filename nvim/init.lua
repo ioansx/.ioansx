@@ -191,15 +191,6 @@ require("lazy").setup({
                 },
             })
             require("mini.icons").setup()
-            local mini_indentscope = require("mini.indentscope")
-            mini_indentscope.setup({
-                draw = {
-                    delay = 0,
-                    animation = mini_indentscope.gen_animation.none(),
-                },
-                options = { indent_at_cursor = false },
-                symbol = '│',
-            })
             require("mini.splitjoin").setup()
             require("mini.trailspace").setup()
         end
@@ -212,7 +203,7 @@ require("lazy").setup({
         opts = {
             bigfile = { enabled = true },
             image = { enabled = true },
-            -- indent = { enabled = true, animate = { enabled = false } },
+            indent = { enabled = true, animate = { enabled = false } },
             picker = {
                 enabled = true,
                 ui_select = false,
@@ -323,6 +314,25 @@ require("lazy").setup({
     },
 
     {
+        "stevearc/conform.nvim",
+        opts = {
+            default_format_opts = { lsp_format = "fallback" },
+            format_on_save = { timeout_ms = 500 },
+            formatters_by_ft = {
+                javascript = { "prettier" },
+                typescript = { "prettier" },
+                svelte = { "prettier" },
+                css = { "prettier" },
+                scss = { "prettier" },
+                html = { "prettier" },
+                json = { "prettier" },
+                yaml = { "prettier" },
+            },
+        },
+    },
+
+
+    {
         "mason-org/mason-lspconfig.nvim",
         opts = {},
         dependencies = {
@@ -431,26 +441,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
     callback = function()
         vim.hl.on_yank()
-    end,
-})
-
--- -------------------------------------
--- Auto-format ("lint") on save fallback
--- -------------------------------------
-vim.api.nvim_create_autocmd("LspAttach", {
-    group = vim.api.nvim_create_augroup("my.lsp.fmt", {}),
-    callback = function(args)
-        local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-        if not client:supports_method('textDocument/willSaveWaitUntil')
-            and client:supports_method('textDocument/formatting') then
-            vim.api.nvim_create_autocmd('BufWritePre', {
-                group = vim.api.nvim_create_augroup('my.lsp.fmt', { clear = false }),
-                buffer = args.buf,
-                callback = function()
-                    vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 250 })
-                end,
-            })
-        end
     end,
 })
 
