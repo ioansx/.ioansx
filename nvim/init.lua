@@ -79,6 +79,7 @@ nmap("<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 nmap("<leader>tk", toggle_inlay_hints, { desc = "toggle inlay hints" })
 nmap("<leader>tq", toggle_quickfix_list, { noremap = true, silent = true, desc = "toggle quickfix list" })
 nmap("<leader>tl", toggle_location_list, { noremap = true, silent = true, desc = "toggle location list" })
+nmap("<leader>tg", ":lua MiniDiff.toggle_overlay()<CR>", { desc = "toggle MiniDiff overlay" })
 
 -- -----------
 -- Smart paste
