@@ -37,13 +37,13 @@ $env.config.table.trim.wrapping_try_keep_words = true
 
 $env.config.completions.algorithm = "fuzzy"
 
-$env.config.error_style = "plain"
+# $env.config.error_style = "plain"
 $env.config.display_errors.exit_code = true
 
 $env.config.datetime_format.normal = "%y-%m-%d %H:%M:%S"
 
 $env.PROMPT_COMMAND = {||
-    let p = $" (pwd) "
+    let p = $"(pwd)"
     let home = ($nu.home-path)
     $" ($p | str replace $home ~) "
 }

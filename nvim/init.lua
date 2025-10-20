@@ -409,6 +409,7 @@ require("lazy").setup({
                 "jsdoc",
                 "json",
                 "lua",
+                "nu",
                 "python",
                 "racket",
                 "rust",
