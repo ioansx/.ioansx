@@ -142,6 +142,18 @@ require("lazy").setup({
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
+        "rose-pine/neovim",
+        name = "rose-pine",
+        config = function()
+            require("rose-pine").setup({
+                enable = { legacy_highlights = false },
+                styles = { italic = false },
+            })
+            vim.cmd("colorscheme rose-pine")
+        end
+    },
+
+    {
         "nvim-mini/mini.nvim",
         version = false,
         config = function()
