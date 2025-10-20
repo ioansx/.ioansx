@@ -332,7 +332,6 @@ require("lazy").setup({
         },
     },
 
-
     {
         "mason-org/mason-lspconfig.nvim",
         opts = {},
@@ -347,14 +346,12 @@ require("lazy").setup({
                     "cssls",
                     "eslint",
                     "gopls",
-                    "jsonls",
                     "lua_ls",
                     "rust_analyzer",
                     "svelte",
                     "tailwindcss",
                     "taplo",
                     "ts_ls",
-                    "yamlls",
                     "zls",
                 },
                 automatic_enable = true
