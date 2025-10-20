@@ -3,7 +3,7 @@ cursor-style = block
 font-feature = -calt
 font-size = 12
 macos-option-as-alt = true
-theme = dark:Gruvbox Dark Hard,light:Gruvbox Light
+theme = dark:Rose Pine,light:Rose Pine Dawn
 scrollback-limit = 100000000
 shell-integration-features = no-cursor
 
