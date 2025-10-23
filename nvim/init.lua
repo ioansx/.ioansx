@@ -215,7 +215,6 @@ require("lazy").setup({
         lazy = false,
         opts = {
             bigfile = { enabled = true },
-            image = { enabled = true },
             indent = { enabled = true, animate = { enabled = false } },
             picker = {
                 enabled = true,
