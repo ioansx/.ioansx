@@ -2,6 +2,24 @@ if status is-interactive
         # Commands to run in interactive sessions can go here
 end
 
+function gob
+    set url (git remote get-url origin 2>/dev/null)
+    if test -n "$url"
+        if string match -q '*github.com*' -- $url
+            if string match -q 'git@*' -- $url
+                set url (string replace -r '^git@' '' $url)
+                set url (string replace ':' '/' $url)
+                set url "https://$url"
+            end
+            open "$url"
+        else
+            echo "This repository is not hosted on GitHub"
+        end
+    else
+        echo "No remote found"
+    end
+end
+
 fish_vi_key_bindings
 
 alias lzg="lazygit"
