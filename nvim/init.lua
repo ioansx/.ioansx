@@ -457,30 +457,30 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- ---------------------------
 -- Non-CWD files are read-only
 -- ---------------------------
-local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
-vim.api.nvim_create_autocmd("BufReadPost", {
-    group = project_only_writable_group,
-    pattern = "*",
-    callback = function(args)
-        if vim.bo[args.buf].buftype ~= "" then -- ignore non-file buffers
-            return
-        end
-
-        local file_path = vim.fn.expand("%:p")
-        if file_path == "" then
-            return
-        end
-
-        local cwd = vim.fn.getcwd()
-        -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
-        -- ensure the CWD path is followed by a path separator.
-        local cwd_prefix = cwd .. (cwd:sub(-1) == "/" and "" or "/")
-
-        if not (vim.startswith(file_path, cwd_prefix) or file_path == cwd) then
-            vim.bo[args.buf].readonly = true
-        end
-    end,
-})
+-- local project_only_writable_group = vim.api.nvim_create_augroup("ProjectOnlyWritable", { clear = true })
+-- vim.api.nvim_create_autocmd("BufReadPost", {
+--     group = project_only_writable_group,
+--     pattern = "*",
+--     callback = function(args)
+--         if vim.bo[args.buf].buftype ~= "" then -- ignore non-file buffers
+--             return
+--         end
+--
+--         local file_path = vim.fn.expand("%:p")
+--         if file_path == "" then
+--             return
+--         end
+--
+--         local cwd = vim.fn.getcwd()
+--         -- To avoid partial matches (e.g., /foo/bar vs /foo/bar-baz),
+--         -- ensure the CWD path is followed by a path separator.
+--         local cwd_prefix = cwd .. (cwd:sub(-1) == "/" and "" or "/")
+--
+--         if not (vim.startswith(file_path, cwd_prefix) or file_path == cwd) then
+--             vim.bo[args.buf].readonly = true
+--         end
+--     end,
+-- })
 
 -- -------------------------
 -- LazyGit floating terminal
