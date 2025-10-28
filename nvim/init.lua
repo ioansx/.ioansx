@@ -142,14 +142,19 @@ require("lazy").setup({
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
-        "rose-pine/neovim",
-        name = "rose-pine",
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
         config = function()
-            require("rose-pine").setup({
-                enable = { legacy_highlights = false },
-                styles = { italic = false },
+            require("tokyonight").setup({
+                style = "night",
+                light_style = "day",
+                styles = {
+                    comments = { italic = false },
+                    keywords = { italic = false },
+                },
             })
-            vim.cmd("colorscheme rose-pine")
+            vim.cmd("colorscheme tokyonight")
         end
     },
 
