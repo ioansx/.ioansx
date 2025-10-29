@@ -141,20 +141,38 @@ require("lazy").setup({
     { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
+    -- {
+    --     "folke/tokyonight.nvim",
+    --     lazy = false,
+    --     priority = 1000,
+    --     config = function()
+    --         require("tokyonight").setup({
+    --             style = "moon",
+    --             light_style = "day",
+    --             styles = {
+    --                 comments = { italic = false },
+    --                 keywords = { italic = false },
+    --             },
+    --         })
+    --         vim.cmd("colorscheme tokyonight")
+    --     end
+    -- },
+
     {
-        "folke/tokyonight.nvim",
-        lazy = false,
+        "ellisonleao/gruvbox.nvim",
         priority = 1000,
         config = function()
-            require("tokyonight").setup({
-                style = "night",
-                light_style = "day",
-                styles = {
-                    comments = { italic = false },
-                    keywords = { italic = false },
+            require("gruvbox").setup({
+                italic = {
+                    strings = false,
+                    emphasis = false,
+                    comments = false,
+                    operators = false,
+                    folds = false,
                 },
+                contrast = "hard",
             })
-            vim.cmd("colorscheme tokyonight")
+            vim.cmd("colorscheme gruvbox")
         end
     },
 
