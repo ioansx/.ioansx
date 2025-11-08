@@ -141,23 +141,6 @@ require("lazy").setup({
     { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
-    -- {
-    --     "folke/tokyonight.nvim",
-    --     lazy = false,
-    --     priority = 1000,
-    --     config = function()
-    --         require("tokyonight").setup({
-    --             style = "moon",
-    --             light_style = "day",
-    --             styles = {
-    --                 comments = { italic = false },
-    --                 keywords = { italic = false },
-    --             },
-    --         })
-    --         vim.cmd("colorscheme tokyonight")
-    --     end
-    -- },
-
     {
         "ellisonleao/gruvbox.nvim",
         priority = 1000,
@@ -173,6 +156,60 @@ require("lazy").setup({
                 contrast = "hard",
             })
             vim.cmd("colorscheme gruvbox")
+        end
+    },
+
+    {
+        "lewis6991/gitsigns.nvim",
+        config = function()
+            require("gitsigns").setup({
+                on_attach = function(bufnr)
+                    local gitsigns = require('gitsigns')
+
+                    local function map(mode, l, r, opts)
+                        opts = opts or {}
+                        opts.buffer = bufnr
+                        vim.keymap.set(mode, l, r, opts)
+                    end
+
+                    map('n', ']h', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ ']h', bang = true })
+                        else
+                            gitsigns.nav_hunk('next')
+                        end
+                    end, { desc = "(Git) go to next hunk" })
+
+                    map('n', '[h', function()
+                        if vim.wo.diff then
+                            vim.cmd.normal({ '[h', bang = true })
+                        else
+                            gitsigns.nav_hunk('prev')
+                        end
+                    end, { desc = "(Git) go to previous hunk" })
+
+                    map('n', '<leader>gr', gitsigns.reset_hunk, { desc = "(Git) reset hunk" })
+                    map('n', '<leader>gR', gitsigns.reset_buffer, { desc = "(Git) reset buffer" })
+                    map('v', '<leader>gr', function()
+                        gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+                    end, { desc = "(Git) reset hunk (visual)" })
+
+                    map('n', '<leader>gp', gitsigns.preview_hunk, { desc = "(Git) preview hunk" })
+                    map('n', '<leader>gi', gitsigns.preview_hunk_inline, { desc = "(Git) preview hunk inline" })
+                    map('n', '<leader>gb', function()
+                        gitsigns.blame_line({ full = true })
+                    end, { desc = "(Git) blame line" })
+
+                    map('n', '<leader>gd', gitsigns.diffthis, { desc = "(Git) diff this" })
+                    map('n', '<leader>gD', function()
+                        gitsigns.diffthis('~')
+                    end, { desc = "(Git) diff this vs. previous" })
+
+                    map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = "(Git) toggle blame" })
+                    map('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = "(Git) toggle word diff" })
+                    map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "(Git) select hunk" })
+                end
+            })
         end
     },
 
@@ -212,19 +249,6 @@ require("lazy").setup({
                     mini_clue.gen_clues.z(),
                 },
                 window = { config = { width = "auto" } },
-            })
-            require("mini.diff").setup({
-                view = {
-                    style = "sign",
-                    signs = { add = "▒", change = "▒", delete = "▒" },
-                },
-                mappings = {
-                    reset = "<leader>gr",
-                    goto_first = "[H",
-                    goto_prev = "[h",
-                    goto_next = "]h",
-                    goto_last = "]H",
-                },
             })
             require("mini.icons").setup()
             require("mini.splitjoin").setup()
@@ -266,8 +290,6 @@ require("lazy").setup({
             { "<leader>f",       function() Snacks.picker.files({ hidden = true }) end,                 desc = "Find Files" },
             { "<leader>F",       function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files (incl. ignored)" },
             { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
-            { "<leader>gb",      function() Snacks.git.blame_line() end,                                desc = "Git Branches" },
-            { "<leader>gd",      function() Snacks.picker.git_diff() end,                               desc = "Git Diff (Hunks)" },
             { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
             { "<leader>se",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
             { "<leader>sr",      function() Snacks.picker.resume() end,                                 desc = "Resume" },
