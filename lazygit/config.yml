@@ -3,11 +3,12 @@ gui:
   expandFocusedSidePanel: true
   mainPanelSplitMode: flexible
   nerdFontsVersion: "3"
-  screenMode: full
+  # screenMode: full
   showBottomLine: true
   showDivergenceFromBaseBranch: arrowAndNumber
   showFileIcons: true
   showRandomTip: false
+  sidePanelWidth: 0.5
   statusPanelView: allBranchesLog
   theme:
     selectedLineBgColor:
