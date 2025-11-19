@@ -1,6 +1,6 @@
 gui:
   border: single
-  expandFocusedSidePanel: true
+  # expandFocusedSidePanel: true
   mainPanelSplitMode: flexible
   nerdFontsVersion: "3"
   # screenMode: full
