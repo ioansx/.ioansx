@@ -265,25 +265,7 @@ require("lazy").setup({
             indent = { enabled = true, animate = { enabled = false } },
             picker = {
                 enabled = true,
-                layout = {
-                    cycle = true,
-                    layout = {
-                        backdrop = false,
-                        row = -2,
-                        col = 4,
-                        width = 0.6,
-                        min_width = 80,
-                        height = 0.7,
-                        min_height = 30,
-                        box = "vertical",
-                        border = "single",
-                        title = "{title} {live} {flags}",
-                        title_pos = "center",
-                        { win = "preview", title = "{preview}", height = 0.4,     border = "bottom" },
-                        { win = "input",   height = 1,          border = "bottom" },
-                        { win = "list",    border = "hpad" },
-                    }
-                },
+                layout = { layout = { width = 0.9 } },
             },
         },
         keys = {
