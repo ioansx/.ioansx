@@ -31,8 +31,8 @@ Commands:
 if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
-    ln -fsv "$PWD/bash/.bashrc" ~/.bashrc
-    ln -fsv "$PWD/bash/.inputrc" ~/.inputrc
+    # ln -fsv "$PWD/bash/.bashrc" ~/.bashrc
+    # ln -fsv "$PWD/bash/.inputrc" ~/.inputrc
 
     ensure_dir_exists $XDG_CONFIG_HOME/fish
     ln -fsv "$PWD/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
@@ -48,10 +48,14 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/lazygit" $XDG_CONFIG_HOME
     ln -fsv "$PWD/wezterm" $XDG_CONFIG_HOME
 
+    ensure_dir_exists $XDG_CONFIG_HOME/mise
+    ln -fsv "$PWD/mise/mise.toml" $XDG_CONFIG_HOME/mise/mise.toml
+
     ensure_dir_exists $XDG_CONFIG_HOME/nvim
     ln -fsv "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
     ln -fsv "$PWD/nvim/colors" $XDG_CONFIG_HOME/nvim
 
+    ensure_dir_exists $XDG_CONFIG_HOME/nushell
     ln -fsv "$PWD/nushell/config.nu" $XDG_CONFIG_HOME/nushell/config.nu
     ln -fsv "$PWD/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
 
@@ -68,8 +72,8 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$PWD/zed/keymap.json" $XDG_CONFIG_HOME/zed/keymap.json
     ln -fsv "$PWD/zed/settings.json" $XDG_CONFIG_HOME/zed/settings.json
 elif [ "$CMD_1" = "unlink" ]; then
-    rm -v ~/.bashrc
-    rm -v ~/.inputrc
+    # rm -v ~/.bashrc
+    # rm -v ~/.inputrc
     rm -v $XDG_CONFIG_HOME/fish/config.fish
     rm -v $XDG_CONFIG_HOME/ghostty
 
@@ -80,6 +84,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     # rm -v $XDG_CONFIG_HOME/kitty
     rm -v $XDG_CONFIG_HOME/lazygit
     rm -v $XDG_CONFIG_HOME/wezterm
+    rm -v $XDG_CONFIG_HOME/mise/mise.toml
     rm -v $XDG_CONFIG_HOME/nvim/init.lua
     rm -v $XDG_CONFIG_HOME/nvim/colors
     rm -v $XDG_CONFIG_HOME/nushell/config.nu

@@ -1,0 +1,9 @@
+[tools]
+# Python: "latest" or a specific version like "3.12"
+python = "latest"
+
+# Node: "lts" is recommended for stability, or use "latest"
+node = "lts"
+
+# Go: usually "latest" is best
+go = "latest"
