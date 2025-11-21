@@ -37,7 +37,14 @@ elif [ "$CMD_1" = "link" ]; then
     ensure_dir_exists $XDG_CONFIG_HOME/fish
     ln -fsv "$PWD/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
 
-    ln -fsv "$PWD/ghostty" $XDG_CONFIG_HOME
+    ensure_dir_exists $XDG_CONFIG_HOME/ghostty
+    ln -fsv "$PWD/ghostty/config" $XDG_CONFIG_HOME/ghostty/config
+    if [ "$(uname)" == "Darwin" ]; then
+        ln -fsv "$PWD/ghostty/macos.config" $XDG_CONFIG_HOME/ghostty/macos.config
+    fi
+    if [ "$(uname)" == "Linux" ]; then
+        ln -fsv "$PWD/ghostty/linux.config" $XDG_CONFIG_HOME/ghostty/linux.config
+    fi
 
     if [ "$(uname)" == "Darwin" ]; then
         ensure_dir_exists $XDG_CONFIG_HOME/karabiner
@@ -75,7 +82,13 @@ elif [ "$CMD_1" = "unlink" ]; then
     # rm -v ~/.bashrc
     # rm -v ~/.inputrc
     rm -v $XDG_CONFIG_HOME/fish/config.fish
-    rm -v $XDG_CONFIG_HOME/ghostty
+    rm -v $XDG_CONFIG_HOME/ghostty/config
+    if [ "$(uname)" == "Darwin" ]; then
+        rm -v $XDG_CONFIG_HOME/ghostty/macos.config
+    fi
+    if [ "$(uname)" == "Linux" ]; then
+        rm -v $XDG_CONFIG_HOME/ghostty/linux.config
+    fi
 
     if [ "$(uname)" == "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/karabiner/karabiner.json

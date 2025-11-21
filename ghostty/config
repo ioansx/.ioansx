@@ -1,13 +1,13 @@
-command=/usr/local/bin/fish
-cursor-style = block
+# cursor-style = block
 font-feature = -calt
-font-size = 15
-macos-option-as-alt = true
 theme = light:Gruvbox Light Hard,dark:Gruvbox Dark Hard
 scrollback-limit = 100000000
-shell-integration-features = no-cursor
+# shell-integration-features = no-cursor
 window-padding-balance = true
 window-vsync = true
 # Window width and height will be clamped to max screen size.
 window-height = 9000
 window-width = 9000
+
+config-file = ?linux.config
+config-file = ?macos.config
