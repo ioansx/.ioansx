@@ -79,7 +79,6 @@ nmap("<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 nmap("<leader>tk", toggle_inlay_hints, { desc = "toggle inlay hints" })
 nmap("<leader>tq", toggle_quickfix_list, { noremap = true, silent = true, desc = "toggle quickfix list" })
 nmap("<leader>tl", toggle_location_list, { noremap = true, silent = true, desc = "toggle location list" })
-nmap("<leader>tg", ":lua MiniDiff.toggle_overlay()<CR>", { desc = "toggle MiniDiff overlay" })
 
 -- -----------
 -- Smart paste
@@ -196,9 +195,8 @@ require("lazy").setup({
 
                     map('n', '<leader>gp', gitsigns.preview_hunk, { desc = "(Git) preview hunk" })
                     map('n', '<leader>gi', gitsigns.preview_hunk_inline, { desc = "(Git) preview hunk inline" })
-                    map('n', '<leader>gb', function()
-                        gitsigns.blame_line({ full = true })
-                    end, { desc = "(Git) blame line" })
+                    map('n', '<leader>gb', function() gitsigns.blame_line({ full = true }) end,
+                        { desc = "(Git) blame line" })
 
                     map('n', '<leader>gd', gitsigns.diffthis, { desc = "(Git) diff this" })
                     map('n', '<leader>gD', function()
@@ -217,39 +215,6 @@ require("lazy").setup({
         "nvim-mini/mini.nvim",
         version = false,
         config = function()
-            local mini_clue = require("mini.clue")
-            mini_clue.setup({
-                triggers = {
-                    { mode = "n", keys = "<Leader>" },
-                    { mode = "x", keys = "<Leader>" },
-                    { mode = "n", keys = "[" },
-                    { mode = "n", keys = "]" },
-                    { mode = "i", keys = "<C-x>" },
-                    { mode = "n", keys = "g" },
-                    { mode = "x", keys = "g" },
-                    { mode = "n", keys = "'" },
-                    { mode = "n", keys = "`" },
-                    { mode = "x", keys = "'" },
-                    { mode = "x", keys = "`" },
-                    { mode = "n", keys = '"' },
-                    { mode = "x", keys = '"' },
-                    { mode = "i", keys = "<C-r>" },
-                    { mode = "c", keys = "<C-r>" },
-                    { mode = "n", keys = "<C-w>" },
-                    { mode = "n", keys = "z" },
-                    { mode = "x", keys = "z" },
-                },
-                clues = {
-                    mini_clue.gen_clues.square_brackets(),
-                    mini_clue.gen_clues.builtin_completion(),
-                    mini_clue.gen_clues.g(),
-                    mini_clue.gen_clues.marks(),
-                    mini_clue.gen_clues.registers(),
-                    mini_clue.gen_clues.windows(),
-                    mini_clue.gen_clues.z(),
-                },
-                window = { config = { width = "auto" } },
-            })
             require("mini.icons").setup()
             require("mini.splitjoin").setup()
             require("mini.trailspace").setup()
@@ -280,6 +245,24 @@ require("lazy").setup({
             { "<leader>su",      function() Snacks.picker.undo() end,                                   desc = "Undo History" },
             { "<leader>sw",      function() Snacks.picker.grep_word() end,                              desc = "Visual selection or word" },
         }
+    },
+
+    {
+        "folke/which-key.nvim",
+        event = "VeryLazy",
+        opts = {
+            preset = "helix",
+            delay = 1000,
+        },
+        keys = {
+            {
+                "<leader>?",
+                function()
+                    require("which-key").show({ global = false })
+                end,
+                desc = "Buffer Local Keymaps (which-key)",
+            },
+        },
     },
 
     {
