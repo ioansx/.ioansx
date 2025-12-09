@@ -230,7 +230,7 @@ require("lazy").setup({
             indent = { enabled = true, animate = { enabled = false } },
             picker = {
                 enabled = true,
-                layout = { layout = { width = 0.9 } },
+                layout = { preset = "vertical", layout = { backdrop = true, width = 0.9 } },
             },
         },
         keys = {
