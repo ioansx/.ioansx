@@ -254,15 +254,10 @@ require("lazy").setup({
             preset = "helix",
             delay = 1000,
         },
-        keys = {
-            {
-                "<leader>?",
-                function()
-                    require("which-key").show({ global = false })
-                end,
-                desc = "Buffer Local Keymaps (which-key)",
-            },
-        },
+        config = function()
+            nmap("<leader>?", function() require("which-key").show({ global = false }) end,
+                { desc = "Buffer Local Keymaps (which-key)" })
+        end,
     },
 
     {
@@ -274,14 +269,6 @@ require("lazy").setup({
                 view_options = { show_hidden = true },
             })
             nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
-            vim.api.nvim_create_autocmd("User", {
-                pattern = "OilActionsPost",
-                callback = function(event)
-                    if event.data.actions.type == "move" then
-                        Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url)
-                    end
-                end,
-            })
         end,
     },
 
