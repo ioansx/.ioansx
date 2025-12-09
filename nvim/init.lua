@@ -250,13 +250,13 @@ require("lazy").setup({
     {
         "folke/which-key.nvim",
         event = "VeryLazy",
-        opts = {
-            preset = "helix",
-            delay = 1000,
-        },
         config = function()
-            nmap("<leader>?", function() require("which-key").show({ global = false }) end,
-                { desc = "Buffer Local Keymaps (which-key)" })
+            local wk = require("which-key")
+            wk.setup({
+                preset = "helix",
+                delay = 1000,
+            })
+            nmap("<leader>?", function() wk.show({ global = false }) end, { desc = "Buffer Local Keymaps (which-key)" })
         end,
     },
 
@@ -342,7 +342,6 @@ require("lazy").setup({
 
     {
         "mason-org/mason-lspconfig.nvim",
-        opts = {},
         dependencies = {
             { "mason-org/mason.nvim", opts = {} },
             "neovim/nvim-lspconfig",
