@@ -230,7 +230,14 @@ require("lazy").setup({
             indent = { enabled = true, animate = { enabled = false } },
             picker = {
                 enabled = true,
-                layout = { preset = "vertical", layout = { backdrop = true, width = 0.9 } },
+                layout = {
+                    preset = "vertical",
+                    layout = {
+                        backdrop = true,
+                        width = 0.9,
+                        height = 0.9,
+                    }
+                },
             },
         },
         keys = {
@@ -239,6 +246,7 @@ require("lazy").setup({
             { "<leader>F",       function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files (incl. ignored)" },
             { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
             { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
+            { "<leader>gs",      function() Snacks.picker.git_status() end,                             desc = "Git Status" },
             { "<leader>se",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
             { "<leader>sr",      function() Snacks.picker.resume() end,                                 desc = "Resume" },
             { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end,                  desc = "LSP Workspace Symbols" },
