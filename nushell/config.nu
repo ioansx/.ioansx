@@ -27,7 +27,7 @@ $env.config.history = {
 }
 
 $env.config.edit_mode = "vi"
-$env.config.buffer_editor = ["nvim", "--clean"]
+$env.config.buffer_editor = "nvim"
 
 $env.config.table.mode = "default"
 $env.config.table.padding.left = 0
@@ -51,7 +51,7 @@ $env.PROMPT_COMMAND_RIGHT = { $"(date now | format date '%Y-%d-%m %H:%M:%S%.3f')
 $env.PROMPT_INDICATOR_VI_INSERT = ": "
 $env.PROMPT_INDICATOR_VI_NORMAL = "# "
 
-alias ll = ls -a
+alias ll = ls -la
 alias lg = lazygit
 
 source ~/.config/nushell/.zoxide.nu

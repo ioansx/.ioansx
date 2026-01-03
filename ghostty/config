@@ -1,13 +1,19 @@
-# cursor-style = block
 font-feature = -calt
 theme = light:Gruvbox Light Hard,dark:Gruvbox Dark Hard
-scrollback-limit = 100000000
-# shell-integration-features = no-cursor
+# scrollback-limit = 100000000
+window-new-tab-position = end
 window-padding-balance = true
 window-vsync = true
+
 # Window width and height will be clamped to max screen size.
 window-height = 9000
 window-width = 9000
 
+keybind = global:alt+t=toggle_quick_terminal
+keybind = alt+s=write_screen_file:copy
+
 config-file = ?linux.config
 config-file = ?macos.config
+
+# Vim-mode keybindings for Ghostty.
+# https://github.com/ghostty-org/ghostty/discussions/3708#discussioncomment-15329614
