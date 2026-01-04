@@ -9,8 +9,7 @@ window-vsync = true
 window-height = 9000
 window-width = 9000
 
-keybind = global:alt+t=toggle_quick_terminal
-keybind = alt+s=write_screen_file:copy
+keybind = global:super+ctrl+alt+t=toggle_quick_terminal
 
 config-file = ?linux.config
 config-file = ?macos.config
