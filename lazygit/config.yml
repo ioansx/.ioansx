@@ -1,14 +1,16 @@
 gui:
   border: single
+  commandLogSize: 8
   # expandFocusedSidePanel: true
   mainPanelSplitMode: flexible
   nerdFontsVersion: "3"
   # screenMode: full
+  sidePanelWidth: 0.5
   showBottomLine: true
   showDivergenceFromBaseBranch: arrowAndNumber
+  showCommandLog: true
   showFileIcons: true
   showRandomTip: false
-  sidePanelWidth: 0.5
   statusPanelView: allBranchesLog
   theme:
     selectedLineBgColor:
