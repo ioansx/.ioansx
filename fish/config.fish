@@ -29,7 +29,9 @@ set -U fish_user_paths $HOME/.cargo/bin $fish_user_paths
 set -U fish_user_paths $HOME/.pulumi/bin $fish_user_paths
 set -U fish_user_paths $HOME/.local/bin $fish_user_paths
 
-if [ -f '/Users/ioan/google-cloud-sdk/path.fish.inc' ]; . '/Users/ioan/google-cloud-sdk/path.fish.inc'; end
+if test -f ~/dev/google-cloud-sdk/path.fish.inc
+    source ~/dev/google-cloud-sdk/path.fish.inc
+end
 
 fzf --fish | source
 zoxide init fish | source
