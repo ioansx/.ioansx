@@ -420,7 +420,7 @@ require("lazy").setup({
                 "javascript",
                 "jsdoc",
                 "json",
-                "latex",
+                -- "latex",
                 "lua",
                 "markdown",
                 "markdown_inline",
