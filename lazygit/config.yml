@@ -1,6 +1,6 @@
 gui:
   border: single
-  commandLogSize: 8
+  commandLogSize: 12
   # expandFocusedSidePanel: true
   mainPanelSplitMode: flexible
   nerdFontsVersion: "3"
