@@ -8,7 +8,30 @@
             "manipulators": [
               {
                 "from": {
-                  "key_code": "a",
+                  "key_code": "f",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_command",
+                      "left_control",
+                      "left_option",
+                      "left_shift"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "software_function": {
+                      "open_application": {
+                        "file_path": "/Applications/Brave Browser.app"
+                      }
+                    }
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "key_code": "d",
                   "modifiers": {
                     "mandatory": [
                       "left_command",
@@ -54,30 +77,7 @@
               },
               {
                 "from": {
-                  "key_code": "f",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_control",
-                      "left_option",
-                      "left_shift"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Brave Browser.app"
-                      }
-                    }
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "key_code": "q",
+                  "key_code": "a",
                   "modifiers": {
                     "mandatory": [
                       "left_command",
@@ -100,7 +100,7 @@
               },
               {
                 "from": {
-                  "key_code": "e",
+                  "key_code": "t",
                   "modifiers": {
                     "mandatory": [
                       "left_command",
