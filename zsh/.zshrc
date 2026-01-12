@@ -67,8 +67,8 @@ alias man='MANWIDTH=80 man'
 
 . "$HOME/.cargo/env"
 
-if [ -f '/Users/ioan/google-cloud-sdk/path.zsh.inc' ]; then
-    source '/Users/ioan/google-cloud-sdk/path.zsh.inc';
+if [ -f '/Users/ioan/dev/google-cloud-sdk/path.zsh.inc' ]; then
+    source '/Users/ioan/dev/google-cloud-sdk/path.zsh.inc';
 fi
 
 source <(fzf --zsh)
