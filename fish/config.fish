@@ -1,5 +1,10 @@
+set -U fish_greeting ""
+function fish_greeting
+    # This ensures the standard greeting is also silenced.
+end
+
 if status is-interactive
-        # Commands to run in interactive sessions can go here
+    # Commands to run in interactive sessions can go here
 end
 
 function gob
