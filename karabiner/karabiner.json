@@ -8,30 +8,7 @@
             "manipulators": [
               {
                 "from": {
-                  "key_code": "f",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_control",
-                      "left_option",
-                      "left_shift"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Brave Browser.app"
-                      }
-                    }
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "key_code": "d",
+                  "key_code": "g",
                   "modifiers": {
                     "mandatory": [
                       "left_command",
@@ -46,6 +23,52 @@
                     "software_function": {
                       "open_application": {
                         "bundle_identifier": "com.apple.Finder"
+                      }
+                    }
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "key_code": "f",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_command",
+                      "left_control",
+                      "left_option",
+                      "left_shift"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "software_function": {
+                      "open_application": {
+                        "file_path": "/Applications/Firefox.app"
+                      }
+                    }
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "key_code": "d",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_command",
+                      "left_control",
+                      "left_option",
+                      "left_shift"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "software_function": {
+                      "open_application": {
+                        "file_path": "/Applications/Brave Browser.app"
                       }
                     }
                   }
