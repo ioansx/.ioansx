@@ -91,7 +91,7 @@
                   {
                     "software_function": {
                       "open_application": {
-                        "file_path": "/Users/ioan/Applications/Brave Browser Apps.localized/GitHub.app"
+                        "file_path": "/Applications/Claude.app"
                       }
                     }
                   }
@@ -161,6 +161,29 @@
                     "software_function": {
                       "open_application": {
                         "file_path": "/Applications/Slack.app"
+                      }
+                    }
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_command",
+                      "left_control",
+                      "left_option",
+                      "left_shift"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "software_function": {
+                      "open_application": {
+                        "file_path": "/Users/ioan/Applications/Brave Browser Apps.localized/GitHub.app"
                       }
                     }
                   }
