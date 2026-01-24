@@ -2,19 +2,12 @@
 
 CMD_1="$1"
 
-PWD=$(pwd)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 XDG_CONFIG_HOME=~/.config
+OS="$(uname)"
 
 BLUE='\e[94m'
 RESET='\e[0m'
-
-ensure_dir_exists () {
-    local dirname="$1"
-    if [ ! -d "$dirname" ]; then
-        echo "Creating directory: $dirname"
-        mkdir "$dirname"
-    fi
-}
 
 print_help () {
     # shellcheck disable=SC2059
@@ -31,66 +24,66 @@ Commands:
 if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
-    # ln -fsv "$PWD/bash/.bashrc" ~/.bashrc
-    # ln -fsv "$PWD/bash/.inputrc" ~/.inputrc
+    # ln -fsv "$SCRIPT_DIR/bash/.bashrc" ~/.bashrc
+    # ln -fsv "$SCRIPT_DIR/bash/.inputrc" ~/.inputrc
 
-    ensure_dir_exists $XDG_CONFIG_HOME/fish
-    ln -fsv "$PWD/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
+    mkdir -p "$XDG_CONFIG_HOME/fish"
+    ln -fsv "$SCRIPT_DIR/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
 
-    ensure_dir_exists $XDG_CONFIG_HOME/ghostty
-    ln -fsv "$PWD/ghostty/config" $XDG_CONFIG_HOME/ghostty/config
-    if [ "$(uname)" == "Darwin" ]; then
-        ln -fsv "$PWD/ghostty/macos.config" $XDG_CONFIG_HOME/ghostty/macos.config
+    mkdir -p "$XDG_CONFIG_HOME/ghostty"
+    ln -fsv "$SCRIPT_DIR/ghostty/config" $XDG_CONFIG_HOME/ghostty/config
+    if [ "$OS" = "Darwin" ]; then
+        ln -fsv "$SCRIPT_DIR/ghostty/macos.config" $XDG_CONFIG_HOME/ghostty/macos.config
     fi
-    if [ "$(uname)" == "Linux" ]; then
-        ln -fsv "$PWD/ghostty/linux.config" $XDG_CONFIG_HOME/ghostty/linux.config
-    fi
-
-    if [ "$(uname)" == "Darwin" ]; then
-        ensure_dir_exists $XDG_CONFIG_HOME/karabiner
-        ln -fsv "$PWD/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
+    if [ "$OS" = "Linux" ]; then
+        ln -fsv "$SCRIPT_DIR/ghostty/linux.config" $XDG_CONFIG_HOME/ghostty/linux.config
     fi
 
-    # ln -fsv "$PWD/kitty" $XDG_CONFIG_HOME
-    ln -fsv "$PWD/lazygit" $XDG_CONFIG_HOME
-    ln -fsv "$PWD/wezterm" $XDG_CONFIG_HOME
+    if [ "$OS" = "Darwin" ]; then
+        mkdir -p "$XDG_CONFIG_HOME/karabiner"
+        ln -fsv "$SCRIPT_DIR/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
+    fi
 
-    ensure_dir_exists $XDG_CONFIG_HOME/mise
-    ln -fsv "$PWD/mise/mise.toml" $XDG_CONFIG_HOME/mise/mise.toml
+    # ln -fsv "$SCRIPT_DIR/kitty" $XDG_CONFIG_HOME
+    ln -fsv "$SCRIPT_DIR/lazygit" $XDG_CONFIG_HOME
+    ln -fsv "$SCRIPT_DIR/wezterm" $XDG_CONFIG_HOME
 
-    ensure_dir_exists $XDG_CONFIG_HOME/nvim
-    ln -fsv "$PWD/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
-    ln -fsv "$PWD/nvim/colors" $XDG_CONFIG_HOME/nvim
+    mkdir -p "$XDG_CONFIG_HOME/mise"
+    ln -fsv "$SCRIPT_DIR/mise/mise.toml" $XDG_CONFIG_HOME/mise/mise.toml
 
-    ensure_dir_exists $XDG_CONFIG_HOME/nushell
-    ln -fsv "$PWD/nushell/config.nu" $XDG_CONFIG_HOME/nushell/config.nu
-    ln -fsv "$PWD/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
+    mkdir -p "$XDG_CONFIG_HOME/nvim"
+    ln -fsv "$SCRIPT_DIR/nvim/init.lua" $XDG_CONFIG_HOME/nvim/init.lua
+    ln -fsv "$SCRIPT_DIR/nvim/colors" $XDG_CONFIG_HOME/nvim
 
-    ln -fsv "$PWD/tmux/tmux.conf" ~/.tmux.conf
+    mkdir -p "$XDG_CONFIG_HOME/nushell"
+    ln -fsv "$SCRIPT_DIR/nushell/config.nu" $XDG_CONFIG_HOME/nushell/config.nu
+    ln -fsv "$SCRIPT_DIR/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
 
-    ensure_dir_exists $XDG_CONFIG_HOME/vim
-    ln -fsv "$PWD/vim/vimrc" $XDG_CONFIG_HOME/vim/vimrc
+    ln -fsv "$SCRIPT_DIR/tmux/tmux.conf" ~/.tmux.conf
 
-    # if [ "$(uname)" == "Darwin" ]; then
-    ln -fsv "$PWD/zsh/.zshrc" ~/.zshrc
+    mkdir -p "$XDG_CONFIG_HOME/vim"
+    ln -fsv "$SCRIPT_DIR/vim/vimrc" $XDG_CONFIG_HOME/vim/vimrc
+
+    # if [ "$OS" = "Darwin" ]; then
+    ln -fsv "$SCRIPT_DIR/zsh/.zshrc" ~/.zshrc
     # fi
 
-    ensure_dir_exists $XDG_CONFIG_HOME/zed
-    ln -fsv "$PWD/zed/keymap.json" $XDG_CONFIG_HOME/zed/keymap.json
-    ln -fsv "$PWD/zed/settings.json" $XDG_CONFIG_HOME/zed/settings.json
+    mkdir -p "$XDG_CONFIG_HOME/zed"
+    ln -fsv "$SCRIPT_DIR/zed/keymap.json" $XDG_CONFIG_HOME/zed/keymap.json
+    ln -fsv "$SCRIPT_DIR/zed/settings.json" $XDG_CONFIG_HOME/zed/settings.json
 elif [ "$CMD_1" = "unlink" ]; then
     # rm -v ~/.bashrc
     # rm -v ~/.inputrc
     rm -v $XDG_CONFIG_HOME/fish/config.fish
     rm -v $XDG_CONFIG_HOME/ghostty/config
-    if [ "$(uname)" == "Darwin" ]; then
+    if [ "$OS" = "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/ghostty/macos.config
     fi
-    if [ "$(uname)" == "Linux" ]; then
+    if [ "$OS" = "Linux" ]; then
         rm -v $XDG_CONFIG_HOME/ghostty/linux.config
     fi
 
-    if [ "$(uname)" == "Darwin" ]; then
+    if [ "$OS" = "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/karabiner/karabiner.json
     fi
 
@@ -105,7 +98,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v ~/.tmux.conf
     rm -v $XDG_CONFIG_HOME/vim/vimrc
 
-    # if [ "$(uname)" == "Darwin" ]; then
+    # if [ "$OS" = "Darwin" ]; then
     rm -v ~/.zshrc
     # fi
 
