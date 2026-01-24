@@ -474,10 +474,11 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 -- -------------------------
 -- LazyGit floating terminal
 -- -------------------------
+local LazyGitState = { win = nil, buf = nil }
+
 local function LazyGitOpen()
-    local LazyGitState = { win = nil, buf = nil }
     if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-        pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+        vim.api.nvim_win_close(LazyGitState.win, true)
         LazyGitState.win = nil
         return
     end
@@ -496,19 +497,17 @@ local function LazyGitOpen()
         row = 0,
         border = "none",
         style = "minimal",
-        noautocmd = true,
     })
 
-    pcall(vim.api.nvim_buf_set_option, LazyGitState.buf, "filetype", "lazygit")
-
-    vim.fn.jobstart("lazygit", {
-        term = true,
+    vim.fn.termopen("lazygit", {
         on_exit = function()
-            if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-                pcall(vim.api.nvim_win_close, LazyGitState.win, true)
-            end
-            LazyGitState.win = nil
-            LazyGitState.buf = nil
+            vim.schedule(function()
+                if LazyGitState.buf and vim.api.nvim_buf_is_valid(LazyGitState.buf) then
+                    vim.api.nvim_buf_delete(LazyGitState.buf, { force = true })
+                end
+                LazyGitState.win = nil
+                LazyGitState.buf = nil
+            end)
         end,
     })
 
