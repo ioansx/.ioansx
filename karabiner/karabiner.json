@@ -4,6 +4,25 @@
       "complex_modifications": {
         "rules": [
           {
+            "description": "Ghostty Window Picker",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "mandatory": ["option"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "open '/Users/ioan/.ioansx/ghostty-picker/Ghostty Picker.app'"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
             "description": "Open Apps",
             "manipulators": [
               {
