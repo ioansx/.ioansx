@@ -217,7 +217,6 @@ require("lazy").setup({
         config = function()
             require("mini.icons").setup()
             require("mini.splitjoin").setup()
-            require("mini.trailspace").setup()
         end
     },
 
@@ -459,6 +458,17 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
         vim.hl.on_yank()
     end,
+})
+
+-- ------------------------
+-- Highlight trailing space
+-- ------------------------
+vim.api.nvim_create_autocmd("BufWinEnter", {
+    callback = function()
+        if vim.bo.buftype == "" then
+            vim.fn.matchadd("ErrorMsg", [[\s\+$]])
+        end
+    end
 })
 
 -- -------------------------
