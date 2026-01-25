@@ -33,7 +33,7 @@ func focusWindow(_ window: GhosttyWindow) {
     AXUIElementPerformAction(window.axElement, kAXRaiseAction as CFString)
     NSWorkspace.shared.runningApplications
         .first { $0.bundleIdentifier == "com.mitchellh.ghostty" }?
-        .activate(options: .activateIgnoringOtherApps)
+        .activate()
 }
 
 class PickerWindowController: NSWindowController {
@@ -45,7 +45,7 @@ class PickerWindowController: NSWindowController {
 
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 400, height: 300),
-            styleMask: [.titled, .fullSizeContentView],
+            styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -56,6 +56,7 @@ class PickerWindowController: NSWindowController {
         window.level = .floating
 
         super.init(window: window)
+        window.delegate = self
         setupUI()
     }
 
@@ -153,6 +154,12 @@ class PickerWindowController: NSWindowController {
     }
 }
 
+extension PickerWindowController: NSWindowDelegate {
+    func windowWillClose(_ notification: Notification) {
+        NSApp.terminate(nil)
+    }
+}
+
 extension PickerWindowController: NSTableViewDataSource, NSTableViewDelegate {
     func numberOfRows(in tableView: NSTableView) -> Int {
         return windows.count
@@ -172,12 +179,10 @@ extension PickerWindowController: NSTableViewDataSource, NSTableViewDelegate {
     }
 }
 
-// MARK: - Main
-
 let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 
-let windows = getGhosttyWindows().sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+let windows = getGhosttyWindows()
 
 if windows.isEmpty {
     // No Ghostty windows, just exit
