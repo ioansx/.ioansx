@@ -106,20 +106,9 @@ vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnosti
 vim.keymap.set("n", "<leader>de", diagnostic_copen_errors, { desc = "diagnostics copen errors" })
 vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostics copen all" })
 
--- ---
--- LSP
--- ---
-local function show_lsp_documentation()
-    -- The default hover is only closed on cursor move by default.
-    vim.lsp.buf.hover({
-        close_events = { "BufWinLeave", "CursorMoved", "CursorMovedI", "InsertEnter" }
-    })
-end
-
 nmap("gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration()" })
 nmap("gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()" })
 nmap("grs", vim.lsp.buf.workspace_symbol, { desc = "vim.lsp.buf.workspace_symbol()" })
-nmap("K", show_lsp_documentation, { desc = "vim.lsp.buf.hover()" })
 nmap("grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- ----
