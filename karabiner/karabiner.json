@@ -4,25 +4,6 @@
       "complex_modifications": {
         "rules": [
           {
-            "description": "Ghostty Window Picker",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "i",
-                  "modifiers": {
-                    "mandatory": ["option"]
-                  }
-                },
-                "to": [
-                  {
-                    "shell_command": "open '/Users/ioan/.ioansx/ghostty-picker/Ghostty Picker.app'"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
             "description": "Open Apps",
             "manipulators": [
               {
@@ -238,18 +219,12 @@
         {
           "identifiers": {
             "is_keyboard": true,
-            "product_id": 591,
-            "vendor_id": 1452
-          },
-          "simple_modifications": []
-        },
-        {
-          "identifiers": {
-            "is_keyboard": true,
+            "is_pointing_device": true,
             "product_id": 10203,
             "vendor_id": 5824
           },
-          "simple_modifications": []
+          "ignore": false,
+          "manipulate_caps_lock_led": true
         }
       ],
       "name": "Default",

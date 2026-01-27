@@ -30,6 +30,7 @@ fish_vi_key_bindings
 alias lzg="lazygit"
 
 set -x XDG_CONFIG_HOME "$HOME/.config"
+set -U fish_user_paths $HOME/.ioansx/bin $fish_user_paths
 set -U fish_user_paths $HOME/.cargo/bin $fish_user_paths
 set -U fish_user_paths $HOME/.pulumi/bin $fish_user_paths
 set -U fish_user_paths $HOME/.local/bin $fish_user_paths

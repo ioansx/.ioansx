@@ -1,47 +1,83 @@
 import Cocoa
 import ApplicationServices
 
+let ghosttyBundleId = "com.mitchellh.ghostty"
+
 struct GhosttyWindow {
     let title: String
     let axElement: AXUIElement
+
+    var slotNumber: Int? {
+        if title.hasPrefix("Ghostty "),
+           let num = Int(title.dropFirst(8)),
+           num >= 1 && num <= 5 {
+            return num
+        }
+        return nil
+    }
 }
 
 func getGhosttyWindows() -> [GhosttyWindow] {
-    var result: [GhosttyWindow] = []
+    guard let ghostty = NSWorkspace.shared.runningApplications.first(where: { $0.bundleIdentifier == ghosttyBundleId }) else {
+        return []
+    }
 
-    let ghostty = NSWorkspace.shared.runningApplications
-        .first { $0.bundleIdentifier == "com.mitchellh.ghostty" }
-
-    guard let pid = ghostty?.processIdentifier else { return result }
-
-    let appRef = AXUIElementCreateApplication(pid)
+    let appRef = AXUIElementCreateApplication(ghostty.processIdentifier)
     var windowsRef: CFTypeRef?
     AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute as CFString, &windowsRef)
 
-    guard let windows = windowsRef as? [AXUIElement] else { return result }
+    guard let windows = windowsRef as? [AXUIElement] else { return [] }
 
-    for window in windows {
+    return windows.map { window in
         var titleRef: CFTypeRef?
         AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleRef)
-        let title = (titleRef as? String) ?? "Untitled"
-        result.append(GhosttyWindow(title: title, axElement: window))
+        return GhosttyWindow(title: (titleRef as? String) ?? "Untitled", axElement: window)
     }
-    return result
 }
 
 func focusWindow(_ window: GhosttyWindow) {
     AXUIElementPerformAction(window.axElement, kAXRaiseAction as CFString)
-    NSWorkspace.shared.runningApplications
-        .first { $0.bundleIdentifier == "com.mitchellh.ghostty" }?
-        .activate()
+    NSWorkspace.shared.runningApplications.first { $0.bundleIdentifier == ghosttyBundleId }?.activate()
 }
 
-class PickerWindowController: NSWindowController {
-    private var windows: [GhosttyWindow]
+// MARK: - CLI Commands
+
+func cmdSwitch(_ slot: Int) {
+    let windows = getGhosttyWindows()
+    guard let window = windows.first(where: { $0.slotNumber == slot }) else {
+        fputs("No window found for slot \(slot)\n", stderr)
+        exit(1)
+    }
+    focusWindow(window)
+}
+
+func cmdList() {
+    let windows = getGhosttyWindows()
+
+    for slot in 1...5 {
+        let status = windows.contains { $0.slotNumber == slot } ? "+" : "-"
+        print("\(slot). [\(status)]")
+    }
+
+    let other = windows.filter { $0.slotNumber == nil }
+    if !other.isEmpty {
+        print("\nOther windows:")
+        for window in other {
+            print("   \(window.title)")
+        }
+    }
+}
+
+// MARK: - Picker UI
+
+class PickerWindowController: NSWindowController, NSWindowDelegate, NSTableViewDataSource, NSTableViewDelegate {
+    private var orderedWindows: [GhosttyWindow]
     private var tableView: NSTableView!
 
     init(windows: [GhosttyWindow]) {
-        self.windows = windows
+        let numbered = windows.filter { $0.slotNumber != nil }.sorted { $0.slotNumber! < $1.slotNumber! }
+        let unnumbered = windows.filter { $0.slotNumber == nil }
+        self.orderedWindows = numbered + unnumbered
 
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 400, height: 300),
@@ -60,22 +96,16 @@ class PickerWindowController: NSWindowController {
         setupUI()
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError() }
 
     private func setupUI() {
         guard let window = self.window else { return }
 
-        let contentView = NSView(frame: window.contentView!.bounds)
-        contentView.autoresizingMask = [.width, .height]
-
-        // Scroll view + table
         let scrollView = NSScrollView(frame: NSRect(x: 12, y: 12, width: 376, height: 276))
         scrollView.hasVerticalScroller = true
         scrollView.autoresizingMask = [.width, .height]
 
-        tableView = NSTableView(frame: scrollView.bounds)
+        tableView = NSTableView()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.headerView = nil
@@ -87,96 +117,84 @@ class PickerWindowController: NSWindowController {
         tableView.addTableColumn(column)
 
         scrollView.documentView = tableView
-        contentView.addSubview(scrollView)
+        window.contentView?.addSubview(scrollView)
 
-        window.contentView = contentView
-
-        // Handle key events
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            return self?.handleKeyDown(event)
+            self?.handleKeyDown(event)
         }
     }
 
     private func handleKeyDown(_ event: NSEvent) -> NSEvent? {
-        // Escape to close
-        if event.keyCode == 53 {
+        switch event.keyCode {
+        case 53: // Escape
             NSApp.terminate(nil)
-            return nil
-        }
-
-        // Enter to select current row
-        if event.keyCode == 36 {
-            selectCurrentRow()
-            return nil
-        }
-
-        // Home row keys for quick selection
-        let keys = ["a", "s", "d", "f", "g"]
-        if let chars = event.charactersIgnoringModifiers,
-           let index = keys.firstIndex(of: chars.lowercased()) {
-            if index < windows.count {
-                selectWindow(at: index)
+        case 36: // Enter
+            selectWindow(at: max(0, tableView.selectedRow))
+        case 126: // Up
+            tableView.selectRowIndexes(IndexSet(integer: max(0, tableView.selectedRow - 1)), byExtendingSelection: false)
+        case 125: // Down
+            tableView.selectRowIndexes(IndexSet(integer: min(orderedWindows.count - 1, tableView.selectedRow + 1)), byExtendingSelection: false)
+        default:
+            if let chars = event.charactersIgnoringModifiers,
+               let num = Int(chars), num >= 1 && num <= 5,
+               let idx = orderedWindows.firstIndex(where: { $0.slotNumber == num }) {
+                selectWindow(at: idx)
             }
-            return nil
+            return event
         }
-
-        // Up/Down arrows
-        if event.keyCode == 126 { // Up
-            let newRow = max(0, tableView.selectedRow - 1)
-            tableView.selectRowIndexes(IndexSet(integer: newRow), byExtendingSelection: false)
-            return nil
-        }
-        if event.keyCode == 125 { // Down
-            let newRow = min(windows.count - 1, tableView.selectedRow + 1)
-            tableView.selectRowIndexes(IndexSet(integer: newRow), byExtendingSelection: false)
-            return nil
-        }
-
-        return event
+        return nil
     }
 
     @objc private func rowDoubleClicked() {
-        selectCurrentRow()
-    }
-
-    private func selectCurrentRow() {
-        let row = tableView.selectedRow
-        if row >= 0 && row < windows.count {
-            selectWindow(at: row)
-        } else if windows.count > 0 {
-            selectWindow(at: 0)
+        if tableView.clickedRow >= 0 {
+            selectWindow(at: tableView.clickedRow)
         }
     }
 
     private func selectWindow(at index: Int) {
-        focusWindow(windows[index])
+        guard index >= 0 && index < orderedWindows.count else { return }
+        focusWindow(orderedWindows[index])
         NSApp.terminate(nil)
     }
-}
 
-extension PickerWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         NSApp.terminate(nil)
     }
-}
 
-extension PickerWindowController: NSTableViewDataSource, NSTableViewDelegate {
-    func numberOfRows(in tableView: NSTableView) -> Int {
-        return windows.count
-    }
+    func numberOfRows(in tableView: NSTableView) -> Int { orderedWindows.count }
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let cell = NSTextField(labelWithString: "")
-        let keys = ["a", "s", "d", "f", "g"]
-        let shortcut = row < keys.count ? "\(keys[row]). " : "   "
-        cell.stringValue = shortcut + windows[row].title
+        let window = orderedWindows[row]
+        let prefix = window.slotNumber.map { "\($0). " } ?? "   "
+        let cell = NSTextField(labelWithString: prefix + window.title)
         cell.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
         return cell
     }
 
-    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        return 24
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat { 24 }
+}
+
+// MARK: - Main
+
+let args = CommandLine.arguments
+
+if args.count > 1 {
+    switch args[1] {
+    case "switch":
+        guard args.count > 2, let slot = Int(args[2]), slot >= 1 && slot <= 5 else {
+            fputs("Usage: ghostty-picker switch N (where N is 1-5)\n", stderr)
+            exit(1)
+        }
+        cmdSwitch(slot)
+    case "list":
+        cmdList()
+    case "help", "-h", "--help":
+        print("Usage: ghostty-picker [switch N | list]")
+    default:
+        fputs("Unknown command: \(args[1])\n", stderr)
+        exit(1)
     }
+    exit(0)
 }
 
 let app = NSApplication.shared
@@ -184,14 +202,8 @@ app.setActivationPolicy(.accessory)
 
 let windows = getGhosttyWindows()
 
-if windows.isEmpty {
-    // No Ghostty windows, just exit
-    exit(0)
-}
-
-if windows.count == 1 {
-    // Only one window, just focus it
-    focusWindow(windows[0])
+if windows.count <= 1 {
+    if let window = windows.first { focusWindow(window) }
     exit(0)
 }
 

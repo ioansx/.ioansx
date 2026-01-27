@@ -40,8 +40,8 @@ elif [ "$CMD_1" = "link" ]; then
     fi
 
     if [ "$OS" = "Darwin" ]; then
-        mkdir -p "$XDG_CONFIG_HOME/karabiner"
-        ln -fsv "$SCRIPT_DIR/karabiner/karabiner.json" $XDG_CONFIG_HOME/karabiner
+        rm -rf "$XDG_CONFIG_HOME/karabiner"
+        ln -fsv "$SCRIPT_DIR/karabiner" $XDG_CONFIG_HOME/karabiner
     fi
 
     # ln -fsv "$SCRIPT_DIR/kitty" $XDG_CONFIG_HOME
@@ -84,7 +84,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     fi
 
     if [ "$OS" = "Darwin" ]; then
-        rm -v $XDG_CONFIG_HOME/karabiner/karabiner.json
+        rm -v $XDG_CONFIG_HOME/karabiner
     fi
 
     # rm -v $XDG_CONFIG_HOME/kitty
