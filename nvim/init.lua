@@ -477,7 +477,7 @@ local function LazyGitOpen()
         return
     end
 
-    LazyGitState.buf = vim.api.nvim_create_buf(false, true)
+    LazyGitState.buf = vim.api.nvim_create_buf(false, false)
     LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
         relative = "editor",
         width = vim.o.columns,
