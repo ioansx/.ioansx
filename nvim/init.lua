@@ -488,6 +488,7 @@ local function LazyGitOpen()
         style = "minimal",
         noautocmd = true,
     })
+    vim.wo[LazyGitState.win].winhighlight = "NormalFloat:Normal"
 
     vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
 
@@ -506,3 +507,45 @@ local function LazyGitOpen()
 end
 
 nmap("<leader>gg", LazyGitOpen, { desc = "LazyGit (float)" })
+
+-- --------------------------------
+-- P(ers)i(stent) floating terminal
+-- --------------------------------
+local PiTermState = { win = nil, buf = nil }
+
+local function PiTerminalOpen()
+    -- If window is open, just hide it (don't kill the terminal).
+    if PiTermState.win and vim.api.nvim_win_is_valid(PiTermState.win) then
+        vim.api.nvim_win_close(PiTermState.win, false)
+        PiTermState.win = nil
+        return
+    end
+
+    -- Reuse existing buffer if still valid, otherwise create new one.
+    if not PiTermState.buf or not vim.api.nvim_buf_is_valid(PiTermState.buf) then
+        PiTermState.buf = vim.api.nvim_create_buf(false, true)
+    end
+
+    local start_col = 6
+
+    PiTermState.win = vim.api.nvim_open_win(PiTermState.buf, true, {
+        relative = "editor",
+        width = vim.o.columns - start_col,
+        height = vim.o.lines - 4, -- -4 for the borders, buffer line, and command line
+        col = start_col,
+        row = 0,
+        border = "single",
+        style = "minimal",
+        noautocmd = true,
+    })
+    vim.wo[PiTermState.win].winhighlight = "NormalFloat:Normal"
+
+    -- Start terminal only if buffer is empty (new buffer).
+    if vim.bo[PiTermState.buf].buftype ~= "terminal" then
+        vim.fn.termopen("fish")
+    end
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<C-\\><C-\\>", PiTerminalOpen, { desc = "PiTerm (float)" })
