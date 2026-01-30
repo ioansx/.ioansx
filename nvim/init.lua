@@ -466,8 +466,9 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 local LazyGitState = { win = nil, buf = nil }
 
 local function LazyGitOpen()
+    -- If window is open, just hide it (don't kill lazygit).
     if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-        vim.api.nvim_win_close(LazyGitState.win, true)
+        vim.api.nvim_win_close(LazyGitState.win, false)
         LazyGitState.win = nil
         return
     end
@@ -477,7 +478,12 @@ local function LazyGitOpen()
         return
     end
 
-    LazyGitState.buf = vim.api.nvim_create_buf(false, true)
+    -- Reuse existing buffer if still valid, otherwise create new one.
+    if not LazyGitState.buf or not vim.api.nvim_buf_is_valid(LazyGitState.buf) then
+        LazyGitState.buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
+    end
+
     LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
         relative = "editor",
         width = vim.o.columns,
@@ -490,23 +496,23 @@ local function LazyGitOpen()
     })
     vim.wo[LazyGitState.win].winhighlight = "NormalFloat:Normal"
 
-    vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
-
-    vim.fn.jobstart("lazygit", {
-        term = true,
-        on_exit = function()
-            if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-                pcall(vim.api.nvim_win_close, LazyGitState.win, true)
-            end
-            LazyGitState.win = nil
-            LazyGitState.buf = nil
-        end,
-    })
+    -- Start lazygit only if buffer is empty (new buffer).
+    if vim.bo[LazyGitState.buf].buftype ~= "terminal" then
+        vim.fn.termopen("lazygit", {
+            on_exit = function()
+                if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+                    pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+                end
+                LazyGitState.win = nil
+                LazyGitState.buf = nil
+            end,
+        })
+    end
 
     vim.cmd.startinsert()
 end
 
-nmap("<leader>gg", LazyGitOpen, { desc = "LazyGit (float)" })
+vim.keymap.set({ "n", "t" }, "<C-7>", LazyGitOpen, { desc = "LazyGit (float)" })
 
 -- --------------------------------
 -- P(ers)i(stent) floating terminal
@@ -526,13 +532,11 @@ local function PiTerminalOpen()
         PiTermState.buf = vim.api.nvim_create_buf(false, true)
     end
 
-    local start_col = 6
-
     PiTermState.win = vim.api.nvim_open_win(PiTermState.buf, true, {
         relative = "editor",
-        width = vim.o.columns - start_col,
+        width = vim.o.columns,
         height = vim.o.lines - 4, -- -4 for the borders, buffer line, and command line
-        col = start_col,
+        col = 0,
         row = 0,
         border = "single",
         style = "minimal",
@@ -548,4 +552,4 @@ local function PiTerminalOpen()
     vim.cmd.startinsert()
 end
 
-vim.keymap.set({ "n", "t" }, "<C-\\><C-\\>", PiTerminalOpen, { desc = "PiTerm (float)" })
+vim.keymap.set({ "n", "t" }, "<C-8>", PiTerminalOpen, { desc = "PiTerm (float)" })
