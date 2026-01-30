@@ -460,60 +460,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     end
 })
 
--- -------------------------
--- LazyGit floating terminal
--- -------------------------
-local LazyGitState = { win = nil, buf = nil }
-
-local function LazyGitOpen()
-    -- If window is open, just hide it (don't kill lazygit).
-    if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-        vim.api.nvim_win_close(LazyGitState.win, false)
-        LazyGitState.win = nil
-        return
-    end
-
-    if vim.fn.executable("lazygit") ~= 1 then
-        vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
-        return
-    end
-
-    -- Reuse existing buffer if still valid, otherwise create new one.
-    if not LazyGitState.buf or not vim.api.nvim_buf_is_valid(LazyGitState.buf) then
-        LazyGitState.buf = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
-    end
-
-    LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
-        relative = "editor",
-        width = vim.o.columns,
-        height = vim.o.lines - 1, -- -1 for the command line
-        col = 0,
-        row = 0,
-        border = "none",
-        style = "minimal",
-        noautocmd = true,
-    })
-    vim.wo[LazyGitState.win].winhighlight = "NormalFloat:Normal"
-
-    -- Start lazygit only if buffer is empty (new buffer).
-    if vim.bo[LazyGitState.buf].buftype ~= "terminal" then
-        vim.fn.termopen("lazygit", {
-            on_exit = function()
-                if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-                    pcall(vim.api.nvim_win_close, LazyGitState.win, true)
-                end
-                LazyGitState.win = nil
-                LazyGitState.buf = nil
-            end,
-        })
-    end
-
-    vim.cmd.startinsert()
-end
-
-vim.keymap.set({ "n", "t" }, "<C-7>", LazyGitOpen, { desc = "LazyGit (float)" })
-
 -- --------------------------------
 -- P(ers)i(stent) floating terminal
 -- --------------------------------
@@ -552,4 +498,58 @@ local function PiTerminalOpen()
     vim.cmd.startinsert()
 end
 
-vim.keymap.set({ "n", "t" }, "<C-8>", PiTerminalOpen, { desc = "PiTerm (float)" })
+vim.keymap.set({ "n", "t" }, "<C-7>", PiTerminalOpen, { desc = "PiTerm (float)" })
+
+-- -------------------------
+-- LazyGit floating terminal
+-- -------------------------
+local LazyGitState = { win = nil, buf = nil }
+
+local function LazyGitOpen()
+    -- If window is open, just hide it (don't kill lazygit).
+    if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+        vim.api.nvim_win_close(LazyGitState.win, false)
+        LazyGitState.win = nil
+        return
+    end
+
+    if vim.fn.executable("lazygit") ~= 1 then
+        vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
+        return
+    end
+
+    -- Reuse existing buffer if still valid, otherwise create new one.
+    if not LazyGitState.buf or not vim.api.nvim_buf_is_valid(LazyGitState.buf) then
+        LazyGitState.buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
+    end
+
+    LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
+        relative = "editor",
+        width = vim.o.columns,
+        height = vim.o.lines - 2, -- -2 for the command line and buffer line
+        col = 0,
+        row = 0,
+        border = "none",
+        style = "minimal",
+        noautocmd = true,
+    })
+    vim.wo[LazyGitState.win].winhighlight = "NormalFloat:Normal"
+
+    -- Start lazygit only if buffer is empty (new buffer).
+    if vim.bo[LazyGitState.buf].buftype ~= "terminal" then
+        vim.fn.termopen("lazygit", {
+            on_exit = function()
+                if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+                    pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+                end
+                LazyGitState.win = nil
+                LazyGitState.buf = nil
+            end,
+        })
+    end
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<C-8>", LazyGitOpen, { desc = "LazyGit (float)" })
