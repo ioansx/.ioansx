@@ -477,7 +477,7 @@ local function LazyGitOpen()
         return
     end
 
-    LazyGitState.buf = vim.api.nvim_create_buf(false, false)
+    LazyGitState.buf = vim.api.nvim_create_buf(false, true)
     LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
         relative = "editor",
         width = vim.o.columns,
@@ -486,17 +486,19 @@ local function LazyGitOpen()
         row = 0,
         border = "none",
         style = "minimal",
+        noautocmd = true,
     })
 
-    vim.fn.termopen("lazygit", {
+    vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
+
+    vim.fn.jobstart("lazygit", {
+        term = true,
         on_exit = function()
-            vim.schedule(function()
-                if LazyGitState.buf and vim.api.nvim_buf_is_valid(LazyGitState.buf) then
-                    vim.api.nvim_buf_delete(LazyGitState.buf, { force = true })
-                end
-                LazyGitState.win = nil
-                LazyGitState.buf = nil
-            end)
+            if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+                pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+            end
+            LazyGitState.win = nil
+            LazyGitState.buf = nil
         end,
     })
 
