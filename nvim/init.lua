@@ -553,3 +553,57 @@ local function LazyGitOpen()
 end
 
 vim.keymap.set({ "n", "t" }, "<C-8>", LazyGitOpen, { desc = "LazyGit (float)" })
+
+-- ---------------------------
+-- Navigator floating terminal
+-- ---------------------------
+local NavigatorState = { win = nil, buf = nil }
+
+local function NavigatorOpen()
+    -- If window is open, just hide it.
+    if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
+        vim.api.nvim_win_close(NavigatorState.win, false)
+        NavigatorState.win = nil
+        return
+    end
+
+    if vim.fn.executable("lazygit") ~= 1 then
+        vim.notify("nav not found in PATH", vim.log.levels.ERROR)
+        return
+    end
+
+    -- Reuse existing buffer if still valid, otherwise create new one.
+    if not NavigatorState.buf or not vim.api.nvim_buf_is_valid(NavigatorState.buf) then
+        NavigatorState.buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_option(NavigatorState.buf, "filetype", "nav")
+    end
+
+    NavigatorState.win = vim.api.nvim_open_win(NavigatorState.buf, true, {
+        relative = "editor",
+        width = vim.o.columns,
+        height = vim.o.lines - 2, -- -2 for the command line and buffer line
+        col = 0,
+        row = 0,
+        border = "none",
+        style = "minimal",
+        noautocmd = true,
+    })
+    vim.wo[NavigatorState.win].winhighlight = "NormalFloat:Normal"
+
+    -- Start lazygit only if buffer is empty (new buffer).
+    if vim.bo[NavigatorState.buf].buftype ~= "terminal" then
+        vim.fn.termopen("nav", {
+            on_exit = function()
+                if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
+                    pcall(vim.api.nvim_win_close, NavigatorState.win, true)
+                end
+                NavigatorState.win = nil
+                NavigatorState.buf = nil
+            end,
+        })
+    end
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<C-9>", NavigatorOpen, { desc = "Navigator (float)" })
