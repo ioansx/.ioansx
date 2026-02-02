@@ -557,22 +557,23 @@ vim.keymap.set({ "n", "t" }, "<C-8>", LazyGitOpen, { desc = "LazyGit (float)" })
 -- ---------------------------
 -- Navigator floating terminal
 -- ---------------------------
-local NavigatorState = { win = nil, buf = nil }
+local NavigatorState = { win = nil, buf = nil, prev_win = nil }
 
 local function NavigatorOpen()
-    -- If window is open, just hide it.
     if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
         vim.api.nvim_win_close(NavigatorState.win, false)
         NavigatorState.win = nil
         return
     end
 
-    if vim.fn.executable("lazygit") ~= 1 then
+    if vim.fn.executable("nav") ~= 1 then
         vim.notify("nav not found in PATH", vim.log.levels.ERROR)
         return
     end
 
-    -- Reuse existing buffer if still valid, otherwise create new one.
+    -- Store the current window to return to later
+    NavigatorState.prev_win = vim.api.nvim_get_current_win()
+
     if not NavigatorState.buf or not vim.api.nvim_buf_is_valid(NavigatorState.buf) then
         NavigatorState.buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_option(NavigatorState.buf, "filetype", "nav")
@@ -581,7 +582,7 @@ local function NavigatorOpen()
     NavigatorState.win = vim.api.nvim_open_win(NavigatorState.buf, true, {
         relative = "editor",
         width = vim.o.columns,
-        height = vim.o.lines - 2, -- -2 for the command line and buffer line
+        height = vim.o.lines - 2,
         col = 0,
         row = 0,
         border = "none",
@@ -590,12 +591,15 @@ local function NavigatorOpen()
     })
     vim.wo[NavigatorState.win].winhighlight = "NormalFloat:Normal"
 
-    -- Start lazygit only if buffer is empty (new buffer).
     if vim.bo[NavigatorState.buf].buftype ~= "terminal" then
         vim.fn.termopen("nav", {
             on_exit = function()
                 if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
                     pcall(vim.api.nvim_win_close, NavigatorState.win, true)
+                end
+                -- Focus the previous window after closing
+                if NavigatorState.prev_win and vim.api.nvim_win_is_valid(NavigatorState.prev_win) then
+                    vim.api.nvim_set_current_win(NavigatorState.prev_win)
                 end
                 NavigatorState.win = nil
                 NavigatorState.buf = nil
