@@ -240,6 +240,7 @@ require("lazy").setup({
             { "<leader>sr",      function() Snacks.picker.resume() end,                                 desc = "Resume" },
             { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end,                  desc = "LSP Workspace Symbols" },
             { "<leader>su",      function() Snacks.picker.undo() end,                                   desc = "Undo History" },
+            { "<leader>sk",      function() Snacks.picker.keymaps() end,                                desc = "Keymaps" },
             { "<leader>sw",      function() Snacks.picker.grep_word() end,                              desc = "Visual selection or word" },
         }
     },
@@ -409,7 +410,6 @@ require("lazy").setup({
                 "javascript",
                 "jsdoc",
                 "json",
-                -- "latex",
                 "lua",
                 "markdown",
                 "markdown_inline",
@@ -428,7 +428,7 @@ require("lazy").setup({
             };
             require("nvim-treesitter.configs").setup({
                 ensure_installed = langs,
-                auto_install = true,
+                auto_install = false,
                 sync_install = false,
                 highlight = { enable = true },
                 indent = { enable = true },
