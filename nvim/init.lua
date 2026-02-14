@@ -24,6 +24,7 @@ vim.opt.smartindent = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
@@ -68,7 +69,7 @@ local function toggle_quickfix_list()
 end
 
 local function toggle_location_list()
-    if vim.fn.getloclist(0).winid ~= 0 then
+    if vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 then
         vim.cmd("lclose")
     else
         vim.cmd("lopen")
@@ -273,7 +274,7 @@ require("lazy").setup({
         cmd = "Copilot",
         event = "InsertEnter",
         opts = {
-            suggestion = { enabled = true },
+            suggestion = { enabled = false },
             panel = { enabled = false },
             filetypes = {
                 markdown = true,
@@ -425,15 +426,13 @@ require("lazy").setup({
                 "xml",
                 "yaml",
             };
-            vim.defer_fn(function()
-                require("nvim-treesitter.configs").setup({
-                    ensure_installed = langs,
-                    auto_install = true,
-                    sync_install = false,
-                    highlight = { enable = true },
-                    indent = { enable = true },
-                })
-            end, 0)
+            require("nvim-treesitter.configs").setup({
+                ensure_installed = langs,
+                auto_install = true,
+                sync_install = false,
+                highlight = { enable = true },
+                indent = { enable = true },
+            })
         end
     },
 }, {})
@@ -458,6 +457,15 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
             vim.fn.matchadd("ErrorMsg", [[\s\+$]])
         end
     end
+})
+
+-- ------------------------------------------
+-- Drain pending terminal responses on exit
+-- ------------------------------------------
+vim.api.nvim_create_autocmd("VimLeavePre", {
+    callback = function()
+        vim.cmd("sleep 50m")
+    end,
 })
 
 -- --------------------------------
@@ -492,7 +500,7 @@ local function PiTerminalOpen()
 
     -- Start terminal only if buffer is empty (new buffer).
     if vim.bo[PiTermState.buf].buftype ~= "terminal" then
-        vim.fn.termopen("fish")
+        vim.fn.termopen(vim.o.shell)
     end
 
     vim.cmd.startinsert()
@@ -532,7 +540,7 @@ local function NavigatorOpen()
 
     if not NavigatorState.buf or not vim.api.nvim_buf_is_valid(NavigatorState.buf) then
         NavigatorState.buf = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_buf_set_option(NavigatorState.buf, "filetype", "nav")
+        vim.bo[NavigatorState.buf].filetype = "nav"
     end
 
     NavigatorState.win = vim.api.nvim_open_win(NavigatorState.buf, true, {
@@ -594,7 +602,7 @@ local function LazyGitOpen()
     -- Reuse existing buffer if still valid, otherwise create new one.
     if not LazyGitState.buf or not vim.api.nvim_buf_is_valid(LazyGitState.buf) then
         LazyGitState.buf = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_buf_set_option(LazyGitState.buf, "filetype", "lazygit")
+        vim.bo[LazyGitState.buf].filetype = "lazygit"
     end
 
     LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
