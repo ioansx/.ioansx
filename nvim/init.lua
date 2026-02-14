@@ -127,7 +127,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     'tpope/vim-sleuth',
-    { "j-hui/fidget.nvim",  opts = {} },
+    -- { "j-hui/fidget.nvim",  opts = {} },
     { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
 
     {
@@ -320,21 +320,21 @@ require("lazy").setup({
         opts_extend = { "sources.default" },
     },
 
-    {
-        "stevearc/conform.nvim",
-        opts = {
-            default_format_opts = { lsp_format = "fallback" },
-            format_on_save = { timeout_ms = 500 },
-            formatters_by_ft = {
-                javascript = { "npx prettier" },
-                typescript = { "npx prettier" },
-                svelte = { "npx prettier" },
-                css = { "npx prettier" },
-                json = { "prettier" },
-                yaml = { "prettier" },
-            },
-        },
-    },
+    -- {
+    --     "stevearc/conform.nvim",
+    --     opts = {
+    --         default_format_opts = { lsp_format = "fallback" },
+    --         format_on_save = { timeout_ms = 500 },
+    --         formatters_by_ft = {
+    --             javascript = { "npx prettier" },
+    --             typescript = { "npx prettier" },
+    --             svelte = { "npx prettier" },
+    --             css = { "npx prettier" },
+    --             json = { "prettier" },
+    --             yaml = { "prettier" },
+    --         },
+    --     },
+    -- },
 
     {
         "mason-org/mason-lspconfig.nvim",
@@ -448,6 +448,56 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+-- ---------------
+-- Format on save
+-- ---------------
+local prettier_ft = {
+    javascript = true,
+    typescript = true,
+    svelte = true,
+    css = true,
+    json = true,
+    yaml = true
+}
+
+local function find_prettier(start_dir)
+    local dir = start_dir
+    while dir and dir ~= "/" do
+        local bin = dir .. "/node_modules/.bin/prettier"
+        if vim.fn.executable(bin) == 1 then return bin end
+        dir = vim.fn.fnamemodify(dir, ":h")
+    end
+    return nil
+end
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+    callback = function()
+        if not prettier_ft[vim.bo.filetype] then
+            vim.lsp.buf.format({ timeout_ms = 500 })
+            return
+        end
+        local filepath = vim.api.nvim_buf_get_name(0)
+        local prettier = find_prettier(vim.fn.fnamemodify(filepath, ":h"))
+        if not prettier then
+            vim.lsp.buf.format({ timeout_ms = 500 })
+        end
+    end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+    callback = function()
+        if not prettier_ft[vim.bo.filetype] then return end
+        local filepath = vim.api.nvim_buf_get_name(0)
+        local prettier = find_prettier(vim.fn.fnamemodify(filepath, ":h"))
+        if not prettier then return end
+
+        vim.fn.system({ prettier, "--write", filepath })
+        if vim.v.shell_error == 0 then
+            vim.cmd.edit()
+        end
+    end,
+})
+
 -- ------------------------
 -- Highlight trailing space
 -- ------------------------
@@ -457,6 +507,90 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
             vim.fn.matchadd("ErrorMsg", [[\s\+$]])
         end
     end
+})
+
+-- ------------
+-- LSP progress
+-- ------------
+local LspProgress = { win = nil, buf = nil, timer = nil }
+
+local function lsp_progress_close()
+    if LspProgress.timer then
+        LspProgress.timer:stop()
+        LspProgress.timer = nil
+    end
+    if LspProgress.win and vim.api.nvim_win_is_valid(LspProgress.win) then
+        vim.api.nvim_win_close(LspProgress.win, true)
+    end
+    LspProgress.win = nil
+end
+
+local function lsp_progress_show(title, message, percentage)
+    if not LspProgress.buf or not vim.api.nvim_buf_is_valid(LspProgress.buf) then
+        LspProgress.buf = vim.api.nvim_create_buf(false, true)
+    end
+
+    local max_width = math.floor(vim.o.columns * 0.3)
+
+    -- Build the two lines, clamped to max_width.
+    local title_line = title and (" " .. title) or ""
+    local detail = message or ""
+    if percentage then detail = detail .. " (" .. percentage .. "%%)" end
+    local detail_line = detail ~= "" and (" " .. detail) or ""
+
+    title_line = title_line:sub(1, max_width)
+    detail_line = detail_line:sub(1, max_width)
+
+    -- Right-align by left-padding with spaces.
+    local title_pad = max_width - vim.fn.strdisplaywidth(title_line)
+    local detail_pad = max_width - vim.fn.strdisplaywidth(detail_line)
+    title_line = string.rep(" ", title_pad) .. title_line
+    detail_line = string.rep(" ", detail_pad) .. detail_line
+
+    local lines = { title_line }
+    local height = 1
+    if detail_line ~= "" then
+        table.insert(lines, detail_line)
+        height = 2
+    end
+
+    vim.api.nvim_buf_set_lines(LspProgress.buf, 0, -1, false, lines)
+    vim.api.nvim_buf_clear_namespace(LspProgress.buf, -1, 0, -1)
+    local ns = vim.api.nvim_create_namespace("lsp_progress")
+    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Title", 0, 0, -1)
+    if height == 2 then
+        vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Comment", 1, 0, -1)
+    end
+
+    local opts = {
+        relative = "editor",
+        width = max_width,
+        height = height,
+        col = vim.o.columns - max_width,
+        row = vim.o.lines - 4 - (height - 1),
+        style = "minimal",
+        border = "none",
+        noautocmd = true,
+        focusable = false,
+    }
+
+    if LspProgress.win and vim.api.nvim_win_is_valid(LspProgress.win) then
+        opts.noautocmd = nil
+        vim.api.nvim_win_set_config(LspProgress.win, opts)
+    else
+        LspProgress.win = vim.api.nvim_open_win(LspProgress.buf, false, opts)
+        vim.wo[LspProgress.win].winblend = 100
+    end
+
+    if LspProgress.timer then LspProgress.timer:stop() end
+    LspProgress.timer = vim.defer_fn(lsp_progress_close, 2000)
+end
+
+vim.api.nvim_create_autocmd("LspProgress", {
+    callback = function(ev)
+        local data = ev.data.params.value
+        lsp_progress_show(data.title, data.message, data.percentage)
+    end,
 })
 
 -- ------------------------------------------
