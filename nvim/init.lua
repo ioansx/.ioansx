@@ -478,6 +478,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         end
         local filepath = vim.api.nvim_buf_get_name(0)
         local prettier = find_prettier(vim.fn.fnamemodify(filepath, ":h"))
+        vim.b.prettier_bin = prettier
         if not prettier then
             vim.lsp.buf.format({ timeout_ms = 500 })
         end
@@ -486,12 +487,10 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 vim.api.nvim_create_autocmd("BufWritePost", {
     callback = function()
-        if not prettier_ft[vim.bo.filetype] then return end
-        local filepath = vim.api.nvim_buf_get_name(0)
-        local prettier = find_prettier(vim.fn.fnamemodify(filepath, ":h"))
+        local prettier = vim.b.prettier_bin
         if not prettier then return end
 
-        vim.fn.system({ prettier, "--write", filepath })
+        vim.fn.system({ prettier, "--write", vim.api.nvim_buf_get_name(0) })
         if vim.v.shell_error == 0 then
             vim.cmd.edit()
         end
@@ -593,15 +592,6 @@ vim.api.nvim_create_autocmd("LspProgress", {
     end,
 })
 
--- ------------------------------------------
--- Drain pending terminal responses on exit
--- ------------------------------------------
-vim.api.nvim_create_autocmd("VimLeavePre", {
-    callback = function()
-        vim.cmd("sleep 50m")
-    end,
-})
-
 -- --------------------------------
 -- P(ers)i(stent) floating terminal
 -- --------------------------------
@@ -634,7 +624,7 @@ local function PiTerminalOpen()
 
     -- Start terminal only if buffer is empty (new buffer).
     if vim.bo[PiTermState.buf].buftype ~= "terminal" then
-        vim.fn.termopen(vim.o.shell)
+        vim.fn.jobstart(vim.o.shell, { term = true })
     end
 
     vim.cmd.startinsert()
@@ -696,13 +686,14 @@ local function NavigatorOpen()
             cmd = cmd .. " --select " .. vim.fn.shellescape(filename)
         end
 
-        vim.fn.termopen(cmd, {
+        vim.fn.jobstart(cmd, {
+            term = true,
             on_exit = function()
                 if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
                     pcall(vim.api.nvim_win_close, NavigatorState.win, true)
                 end
                 if NavigatorState.prev_win and vim.api.nvim_win_is_valid(NavigatorState.prev_win) then
-                    vim.api.nvim_set_current_win(NavigatorState.prev_win)
+                    pcall(vim.api.nvim_set_current_win, NavigatorState.prev_win)
                 end
                 NavigatorState.win = nil
                 NavigatorState.buf = nil
@@ -753,7 +744,8 @@ local function LazyGitOpen()
 
     -- Start lazygit only if buffer is empty (new buffer).
     if vim.bo[LazyGitState.buf].buftype ~= "terminal" then
-        vim.fn.termopen("lazygit", {
+        vim.fn.jobstart("lazygit", {
+            term = true,
             on_exit = function()
                 if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
                     pcall(vim.api.nvim_win_close, LazyGitState.win, true)
