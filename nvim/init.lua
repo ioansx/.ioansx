@@ -28,7 +28,6 @@ vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
-vim.opt.mouse = "a"
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
 vim.opt.undofile = true
@@ -77,6 +76,7 @@ local function toggle_location_list()
 end
 
 nmap("<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
+nmap("<leader>tw", ":set wrap!<CR>", { desc = "toggle wrap" })
 nmap("<leader>tk", toggle_inlay_hints, { desc = "toggle inlay hints" })
 nmap("<leader>tq", toggle_quickfix_list, { noremap = true, silent = true, desc = "toggle quickfix list" })
 nmap("<leader>tl", toggle_location_list, { noremap = true, silent = true, desc = "toggle location list" })
@@ -193,8 +193,8 @@ require("lazy").setup({
                         gitsigns.diffthis('~')
                     end, { desc = "(Git) diff this vs. previous" })
 
-                    map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = "(Git) toggle blame" })
-                    map('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = "(Git) toggle word diff" })
+                    map('n', '<leader>gB', gitsigns.toggle_current_line_blame, { desc = "(Git) toggle blame" })
+                    map('n', '<leader>gw', gitsigns.toggle_word_diff, { desc = "(Git) toggle word diff" })
                     map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "(Git) select hunk" })
                 end
             })
