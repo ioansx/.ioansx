@@ -69,8 +69,10 @@ end
 local function toggle_location_list()
     if vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 then
         vim.cmd("lclose")
-    else
+    elseif #vim.fn.getloclist(0) > 0 then
         vim.cmd("lopen")
+    else
+        vim.notify("Location list is empty", vim.log.levels.INFO)
     end
 end
 
