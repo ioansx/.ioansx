@@ -474,10 +474,10 @@ require("lazy").setup({
     },
     {
         "nvim-treesitter/nvim-treesitter",
-        branch = "master",
         build = ":TSUpdate",
     },
     "folke/snacks.nvim",
+    "folke/which-key.nvim",
     "zbirenbaum/copilot.lua",
     {
         "saghen/blink.cmp",
@@ -605,7 +605,7 @@ vim.lsp.config["rust_analyzer"] = {
 --- ----------
 --- Treesitter
 --- ----------
-local langs = {
+require("nvim-treesitter").install({
     "bash",
     "c",
     "commonlisp",
@@ -632,15 +632,29 @@ local langs = {
     "vimdoc",
     "xml",
     "yaml",
-};
-
-require("nvim-treesitter.configs").setup({
-    ensure_installed = langs,
-    auto_install = false,
-    sync_install = false,
-    highlight = { enable = true },
-    indent = { enable = true },
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+    callback = function()
+        pcall(vim.treesitter.start)
+        -- folds
+        vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+        vim.wo[0][0].foldmethod = 'expr'
+        vim.opt.foldlevelstart = 99
+        -- indentation
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end,
+})
+
+-- ---------
+-- Which Key
+-- ---------
+local wk = require("which-key")
+wk.setup({
+    preset = "helix",
+    delay = 1000,
+})
+nmap("<leader>?", function() wk.show({ global = false }) end, { desc = "Buffer Local Keymaps (which-key)" })
 
 -- ------
 -- Snacks
