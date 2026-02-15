@@ -362,7 +362,7 @@ local function PiTerminalOpen()
 
     -- Start terminal only if buffer is empty (new buffer).
     if vim.bo[PiTermState.buf].buftype ~= "terminal" then
-        vim.fn.jobstart(vim.o.shell, { term = true })
+        vim.fn.jobstart("fish", { term = true })
     end
 
     vim.cmd.startinsert()
