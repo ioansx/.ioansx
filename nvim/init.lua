@@ -36,7 +36,6 @@ vim.opt.wrap = false
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
--- Quick normal mode mapping.
 local function nmap(lhs, rhs, opts)
     vim.keymap.set("n", lhs, rhs, opts)
 end
@@ -122,6 +121,62 @@ vim.api.nvim_create_autocmd("TextYankPost", {
         vim.hl.on_yank()
     end,
 })
+
+-- -----------
+-- Status Line
+-- -----------
+local function filesize()
+    local size = vim.fn.getfsize(vim.fn.expand("%"))
+    if size <= 0 then
+        return ""
+    elseif size < 1024 then
+        return size .. "B"
+    elseif size < 1048576 then
+        return string.format("%.1fKB", size / 1024)
+    end
+    return string.format("%.1fMB", size / 1048576)
+end
+
+local function diagnostics()
+    local buf = vim.api.nvim_get_current_buf()
+    local e = #vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.ERROR })
+    local w = #vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.WARN })
+    local parts = {}
+    if e > 0 then
+        parts[#parts + 1] = "%#DiagnosticError#E:" .. e .. "%*"
+    end
+    if w > 0 then
+        parts[#parts + 1] = "%#DiagnosticWarn#W:" .. w .. "%*"
+    end
+    if #parts == 0 then
+        return ""
+    end
+    return table.concat(parts, " ")
+end
+
+local function indent_style()
+    if vim.bo.expandtab then
+        return "spaces:" .. vim.bo.shiftwidth
+    else
+        return "tabs:" .. vim.bo.tabstop
+    end
+end
+
+-- %f = relative file path, %m = modified flag, %r = readonly flag
+-- %= = right-align separator
+-- %l = line number, %c = column, %p%% = percentage through file
+-- %#Group# / %* = highlight group switch / reset
+local function statusline()
+    return " %f %m%r%= "
+        .. diagnostics() .. "  "
+        .. vim.bo.fileencoding .. "  "
+        .. filesize() .. "  "
+        .. indent_style()
+        .. "    %7l:%-3c %3p%% "
+end
+
+vim.opt.statusline = "%!v:lua.statusline()"
+_G.statusline = statusline
 
 -- ---------------
 -- Format on save
