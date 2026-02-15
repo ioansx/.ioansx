@@ -46,8 +46,8 @@ autoload -Uz edit-command-line
 zle -N edit-command-line
 
 function edit-command-line-clean() {
-  local -x VISUAL="vim" EDITOR="vim"
-  zle edit-command-line
+    local -x VISUAL="vim" EDITOR="vim"
+    zle edit-command-line
 }
 
 zle -N edit-command-line-clean
