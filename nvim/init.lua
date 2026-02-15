@@ -460,7 +460,8 @@ local prettier_ft = {
     yaml = true
 }
 
-local function find_prettier(start_dir)
+local function find_formatter(start_dir)
+    if vim.fn.executable("prettierd") == 1 then return "prettierd" end
     local dir = start_dir
     while dir and dir ~= "/" do
         local bin = dir .. "/node_modules/.bin/prettier"
@@ -477,23 +478,30 @@ vim.api.nvim_create_autocmd("BufWritePre", {
             return
         end
         local filepath = vim.api.nvim_buf_get_name(0)
-        local prettier = find_prettier(vim.fn.fnamemodify(filepath, ":h"))
-        vim.b.prettier_bin = prettier
-        if not prettier then
+        local formatter = find_formatter(vim.fn.fnamemodify(filepath, ":h"))
+        if not formatter then
             vim.lsp.buf.format({ timeout_ms = 500 })
+            return
+        end
+
+        local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+        local result = vim.fn.system({ formatter, "--stdin-filepath", filepath }, table.concat(lines, "\n") .. "\n")
+        if vim.v.shell_error == 0 then
+            local new_lines = vim.split(result, "\n")
+            if new_lines[#new_lines] == "" then table.remove(new_lines) end
+            if new_lines[1] and new_lines[1]:match("^/%*!.*%*/") then table.remove(new_lines, 1) end -- strip daisyUI banner
+            vim.api.nvim_buf_set_lines(0, 0, -1, false, new_lines)
         end
     end,
 })
 
-vim.api.nvim_create_autocmd("BufWritePost", {
+-- --------
+-- Shutdown
+-- --------
+vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
-        local prettier = vim.b.prettier_bin
-        if not prettier then return end
-
-        vim.fn.system({ prettier, "--write", vim.api.nvim_buf_get_name(0) })
-        if vim.v.shell_error == 0 then
-            vim.cmd.edit()
-        end
+        -- It's possible to stop prettierd but it's not necessary.
+        -- vim.fn.system("prettierd --stop")
     end,
 })
 
@@ -511,6 +519,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 -- ------------
 -- LSP progress
 -- ------------
+---@type { win: integer?, buf: integer?, timer: table? }
 local LspProgress = { win = nil, buf = nil, timer = nil }
 
 local function lsp_progress_close()
@@ -529,44 +538,35 @@ local function lsp_progress_show(title, message, percentage)
         LspProgress.buf = vim.api.nvim_create_buf(false, true)
     end
 
-    local max_width = math.floor(vim.o.columns * 0.3)
+    local max_width = math.floor(vim.o.columns * 0.5)
 
-    -- Build the two lines, clamped to max_width.
-    local title_line = title and (" " .. title) or ""
-    local detail = message or ""
-    if percentage then detail = detail .. " (" .. percentage .. "%%)" end
-    local detail_line = detail ~= "" and (" " .. detail) or ""
-
-    title_line = title_line:sub(1, max_width)
-    detail_line = detail_line:sub(1, max_width)
-
-    -- Right-align by left-padding with spaces.
-    local title_pad = max_width - vim.fn.strdisplaywidth(title_line)
-    local detail_pad = max_width - vim.fn.strdisplaywidth(detail_line)
-    title_line = string.rep(" ", title_pad) .. title_line
-    detail_line = string.rep(" ", detail_pad) .. detail_line
-
-    local lines = { title_line }
-    local height = 1
-    if detail_line ~= "" then
-        table.insert(lines, detail_line)
-        height = 2
+    local function rpad(s)
+        return string.rep(" ", max_width - vim.fn.strdisplaywidth(s)) .. s
     end
 
-    vim.api.nvim_buf_set_lines(LspProgress.buf, 0, -1, false, lines)
+    local t = title or ""
+    if percentage then
+        t = t .. " (" .. percentage .. "%)"
+    end
+    local title_line = rpad(t:sub(1, max_width))
+    local msg = message or ""
+    if #msg > max_width then
+        msg = msg:sub(1, max_width - 1) .. "…"
+    end
+    local detail_line = rpad(msg:sub(1, max_width))
+
+    vim.api.nvim_buf_set_lines(LspProgress.buf, 0, -1, false, { title_line, detail_line })
     vim.api.nvim_buf_clear_namespace(LspProgress.buf, -1, 0, -1)
     local ns = vim.api.nvim_create_namespace("lsp_progress")
     vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Title", 0, 0, -1)
-    if height == 2 then
-        vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Comment", 1, 0, -1)
-    end
+    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Comment", 1, 0, -1)
 
     local opts = {
         relative = "editor",
         width = max_width,
-        height = height,
+        height = 2,
         col = vim.o.columns - max_width,
-        row = vim.o.lines - 4 - (height - 1),
+        row = vim.o.lines - 4,
         style = "minimal",
         border = "none",
         noautocmd = true,
@@ -578,7 +578,8 @@ local function lsp_progress_show(title, message, percentage)
         vim.api.nvim_win_set_config(LspProgress.win, opts)
     else
         LspProgress.win = vim.api.nvim_open_win(LspProgress.buf, false, opts)
-        vim.wo[LspProgress.win].winblend = 100
+        vim.wo[LspProgress.win].winblend = 80
+        vim.wo[LspProgress.win].winhighlight = "NormalFloat:Normal"
     end
 
     if LspProgress.timer then LspProgress.timer:stop() end
