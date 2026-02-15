@@ -170,16 +170,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     end,
 })
 
--- --------
--- Shutdown
--- --------
-vim.api.nvim_create_autocmd("VimLeavePre", {
-    callback = function()
-        -- It's possible to stop prettierd but it's not necessary.
-        -- vim.fn.system("prettierd --stop")
-    end,
-})
-
 -- ------------------------
 -- Highlight trailing space
 -- ------------------------
@@ -265,6 +255,16 @@ vim.api.nvim_create_autocmd("LspProgress", {
     callback = function(ev)
         local data = ev.data.params.value
         lsp_progress_show(data.title, data.message, data.percentage)
+    end,
+})
+
+-- --------
+-- Shutdown
+-- --------
+vim.api.nvim_create_autocmd("VimLeavePre", {
+    callback = function()
+        -- It's possible to stop prettierd but it's not necessary.
+        -- vim.fn.system("prettierd --stop")
     end,
 })
 
@@ -485,21 +485,8 @@ require("lazy").setup({
                         vim.keymap.set(mode, l, r, opts)
                     end
 
-                    map('n', ']h', function()
-                        if vim.wo.diff then
-                            vim.cmd.normal({ ']h', bang = true })
-                        else
-                            gitsigns.nav_hunk('next')
-                        end
-                    end, { desc = "(Git) go to next hunk" })
-
-                    map('n', '[h', function()
-                        if vim.wo.diff then
-                            vim.cmd.normal({ '[h', bang = true })
-                        else
-                            gitsigns.nav_hunk('prev')
-                        end
-                    end, { desc = "(Git) go to previous hunk" })
+                    map('n', ']h', function() gitsigns.nav_hunk('next') end, { desc = "(Git) next hunk" })
+                    map('n', '[h', function() gitsigns.nav_hunk('prev') end, { desc = "(Git) prev hunk" })
 
                     map('n', '<leader>gr', gitsigns.reset_hunk, { desc = "(Git) reset hunk" })
                     map('n', '<leader>gR', gitsigns.reset_buffer, { desc = "(Git) reset buffer" })
