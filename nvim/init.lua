@@ -437,9 +437,9 @@ end
 
 vim.keymap.set({ "n", "t" }, "<C-9>", LazyGitOpen, { desc = "LazyGit (float)" })
 
--- ----
--- Lazy
--- ----
+-- -------
+-- Plugins
+-- -------
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -451,283 +451,272 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    'tpope/vim-sleuth',
-    { "Saecki/crates.nvim", event = { "BufRead Cargo.toml" }, opts = {} },
-
-    {
-        "ellisonleao/gruvbox.nvim",
-        priority = 1000,
-        config = function()
-            require("gruvbox").setup({
-                italic = {
-                    strings = false,
-                    emphasis = false,
-                    comments = false,
-                    operators = false,
-                    folds = false,
-                },
-                contrast = "hard",
-            })
-            vim.cmd("colorscheme gruvbox")
-        end
-    },
-
-    {
-        "lewis6991/gitsigns.nvim",
-        config = function()
-            require("gitsigns").setup({
-                on_attach = function(bufnr)
-                    local gitsigns = require('gitsigns')
-
-                    local function map(mode, l, r, opts)
-                        opts = opts or {}
-                        opts.buffer = bufnr
-                        vim.keymap.set(mode, l, r, opts)
-                    end
-
-                    map('n', ']h', function() gitsigns.nav_hunk('next') end, { desc = "(Git) next hunk" })
-                    map('n', '[h', function() gitsigns.nav_hunk('prev') end, { desc = "(Git) prev hunk" })
-
-                    map('n', '<leader>gr', gitsigns.reset_hunk, { desc = "(Git) reset hunk" })
-                    map('n', '<leader>gR', gitsigns.reset_buffer, { desc = "(Git) reset buffer" })
-                    map('v', '<leader>gr', function()
-                        gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-                    end, { desc = "(Git) reset hunk (visual)" })
-
-                    map('n', '<leader>gp', gitsigns.preview_hunk, { desc = "(Git) preview hunk" })
-                    map('n', '<leader>gi', gitsigns.preview_hunk_inline, { desc = "(Git) preview hunk inline" })
-                    map('n', '<leader>gb', function() gitsigns.blame_line({ full = true }) end,
-                        { desc = "(Git) blame line" })
-
-                    map('n', '<leader>gd', gitsigns.diffthis, { desc = "(Git) diff this" })
-                    map('n', '<leader>gD', function()
-                        gitsigns.diffthis('~')
-                    end, { desc = "(Git) diff this vs. previous" })
-
-                    map('n', '<leader>gB', gitsigns.toggle_current_line_blame, { desc = "(Git) toggle blame" })
-                    map('n', '<leader>gw', gitsigns.toggle_word_diff, { desc = "(Git) toggle word diff" })
-                    map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "(Git) select hunk" })
-                end
-            })
-        end
-    },
-
-    {
-        "nvim-mini/mini.nvim",
-        version = false,
-        config = function()
-            require("mini.icons").setup()
-            require("mini.splitjoin").setup()
-        end
-    },
-
-    {
-        "folke/snacks.nvim",
-        priority = 1000,
-        lazy = false,
-        opts = {
-            bigfile = { enabled = true },
-            indent = { enabled = true, animate = { enabled = false } },
-            picker = {
-                enabled = true,
-                layout = {
-                    preset = "vertical",
-                    layout = {
-                        backdrop = true,
-                        width = 0.9,
-                        height = 0.9,
-                    }
-                },
-            },
-        },
-        keys = {
-            { "<leader>/",       function() Snacks.picker.grep() end,                                   desc = "Grep" },
-            { "<leader>f",       function() Snacks.picker.files({ hidden = true }) end,                 desc = "Find Files" },
-            { "<leader>F",       function() Snacks.picker.files({ hidden = true, ignored = true }) end, desc = "Find Files (incl. ignored)" },
-            { "<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end,        desc = "Find Buffers" },
-            { "<leader>gf",      function() Snacks.picker.git_log_file() end,                           desc = "Git Log File" },
-            { "<leader>gs",      function() Snacks.picker.git_status() end,                             desc = "Git Status" },
-            { "<leader>se",      function() Snacks.picker.recent() end,                                 desc = "Recent" },
-            { "<leader>sr",      function() Snacks.picker.resume() end,                                 desc = "Resume" },
-            { "<leader>ss",      function() Snacks.picker.lsp_workspace_symbols() end,                  desc = "LSP Workspace Symbols" },
-            { "<leader>su",      function() Snacks.picker.undo() end,                                   desc = "Undo History" },
-            { "<leader>sk",      function() Snacks.picker.keymaps() end,                                desc = "Keymaps" },
-            { "<leader>sw",      function() Snacks.picker.grep_word() end,                              desc = "Visual selection or word" },
-        }
-    },
-
-    {
-        "folke/which-key.nvim",
-        event = "VeryLazy",
-        config = function()
-            local wk = require("which-key")
-            wk.setup({
-                preset = "helix",
-                delay = 1000,
-            })
-            nmap("<leader>?", function() wk.show({ global = false }) end, { desc = "Buffer Local Keymaps (which-key)" })
-        end,
-    },
-
-    {
-        "stevearc/oil.nvim",
-        config = function()
-            require("oil").setup({
-                columns = { "icon" },
-                delete_to_trash = true,
-                view_options = { show_hidden = true },
-            })
-            nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
-        end,
-    },
-
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        opts = {
-            suggestion = { enabled = false },
-            panel = { enabled = false },
-            filetypes = {
-                markdown = true,
-                help = true,
-            },
-        },
-    },
-
-    {
-        "saghen/blink.cmp",
-        dependencies = { "fang2hou/blink-copilot" },
-        version = "1.*",
-        opts = {
-            keymap = { preset = "default" },
-            cmdline = { enabled = false },
-            signature = { enabled = true },
-            appearance = { nerd_font_variant = "mono" },
-            completion = {
-                documentation = {
-                    auto_show = true,
-                    auto_show_delay_ms = 0,
-                },
-                accept = { auto_brackets = { enabled = false } },
-                list = { selection = { auto_insert = false } }
-            },
-            sources = {
-                default = { "lsp", "path", "buffer", "copilot" },
-                providers = {
-                    copilot = {
-                        name = "copilot",
-                        module = "blink-copilot",
-                        score_offset = 100,
-                        async = true,
-                        opts = {
-                            max_completions = 1,
-                            max_attempts = 2,
-                        }
-                    },
-                },
-            },
-            fuzzy = { implementation = "prefer_rust_with_warning" }
-        },
-        opts_extend = { "sources.default" },
-    },
-
+    { 'tpope/vim-sleuth' },
+    { "ellisonleao/gruvbox.nvim", priority = 1000 },
+    { "Saecki/crates.nvim",       event = { "BufRead Cargo.toml" } },
+    { "nvim-mini/mini.nvim",      version = false },
+    { "folke/which-key.nvim",     event = "VeryLazy" },
+    { "stevearc/oil.nvim" },
+    { "lewis6991/gitsigns.nvim" },
     {
         "mason-org/mason-lspconfig.nvim",
         dependencies = {
             { "mason-org/mason.nvim", opts = {} },
             "neovim/nvim-lspconfig",
         },
-        config = function()
-            require("mason-lspconfig").setup({
-                ensure_installed = {
-                    "bashls",
-                    "cssls",
-                    "eslint",
-                    "gopls",
-                    "lua_ls",
-                    "rust_analyzer",
-                    "superhtml",
-                    "svelte",
-                    "tailwindcss",
-                    "taplo",
-                    "ts_ls",
-                    "zls",
-                },
-                automatic_enable = true
-            })
-
-            vim.lsp.config["lua_ls"] = {
-                settings = {
-                    Lua = {
-                        diagnostics = {
-                            disable = { "missing-fields" },
-                            globals = { "vim", "Snacks" },
-                        },
-                    }
-                }
-            }
-
-            vim.lsp.config["rust_analyzer"] = {
-                settings = {
-                    ["rust-analyzer"] = {
-                        completion = {
-                            postfix = { enable = false },
-                        },
-                        check = {
-                            command = "check",
-                        },
-                        cargo = {
-                            targetDir = true,
-                        }
-                    }
-                }
-
-            }
-        end
     },
-
     {
         "nvim-treesitter/nvim-treesitter",
         branch = "master",
         lazy = false,
         build = ":TSUpdate",
-        config = function()
-            local langs = {
-                "bash",
-                "c",
-                "commonlisp",
-                "css",
-                "csv",
-                "fish",
-                "go",
-                "html",
-                "javascript",
-                "jsdoc",
-                "json",
-                "lua",
-                "markdown",
-                "markdown_inline",
-                "nu",
-                "python",
-                "racket",
-                "rust",
-                "sql",
-                "svelte",
-                "toml",
-                "typescript",
-                "vim",
-                "vimdoc",
-                "xml",
-                "yaml",
-            };
-            require("nvim-treesitter.configs").setup({
-                ensure_installed = langs,
-                auto_install = false,
-                sync_install = false,
-                highlight = { enable = true },
-                indent = { enable = true },
-            })
-        end
     },
+    { "folke/snacks.nvim" },
+    { "zbirenbaum/copilot.lua" },
+    { "saghen/blink.cmp",      version = "1.*", dependencies = { "fang2hou/blink-copilot" } },
 }, {})
+
+-- -----
+-- Theme
+-- -----
+require("gruvbox").setup({
+    italic = {
+        strings = false,
+        emphasis = false,
+        comments = false,
+        operators = false,
+        folds = false,
+    },
+    contrast = "hard",
+})
+vim.cmd("colorscheme gruvbox")
+
+-- -------
+-- Utility
+-- -------
+require("crates").setup()
+require("mini.icons").setup()
+require("mini.splitjoin").setup()
+
+-- ---
+-- Oil
+-- ---
+require("oil").setup({
+    columns = { "icon" },
+    delete_to_trash = true,
+    view_options = { show_hidden = true },
+})
+nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
+
+-- ---------
+-- Which Key
+-- ---------
+local wk = require("which-key")
+wk.setup({
+    preset = "helix",
+    delay = 1000,
+})
+nmap("<leader>?", function() wk.show({ global = false }) end, { desc = "Buffer Local Keymaps (which-key)" })
+
+-- --------
+-- Gitsigns
+-- --------
+require("gitsigns").setup({
+    on_attach = function(bufnr)
+        local gitsigns = require('gitsigns')
+
+        local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+        end
+
+        map('n', ']h', function() gitsigns.nav_hunk('next') end, { desc = "(Git) next hunk" })
+        map('n', '[h', function() gitsigns.nav_hunk('prev') end, { desc = "(Git) prev hunk" })
+
+        map('n', '<leader>gr', gitsigns.reset_hunk, { desc = "(Git) reset hunk" })
+        map('n', '<leader>gR', gitsigns.reset_buffer, { desc = "(Git) reset buffer" })
+        map('v', '<leader>gr', function()
+            gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end, { desc = "(Git) reset hunk (visual)" })
+
+        map('n', '<leader>gp', gitsigns.preview_hunk, { desc = "(Git) preview hunk" })
+        map('n', '<leader>gi', gitsigns.preview_hunk_inline, { desc = "(Git) preview hunk inline" })
+        map('n', '<leader>gb', function() gitsigns.blame_line({ full = true }) end, { desc = "(Git) blame line" })
+
+        map('n', '<leader>gd', gitsigns.diffthis, { desc = "(Git) diff this" })
+        map('n', '<leader>gD', function() gitsigns.diffthis('~') end, { desc = "(Git) diff this vs. previous" })
+
+        map('n', '<leader>gB', gitsigns.toggle_current_line_blame, { desc = "(Git) toggle blame" })
+        map('n', '<leader>gw', gitsigns.toggle_word_diff, { desc = "(Git) toggle word diff" })
+        map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "(Git) select hunk" })
+    end
+})
+
+-- ---
+-- LSP
+-- ---
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        "bashls",
+        "cssls",
+        "eslint",
+        "gopls",
+        "lua_ls",
+        "rust_analyzer",
+        "superhtml",
+        "svelte",
+        "tailwindcss",
+        "taplo",
+        "ts_ls",
+        "zls",
+    },
+    automatic_enable = true
+})
+
+vim.lsp.config["lua_ls"] = {
+    settings = {
+        Lua = {
+            diagnostics = {
+                disable = { "missing-fields" },
+                globals = { "vim", "Snacks" },
+            },
+        }
+    }
+}
+
+vim.lsp.config["rust_analyzer"] = {
+    settings = {
+        ["rust-analyzer"] = {
+            completion = {
+                postfix = { enable = false },
+            },
+            check = {
+                command = "check",
+            },
+            cargo = {
+                targetDir = true,
+            }
+        }
+    }
+
+}
+
+--- ----------
+--- Treesitter
+--- ----------
+local langs = {
+    "bash",
+    "c",
+    "commonlisp",
+    "css",
+    "csv",
+    "fish",
+    "go",
+    "html",
+    "javascript",
+    "jsdoc",
+    "json",
+    "lua",
+    "markdown",
+    "markdown_inline",
+    "nu",
+    "python",
+    "racket",
+    "rust",
+    "sql",
+    "svelte",
+    "toml",
+    "typescript",
+    "vim",
+    "vimdoc",
+    "xml",
+    "yaml",
+};
+
+require("nvim-treesitter.configs").setup({
+    ensure_installed = langs,
+    auto_install = false,
+    sync_install = false,
+    highlight = { enable = true },
+    indent = { enable = true },
+})
+
+-- ------
+-- Snacks
+-- ------
+require("snacks").setup({
+    bigfile = { enabled = true },
+    indent = { enabled = true, animate = { enabled = false } },
+    picker = {
+        enabled = true,
+        layout = {
+            preset = "vertical",
+            layout = {
+                backdrop = true,
+                width = 0.9,
+                height = 0.9,
+            }
+        },
+    },
+})
+
+nmap("<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
+nmap("<leader>f", function() Snacks.picker.files({ hidden = true }) end, { desc = "Find Files" })
+nmap("<leader>F", function() Snacks.picker.files({ hidden = true, ignored = true }) end,
+    { desc = "Find Files (incl. ignored)" })
+nmap("<leader><space>", function() Snacks.picker.buffers({ sort_lastused = true }) end, { desc = "Find Buffers" })
+nmap("<leader>gf", function() Snacks.picker.git_log_file() end, { desc = "Git Log File" })
+nmap("<leader>gs", function() Snacks.picker.git_status() end, { desc = "Git Status" })
+nmap("<leader>se", function() Snacks.picker.recent() end, { desc = "Recent" })
+nmap("<leader>sr", function() Snacks.picker.resume() end, { desc = "Resume" })
+nmap("<leader>ss", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "LSP Workspace Symbols" })
+nmap("<leader>su", function() Snacks.picker.undo() end, { desc = "Undo History" })
+nmap("<leader>sk", function() Snacks.picker.keymaps() end, { desc = "Keymaps" })
+nmap("<leader>sw", function() Snacks.picker.grep_word() end, { desc = "Visual selection or word" })
+
+-- -------
+-- Copilot
+-- -------
+require("copilot").setup({
+    suggestion = { enabled = false },
+    panel = { enabled = false },
+    filetypes = {
+        markdown = true,
+        help = true,
+    },
+})
+
+-- ---------
+-- Blink CMP
+-- ---------
+require("blink.cmp").setup({
+    keymap = { preset = "default" },
+    cmdline = { enabled = false },
+    signature = { enabled = true },
+    appearance = { nerd_font_variant = "mono" },
+    completion = {
+        documentation = {
+            auto_show = true,
+            auto_show_delay_ms = 0,
+        },
+        accept = { auto_brackets = { enabled = false } },
+        list = { selection = { auto_insert = false } }
+    },
+    sources = {
+        default = { "lsp", "path", "buffer", "copilot" },
+        providers = {
+            copilot = {
+                name = "copilot",
+                module = "blink-copilot",
+                score_offset = 100,
+                async = true,
+                opts = {
+                    max_completions = 1,
+                    max_attempts = 2,
+                }
+            },
+        },
+    },
+    fuzzy = { implementation = "prefer_rust_with_warning" }
+})
