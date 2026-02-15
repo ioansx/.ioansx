@@ -136,7 +136,12 @@ local prettier_ft = {
 }
 
 local function find_formatter(start_dir)
-    if vim.fn.executable("prettierd") == 1 then return "prettierd" end
+    if vim.fn.executable("prettierd") == 1 then
+        return "prettierd"
+    end
+
+    vim.notify("prettierd not found in PATH, finding the local version in node_modules...", vim.log.levels.WARN)
+
     local dir = start_dir
     while dir and dir ~= "/" do
         local bin = dir .. "/node_modules/.bin/prettier"
@@ -451,34 +456,39 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    { 'tpope/vim-sleuth' },
-    { "ellisonleao/gruvbox.nvim", priority = 1000 },
-    { "Saecki/crates.nvim",       event = { "BufRead Cargo.toml" } },
-    { "nvim-mini/mini.nvim",      version = false },
-    { "folke/which-key.nvim",     event = "VeryLazy" },
-    { "stevearc/oil.nvim" },
-    { "lewis6991/gitsigns.nvim" },
+    "tpope/vim-sleuth",
+    "ellisonleao/gruvbox.nvim",
+    "Saecki/crates.nvim",
+    {
+        "nvim-mini/mini.nvim",
+        version = false,
+    },
+    "stevearc/oil.nvim",
+    "lewis6991/gitsigns.nvim",
     {
         "mason-org/mason-lspconfig.nvim",
         dependencies = {
-            { "mason-org/mason.nvim", opts = {} },
+            "mason-org/mason.nvim",
             "neovim/nvim-lspconfig",
         },
     },
     {
         "nvim-treesitter/nvim-treesitter",
         branch = "master",
-        lazy = false,
         build = ":TSUpdate",
     },
-    { "folke/snacks.nvim" },
-    { "zbirenbaum/copilot.lua" },
-    { "saghen/blink.cmp",      version = "1.*", dependencies = { "fang2hou/blink-copilot" } },
+    "folke/snacks.nvim",
+    "zbirenbaum/copilot.lua",
+    {
+        "saghen/blink.cmp",
+        version = "1.*",
+        dependencies = { "fang2hou/blink-copilot" },
+    },
 }, {})
 
--- -----
--- Theme
--- -----
+-- ------------
+-- Color Scheme
+-- ------------
 require("gruvbox").setup({
     italic = {
         strings = false,
@@ -507,16 +517,6 @@ require("oil").setup({
     view_options = { show_hidden = true },
 })
 nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
-
--- ---------
--- Which Key
--- ---------
-local wk = require("which-key")
-wk.setup({
-    preset = "helix",
-    delay = 1000,
-})
-nmap("<leader>?", function() wk.show({ global = false }) end, { desc = "Buffer Local Keymaps (which-key)" })
 
 -- --------
 -- Gitsigns
@@ -556,6 +556,7 @@ require("gitsigns").setup({
 -- ---
 -- LSP
 -- ---
+require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
         "bashls",
@@ -599,7 +600,6 @@ vim.lsp.config["rust_analyzer"] = {
             }
         }
     }
-
 }
 
 --- ----------
