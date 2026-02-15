@@ -134,9 +134,9 @@ local function filesize()
     elseif size < 1024 then
         return size .. "B"
     elseif size < 1048576 then
-        return string.format("%.1fKB", size / 1024)
+        return string.format("%.1fKiB", size / 1024)
     end
-    return string.format("%.1fMB", size / 1048576)
+    return string.format("%.1fMiB", size / 1048576)
 end
 
 local function diagnostics()
