@@ -320,16 +320,6 @@ vim.api.nvim_create_autocmd("LspProgress", {
     end,
 })
 
--- --------
--- Shutdown
--- --------
-vim.api.nvim_create_autocmd("VimLeavePre", {
-    callback = function()
-        -- It's possible to stop prettierd but it's not necessary.
-        -- vim.fn.system("prettierd --stop")
-    end,
-})
-
 -- --------------------------------
 -- P(ers)i(stent) floating terminal
 -- --------------------------------
@@ -535,11 +525,10 @@ require("lazy").setup({
     },
     "folke/snacks.nvim",
     "folke/which-key.nvim",
-    "zbirenbaum/copilot.lua",
+    "github/copilot.vim",
     {
         "saghen/blink.cmp",
         version = "1.*",
-        dependencies = { "fang2hou/blink-copilot" },
     },
 }, {})
 
@@ -749,14 +738,8 @@ nmap("<leader>sw", function() Snacks.picker.grep_word() end, { desc = "Visual se
 -- -------
 -- Copilot
 -- -------
-require("copilot").setup({
-    suggestion = { enabled = false },
-    panel = { enabled = false },
-    filetypes = {
-        markdown = true,
-        help = true,
-    },
-})
+vim.g.copilot_filetypes = { ["*"] = true, ["."] = false }
+vim.keymap.set("i", "<C-l>", 'copilot#Accept("")', { expr = true, replace_keycodes = false, silent = true })
 
 -- ---------
 -- Blink CMP
@@ -775,19 +758,7 @@ require("blink.cmp").setup({
         list = { selection = { auto_insert = false } }
     },
     sources = {
-        default = { "lsp", "path", "buffer", "copilot" },
-        providers = {
-            copilot = {
-                name = "copilot",
-                module = "blink-copilot",
-                score_offset = 100,
-                async = true,
-                opts = {
-                    max_completions = 1,
-                    max_attempts = 2,
-                }
-            },
-        },
+        default = { "lsp", "path", "buffer" },
     },
     fuzzy = { implementation = "prefer_rust_with_warning" }
 })
