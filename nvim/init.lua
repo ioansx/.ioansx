@@ -492,45 +492,22 @@ vim.keymap.set({ "n", "t" }, "<C-9>", LazyGitOpen, { desc = "LazyGit (float)" })
 -- -------
 -- Plugins
 -- -------
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-    local out = vim.fn.system { "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath }
-    if vim.v.shell_error ~= 0 then
-        error("Error cloning lazy.nvim:\n" .. out)
-    end
-end
-vim.opt.rtp:prepend(lazypath)
-
-require("lazy").setup({
-    "tpope/vim-sleuth",
-    "ellisonleao/gruvbox.nvim",
-    "Saecki/crates.nvim",
-    {
-        "nvim-mini/mini.nvim",
-        version = false,
-    },
-    "stevearc/oil.nvim",
-    "lewis6991/gitsigns.nvim",
-    {
-        "mason-org/mason-lspconfig.nvim",
-        dependencies = {
-            "mason-org/mason.nvim",
-            "neovim/nvim-lspconfig",
-        },
-    },
-    {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-    },
-    "folke/snacks.nvim",
-    "folke/which-key.nvim",
-    "github/copilot.vim",
-    {
-        "saghen/blink.cmp",
-        version = "1.*",
-    },
-}, {})
+vim.pack.add({
+    "https://github.com/tpope/vim-sleuth",
+    "https://github.com/ellisonleao/gruvbox.nvim",
+    "https://github.com/Saecki/crates.nvim",
+    "https://github.com/nvim-mini/mini.nvim",
+    "https://github.com/stevearc/oil.nvim",
+    "https://github.com/lewis6991/gitsigns.nvim",
+    "https://github.com/mason-org/mason.nvim",
+    "https://github.com/mason-org/mason-lspconfig.nvim",
+    "https://github.com/neovim/nvim-lspconfig",
+    "https://github.com/nvim-treesitter/nvim-treesitter",
+    "https://github.com/folke/snacks.nvim",
+    "https://github.com/folke/which-key.nvim",
+    "https://github.com/github/copilot.vim",
+    { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("^1") },
+})
 
 -- ------------
 -- Color Scheme
