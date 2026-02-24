@@ -320,175 +320,6 @@ vim.api.nvim_create_autocmd("LspProgress", {
     end,
 })
 
--- --------------------------------
--- P(ers)i(stent) floating terminal
--- --------------------------------
-local PiTermState = { win = nil, buf = nil }
-
-local function PiTerminalOpen()
-    -- If window is open, just hide it (don't kill the terminal).
-    if PiTermState.win and vim.api.nvim_win_is_valid(PiTermState.win) then
-        vim.api.nvim_win_close(PiTermState.win, false)
-        PiTermState.win = nil
-        return
-    end
-
-    -- Reuse existing buffer if still valid, otherwise create new one.
-    if not PiTermState.buf or not vim.api.nvim_buf_is_valid(PiTermState.buf) then
-        PiTermState.buf = vim.api.nvim_create_buf(false, true)
-    end
-
-    PiTermState.win = vim.api.nvim_open_win(PiTermState.buf, true, {
-        relative = "editor",
-        width = vim.o.columns,
-        height = vim.o.lines - 4, -- -4 for the borders, buffer line, and command line
-        col = 0,
-        row = 0,
-        border = "single",
-        style = "minimal",
-        noautocmd = true,
-    })
-    vim.wo[PiTermState.win].winhighlight = "NormalFloat:Normal"
-
-    -- Start terminal only if buffer is empty (new buffer).
-    if vim.bo[PiTermState.buf].buftype ~= "terminal" then
-        vim.fn.jobstart("fish", { term = true })
-    end
-
-    vim.cmd.startinsert()
-end
-
-vim.keymap.set({ "n", "t" }, "<C-7>", PiTerminalOpen, { desc = "PiTerm (float)" })
-
--- ---------------------------
--- Navigator floating terminal
--- ---------------------------
-local NavigatorState = { win = nil, buf = nil, prev_win = nil }
-
-local function NavigatorOpen()
-    if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
-        vim.api.nvim_win_close(NavigatorState.win, false)
-        NavigatorState.win = nil
-        return
-    end
-
-    if vim.fn.executable("nav") ~= 1 then
-        vim.notify("nav not found in PATH", vim.log.levels.ERROR)
-        return
-    end
-
-    NavigatorState.prev_win = vim.api.nvim_get_current_win()
-
-    -- Get current buffer's directory and filename
-    local bufpath = vim.api.nvim_buf_get_name(0)
-    local dir = vim.fn.fnamemodify(bufpath, ":h")
-    local filename = vim.fn.fnamemodify(bufpath, ":t")
-
-    -- Fall back to cwd if buffer has no file
-    if dir == "" or dir == "." then
-        dir = vim.fn.getcwd()
-        filename = nil
-    end
-
-    if not NavigatorState.buf or not vim.api.nvim_buf_is_valid(NavigatorState.buf) then
-        NavigatorState.buf = vim.api.nvim_create_buf(false, true)
-        vim.bo[NavigatorState.buf].filetype = "nav"
-    end
-
-    NavigatorState.win = vim.api.nvim_open_win(NavigatorState.buf, true, {
-        relative = "editor",
-        width = vim.o.columns,
-        height = vim.o.lines - 2,
-        col = 0,
-        row = 0,
-        border = "none",
-        style = "minimal",
-        noautocmd = true,
-    })
-    vim.wo[NavigatorState.win].winhighlight = "NormalFloat:Normal"
-
-    if vim.bo[NavigatorState.buf].buftype ~= "terminal" then
-        -- Build command with directory and optional select
-        local cmd = "nav " .. vim.fn.shellescape(dir)
-        if filename and filename ~= "" then
-            cmd = cmd .. " --select " .. vim.fn.shellescape(filename)
-        end
-
-        vim.fn.jobstart(cmd, {
-            term = true,
-            on_exit = function()
-                if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
-                    pcall(vim.api.nvim_win_close, NavigatorState.win, true)
-                end
-                if NavigatorState.prev_win and vim.api.nvim_win_is_valid(NavigatorState.prev_win) then
-                    pcall(vim.api.nvim_set_current_win, NavigatorState.prev_win)
-                end
-                NavigatorState.win = nil
-                NavigatorState.buf = nil
-            end,
-        })
-    end
-
-    vim.cmd.startinsert()
-end
-
-vim.keymap.set({ "n", "t" }, "<C-8>", NavigatorOpen, { desc = "Navigator (float)" })
-
--- -------------------------
--- LazyGit floating terminal
--- -------------------------
-local LazyGitState = { win = nil, buf = nil }
-
-local function LazyGitOpen()
-    -- If window is open, just hide it (don't kill lazygit).
-    if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-        vim.api.nvim_win_close(LazyGitState.win, false)
-        LazyGitState.win = nil
-        return
-    end
-
-    if vim.fn.executable("lazygit") ~= 1 then
-        vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
-        return
-    end
-
-    -- Reuse existing buffer if still valid, otherwise create new one.
-    if not LazyGitState.buf or not vim.api.nvim_buf_is_valid(LazyGitState.buf) then
-        LazyGitState.buf = vim.api.nvim_create_buf(false, true)
-        vim.bo[LazyGitState.buf].filetype = "lazygit"
-    end
-
-    LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
-        relative = "editor",
-        width = vim.o.columns,
-        height = vim.o.lines - 2, -- -2 for the command line and buffer line
-        col = 0,
-        row = 0,
-        border = "none",
-        style = "minimal",
-        noautocmd = true,
-    })
-    vim.wo[LazyGitState.win].winhighlight = "NormalFloat:Normal"
-
-    -- Start lazygit only if buffer is empty (new buffer).
-    if vim.bo[LazyGitState.buf].buftype ~= "terminal" then
-        vim.fn.jobstart("lazygit", {
-            term = true,
-            on_exit = function()
-                if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
-                    pcall(vim.api.nvim_win_close, LazyGitState.win, true)
-                end
-                LazyGitState.win = nil
-                LazyGitState.buf = nil
-            end,
-        })
-    end
-
-    vim.cmd.startinsert()
-end
-
-vim.keymap.set({ "n", "t" }, "<C-9>", LazyGitOpen, { desc = "LazyGit (float)" })
-
 -- ------------
 -- Color Scheme
 -- ------------
@@ -737,3 +568,172 @@ require("blink.cmp").setup({
     },
     fuzzy = { implementation = "prefer_rust_with_warning" }
 })
+
+-- --------------------------------
+-- P(ers)i(stent) floating terminal
+-- --------------------------------
+local PiTermState = { win = nil, buf = nil }
+
+local function PiTerminalOpen()
+    -- If window is open, just hide it (don't kill the terminal).
+    if PiTermState.win and vim.api.nvim_win_is_valid(PiTermState.win) then
+        vim.api.nvim_win_close(PiTermState.win, false)
+        PiTermState.win = nil
+        return
+    end
+
+    -- Reuse existing buffer if still valid, otherwise create new one.
+    if not PiTermState.buf or not vim.api.nvim_buf_is_valid(PiTermState.buf) then
+        PiTermState.buf = vim.api.nvim_create_buf(false, true)
+    end
+
+    PiTermState.win = vim.api.nvim_open_win(PiTermState.buf, true, {
+        relative = "editor",
+        width = vim.o.columns,
+        height = vim.o.lines - 4, -- -4 for the borders, buffer line, and command line
+        col = 0,
+        row = 0,
+        border = "single",
+        style = "minimal",
+        noautocmd = true,
+    })
+    vim.wo[PiTermState.win].winhighlight = "NormalFloat:Normal"
+
+    -- Start terminal only if buffer is empty (new buffer).
+    if vim.bo[PiTermState.buf].buftype ~= "terminal" then
+        vim.fn.jobstart("fish", { term = true })
+    end
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<C-7>", PiTerminalOpen, { desc = "PiTerm (float)" })
+
+-- ---------------------------
+-- Navigator floating terminal
+-- ---------------------------
+local NavigatorState = { win = nil, buf = nil, prev_win = nil }
+
+local function NavigatorOpen()
+    if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
+        vim.api.nvim_win_close(NavigatorState.win, false)
+        NavigatorState.win = nil
+        return
+    end
+
+    if vim.fn.executable("nav") ~= 1 then
+        vim.notify("nav not found in PATH", vim.log.levels.ERROR)
+        return
+    end
+
+    NavigatorState.prev_win = vim.api.nvim_get_current_win()
+
+    -- Get current buffer's directory and filename
+    local bufpath = vim.api.nvim_buf_get_name(0)
+    local dir = vim.fn.fnamemodify(bufpath, ":h")
+    local filename = vim.fn.fnamemodify(bufpath, ":t")
+
+    -- Fall back to cwd if buffer has no file
+    if dir == "" or dir == "." then
+        dir = vim.fn.getcwd()
+        filename = nil
+    end
+
+    if not NavigatorState.buf or not vim.api.nvim_buf_is_valid(NavigatorState.buf) then
+        NavigatorState.buf = vim.api.nvim_create_buf(false, true)
+        vim.bo[NavigatorState.buf].filetype = "nav"
+    end
+
+    NavigatorState.win = vim.api.nvim_open_win(NavigatorState.buf, true, {
+        relative = "editor",
+        width = vim.o.columns,
+        height = vim.o.lines - 2,
+        col = 0,
+        row = 0,
+        border = "none",
+        style = "minimal",
+        noautocmd = true,
+    })
+    vim.wo[NavigatorState.win].winhighlight = "NormalFloat:Normal"
+
+    if vim.bo[NavigatorState.buf].buftype ~= "terminal" then
+        -- Build command with directory and optional select
+        local cmd = "nav " .. vim.fn.shellescape(dir)
+        if filename and filename ~= "" then
+            cmd = cmd .. " --select " .. vim.fn.shellescape(filename)
+        end
+
+        vim.fn.jobstart(cmd, {
+            term = true,
+            on_exit = function()
+                if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
+                    pcall(vim.api.nvim_win_close, NavigatorState.win, true)
+                end
+                if NavigatorState.prev_win and vim.api.nvim_win_is_valid(NavigatorState.prev_win) then
+                    pcall(vim.api.nvim_set_current_win, NavigatorState.prev_win)
+                end
+                NavigatorState.win = nil
+                NavigatorState.buf = nil
+            end,
+        })
+    end
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<C-8>", NavigatorOpen, { desc = "Navigator (float)" })
+
+-- -------------------------
+-- LazyGit floating terminal
+-- -------------------------
+local LazyGitState = { win = nil, buf = nil }
+
+local function LazyGitOpen()
+    -- If window is open, just hide it (don't kill lazygit).
+    if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+        vim.api.nvim_win_close(LazyGitState.win, false)
+        LazyGitState.win = nil
+        return
+    end
+
+    if vim.fn.executable("lazygit") ~= 1 then
+        vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
+        return
+    end
+
+    -- Reuse existing buffer if still valid, otherwise create new one.
+    if not LazyGitState.buf or not vim.api.nvim_buf_is_valid(LazyGitState.buf) then
+        LazyGitState.buf = vim.api.nvim_create_buf(false, true)
+        vim.bo[LazyGitState.buf].filetype = "lazygit"
+    end
+
+    LazyGitState.win = vim.api.nvim_open_win(LazyGitState.buf, true, {
+        relative = "editor",
+        width = vim.o.columns,
+        height = vim.o.lines - 2, -- -2 for the command line and buffer line
+        col = 0,
+        row = 0,
+        border = "none",
+        style = "minimal",
+        noautocmd = true,
+    })
+    vim.wo[LazyGitState.win].winhighlight = "NormalFloat:Normal"
+
+    -- Start lazygit only if buffer is empty (new buffer).
+    if vim.bo[LazyGitState.buf].buftype ~= "terminal" then
+        vim.fn.jobstart("lazygit", {
+            term = true,
+            on_exit = function()
+                if LazyGitState.win and vim.api.nvim_win_is_valid(LazyGitState.win) then
+                    pcall(vim.api.nvim_win_close, LazyGitState.win, true)
+                end
+                LazyGitState.win = nil
+                LazyGitState.buf = nil
+            end,
+        })
+    end
+
+    vim.cmd.startinsert()
+end
+
+vim.keymap.set({ "n", "t" }, "<C-9>", LazyGitOpen, { desc = "LazyGit (float)" })
