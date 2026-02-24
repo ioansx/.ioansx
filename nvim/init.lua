@@ -489,29 +489,10 @@ end
 
 vim.keymap.set({ "n", "t" }, "<C-9>", LazyGitOpen, { desc = "LazyGit (float)" })
 
--- -------
--- Plugins
--- -------
-vim.pack.add({
-    "https://github.com/tpope/vim-sleuth",
-    "https://github.com/ellisonleao/gruvbox.nvim",
-    "https://github.com/Saecki/crates.nvim",
-    "https://github.com/nvim-mini/mini.nvim",
-    "https://github.com/stevearc/oil.nvim",
-    "https://github.com/lewis6991/gitsigns.nvim",
-    "https://github.com/mason-org/mason.nvim",
-    "https://github.com/mason-org/mason-lspconfig.nvim",
-    "https://github.com/neovim/nvim-lspconfig",
-    "https://github.com/nvim-treesitter/nvim-treesitter",
-    "https://github.com/folke/snacks.nvim",
-    "https://github.com/folke/which-key.nvim",
-    "https://github.com/github/copilot.vim",
-    { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("^1") },
-})
-
 -- ------------
 -- Color Scheme
 -- ------------
+vim.pack.add({ "https://github.com/ellisonleao/gruvbox.nvim" })
 require("gruvbox").setup({
     italic = {
         strings = false,
@@ -527,13 +508,19 @@ vim.cmd("colorscheme gruvbox")
 -- -------
 -- Utility
 -- -------
+vim.pack.add({ "https://github.com/tpope/vim-sleuth" })
+
+vim.pack.add({ "https://github.com/Saecki/crates.nvim" })
 require("crates").setup()
+
+vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
 require("mini.icons").setup()
 require("mini.splitjoin").setup()
 
 -- ---
 -- Oil
 -- ---
+vim.pack.add({ "https://github.com/stevearc/oil.nvim" })
 require("oil").setup({
     columns = { "icon" },
     delete_to_trash = true,
@@ -544,6 +531,7 @@ nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
 -- --------
 -- Gitsigns
 -- --------
+vim.pack.add({ "https://github.com/lewis6991/gitsigns.nvim" })
 require("gitsigns").setup({
     on_attach = function(bufnr)
         local gitsigns = require('gitsigns')
@@ -579,6 +567,11 @@ require("gitsigns").setup({
 -- ---
 -- LSP
 -- ---
+vim.pack.add({
+    "https://github.com/mason-org/mason.nvim",
+    "https://github.com/mason-org/mason-lspconfig.nvim",
+    "https://github.com/neovim/nvim-lspconfig",
+})
 require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
@@ -628,6 +621,7 @@ vim.lsp.config["rust_analyzer"] = {
 --- ----------
 --- Treesitter
 --- ----------
+vim.pack.add({ "https://github.com/nvim-treesitter/nvim-treesitter" })
 require("nvim-treesitter").install({
     "bash",
     "c",
@@ -672,6 +666,7 @@ vim.api.nvim_create_autocmd("FileType", {
 -- ---------
 -- Which Key
 -- ---------
+vim.pack.add({ "https://github.com/folke/which-key.nvim" })
 local wk = require("which-key")
 wk.setup({
     preset = "helix",
@@ -682,6 +677,7 @@ nmap("<leader>?", function() wk.show({ global = false }) end, { desc = "Buffer L
 -- ------
 -- Snacks
 -- ------
+vim.pack.add({ "https://github.com/folke/snacks.nvim" })
 require("snacks").setup({
     bigfile = { enabled = true },
     indent = { enabled = true, animate = { enabled = false } },
@@ -715,12 +711,14 @@ nmap("<leader>sw", function() Snacks.picker.grep_word() end, { desc = "Visual se
 -- -------
 -- Copilot
 -- -------
+vim.pack.add({ "https://github.com/github/copilot.vim" })
 vim.g.copilot_filetypes = { ["*"] = true, ["."] = false }
 vim.keymap.set("i", "<C-l>", 'copilot#Accept("")', { expr = true, replace_keycodes = false, silent = true })
 
 -- ---------
 -- Blink CMP
 -- ---------
+vim.pack.add({ { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("^1") } })
 require("blink.cmp").setup({
     keymap = { preset = "default" },
     cmdline = { enabled = false },
