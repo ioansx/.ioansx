@@ -553,6 +553,7 @@ vim.pack.add({ { src = "https://github.com/saghen/blink.cmp", version = vim.vers
 require("blink.cmp").setup({
     keymap = { preset = "default" },
     cmdline = { enabled = false },
+    snippets = { active = function() return false end },
     signature = { enabled = true },
     appearance = { nerd_font_variant = "mono" },
     completion = {
