@@ -90,10 +90,10 @@ vim.keymap.set({ "n", "v" }, "<leader>p", '"0p', { desc = "paste yanked" })
 -- ---------
 -- File yank
 -- ---------
-nmap("<leader>Ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
-nmap("<leader>Yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>", { desc = "yank relative file path:line" })
-nmap("<leader>Yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
-nmap("<leader>Yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
+nmap("<leader>ya", ":let @+ = expand('%:p')<CR>", { desc = "yank absolute file path" })
+nmap("<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>", { desc = "yank relative file path:line" })
+nmap("<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
+nmap("<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
 -- -----------
 -- Diagnostics
