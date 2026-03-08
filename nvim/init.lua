@@ -111,7 +111,6 @@ vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostic
 nmap("gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration()" })
 nmap("gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()" })
 nmap("grs", vim.lsp.buf.workspace_symbol, { desc = "vim.lsp.buf.workspace_symbol()" })
-nmap("grX", function() vim.lsp.stop_client(vim.lsp.get_clients()) end, { desc = "LSP: stop clients" })
 
 -- -----------------
 -- Highlight on yank
@@ -183,16 +182,7 @@ _G.statusline = statusline
 -- ---------------
 -- Format on save
 -- ---------------
-local prettier_ft = {
-    javascript = true,
-    typescript = true,
-    svelte = true,
-    css = true,
-    json = true,
-    yaml = true
-}
-
-local function find_formatter(start_dir)
+local function find_prettier(start_dir)
     if vim.fn.executable("prettierd") == 1 then
         return "prettierd"
     end
@@ -208,26 +198,49 @@ local function find_formatter(start_dir)
     return nil
 end
 
+--- Runs a formatter that reads stdin and writes to stdout.
+--- Returns true if formatting succeeded.
+local function format_with_cmd(cmd)
+    local filepath = vim.api.nvim_buf_get_name(0)
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local input = table.concat(lines, "\n") .. "\n"
+
+    if type(cmd) == "function" then
+        cmd = cmd(filepath)
+    end
+    if not cmd then return false end
+
+    local result = vim.fn.system(cmd, input)
+    if vim.v.shell_error ~= 0 then return false end
+
+    local new_lines = vim.split(result, "\n")
+    if new_lines[#new_lines] == "" then table.remove(new_lines) end
+    if new_lines[1] and new_lines[1]:match("^/%*!.*%*/") then table.remove(new_lines, 1) end -- strip daisyUI banner
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, new_lines)
+    return true
+end
+
+local formatters = {
+    go = { "goimports" }, -- superset of gofmt, also manages imports
+    rust = { "rustfmt", "--edition", "2024" },
+    zig = { "zig", "fmt", "--stdin" },
+    javascript = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+    typescript = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+    svelte = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+    css = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+    json = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+    yaml = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+}
+
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
-        if not prettier_ft[vim.bo.filetype] then
+        local fmt = formatters[vim.bo.filetype]
+        if fmt then
+            if not format_with_cmd(fmt) then
+                vim.lsp.buf.format({ timeout_ms = 500 })
+            end
+        else
             vim.lsp.buf.format({ timeout_ms = 500 })
-            return
-        end
-        local filepath = vim.api.nvim_buf_get_name(0)
-        local formatter = find_formatter(vim.fn.fnamemodify(filepath, ":h"))
-        if not formatter then
-            vim.lsp.buf.format({ timeout_ms = 500 })
-            return
-        end
-
-        local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-        local result = vim.fn.system({ formatter, "--stdin-filepath", filepath }, table.concat(lines, "\n") .. "\n")
-        if vim.v.shell_error == 0 then
-            local new_lines = vim.split(result, "\n")
-            if new_lines[#new_lines] == "" then table.remove(new_lines) end
-            if new_lines[1] and new_lines[1]:match("^/%*!.*%*/") then table.remove(new_lines, 1) end -- strip daisyUI banner
-            vim.api.nvim_buf_set_lines(0, 0, -1, false, new_lines)
         end
     end,
 })
@@ -404,22 +417,23 @@ vim.pack.add({
     "https://github.com/neovim/nvim-lspconfig",
 })
 require("mason").setup()
+local lsp_servers = {
+    "bashls",
+    "cssls",
+    "eslint",
+    "gopls",
+    "lua_ls",
+    "rust_analyzer",
+    "superhtml",
+    "svelte",
+    "tailwindcss",
+    "taplo",
+    "ts_ls",
+    "zls",
+}
 require("mason-lspconfig").setup({
-    ensure_installed = {
-        "bashls",
-        "cssls",
-        "eslint",
-        "gopls",
-        "lua_ls",
-        "rust_analyzer",
-        "superhtml",
-        "svelte",
-        "tailwindcss",
-        "taplo",
-        "ts_ls",
-        "zls",
-    },
-    automatic_enable = true
+    ensure_installed = lsp_servers,
+    automatic_enable = false,
 })
 
 vim.lsp.config["lua_ls"] = {
@@ -448,6 +462,33 @@ vim.lsp.config["rust_analyzer"] = {
         }
     }
 }
+
+local function lsp_start_clients()
+    for _, server in ipairs(lsp_servers) do
+        vim.lsp.enable(server)
+    end
+    vim.cmd("edit")
+end
+
+local function lsp_stop_clients()
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+        vim.lsp.stop_client(client.id)
+    end
+end
+
+local function lsp_list_clients()
+    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    if #clients == 0 then
+        vim.notify("No LSP clients attached", vim.log.levels.INFO)
+        return
+    end
+    local names = vim.tbl_map(function(c) return c.name end, clients)
+    vim.notify(table.concat(names, ", "), vim.log.levels.INFO)
+end
+
+nmap("<leader>ls", lsp_start_clients, { desc = "LSP: start clients" })
+nmap("<leader>lx", lsp_stop_clients, { desc = "LSP: stop clients" })
+nmap("<leader>li", lsp_list_clients, { desc = "LSP: list clients" })
 
 --- ----------
 --- Treesitter
