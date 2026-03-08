@@ -33,6 +33,7 @@ vim.opt.sidescrolloff = 8
 vim.opt.undofile = true
 
 vim.opt.wrap = false
+vim.opt.foldlevelstart = 99
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
@@ -250,8 +251,9 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 -- ------------------------
 vim.api.nvim_create_autocmd("BufWinEnter", {
     callback = function()
-        if vim.bo.buftype == "" then
+        if vim.bo.buftype == "" and not vim.w.trailing_space_match then
             vim.fn.matchadd("ErrorMsg", [[\s\+$]])
+            vim.w.trailing_space_match = true
         end
     end
 })
@@ -529,7 +531,6 @@ vim.api.nvim_create_autocmd("FileType", {
         -- folds
         vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
         vim.wo[0][0].foldmethod = 'expr'
-        vim.opt.foldlevelstart = 99
         -- indentation
         vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end,
