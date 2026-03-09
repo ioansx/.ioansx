@@ -32,6 +32,7 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
 vim.opt.undofile = true
+vim.opt.swapfile = false
 
 vim.opt.wrap = false
 vim.opt.foldlevelstart = 99
