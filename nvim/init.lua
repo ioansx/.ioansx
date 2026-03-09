@@ -203,11 +203,12 @@ end
 
 --- Runs a formatter that reads stdin and writes to stdout.
 --- Returns true if formatting succeeded.
-local function format_with_cmd(cmd)
+local function format_with_cmd(fmt)
     local filepath = vim.api.nvim_buf_get_name(0)
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
     local input = table.concat(lines, "\n") .. "\n"
 
+    local cmd = fmt.cmd
     if type(cmd) == "function" then
         cmd = cmd(filepath)
     end
@@ -223,26 +224,30 @@ local function format_with_cmd(cmd)
     return true
 end
 
+local function prettier_cmd(fp)
+    return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp }
+end
+
 local formatters = {
-    go = { "goimports" }, -- superset of gofmt, also manages imports
-    rust = { "rustfmt", "--edition", "2024" },
-    zig = { "zig", "fmt", "--stdin" },
-    javascript = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
-    typescript = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
-    svelte = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
-    css = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
-    json = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
-    yaml = function(fp) return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp } end,
+    go         = { lsp = true, cmd = { "goimports" } },
+    rust       = { lsp = true, cmd = { "rustfmt", "--edition", "2024" } },
+    zig        = { lsp = true, cmd = { "zig", "fmt", "--stdin" } },
+    javascript = { cmd = prettier_cmd },
+    typescript = { cmd = prettier_cmd },
+    svelte     = { cmd = prettier_cmd },
+    css        = { cmd = prettier_cmd },
+    json       = { cmd = prettier_cmd },
+    yaml       = { cmd = prettier_cmd },
 }
 
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         local fmt = formatters[vim.bo.filetype]
-        if fmt then
-            if not format_with_cmd(fmt) then
-                vim.lsp.buf.format({ timeout_ms = 500 })
-            end
-        else
+
+        local has_lsp = #vim.lsp.get_clients({ bufnr = 0 }) > 0
+        local prefer_lsp = not fmt or (fmt.lsp and has_lsp)
+
+        if prefer_lsp or not format_with_cmd(fmt) then
             vim.lsp.buf.format({ timeout_ms = 500 })
         end
     end,
