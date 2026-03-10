@@ -244,7 +244,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         local fmt = formatters[vim.bo.filetype]
 
-        local has_lsp = #vim.lsp.get_clients({ bufnr = 0 }) > 0
+        local has_lsp = #vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" }) > 0
         local prefer_lsp = not fmt or (fmt.lsp and has_lsp)
 
         if prefer_lsp or not format_with_cmd(fmt) then
