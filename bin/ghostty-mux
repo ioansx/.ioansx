@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# ghostty-mux: Open or focus Ghostty windows by workspace slot.
+#
+# Each slot maps to a directory. When invoked:
+# 1. If a Ghostty window with a terminal in the slot's directory exists, focus it.
+# 2. Otherwise, create a new Ghostty window and cd into the directory.
+#
+# Uses Ghostty's AppleScript API to match windows by terminal working directory.
+#
+# Requires: Ghostty 1.3+ (AppleScript support), macOS.
+#
+# Usage: ghostty-mux <0-4>
+#
+# Slots:
+#   0 -> ~/dev/sosha/lightspeed
+#   1 -> ~/dev/sosha/worktrees/work1
+#   2 -> ~/dev/sosha/worktrees/work2
+#   3 -> ~/dev/sosha/worktrees/work3
+#   4 -> ~/dev/sosha/worktrees/review
+#
+# Keybindings (via Karabiner):
+#   Hyper+1 through Hyper+5 trigger the corresponding slot.
+
+set -euo pipefail
+
+SLOT="${1:-}"
+
+case "$SLOT" in
+    0) DIR="$HOME/dev/sosha/lightspeed" ;;
+    1) DIR="$HOME/dev/sosha/worktrees/work1" ;;
+    2) DIR="$HOME/dev/sosha/worktrees/work2" ;;
+    3) DIR="$HOME/dev/sosha/worktrees/work3" ;;
+    4) DIR="$HOME/dev/sosha/worktrees/review" ;;
+    *)
+        echo "Usage: ghostty-mux <0-4>" >&2
+        exit 1
+        ;;
+esac
+
+osascript - "$DIR" <<'APPLESCRIPT'
+on run argv
+    set targetDir to item 1 of argv
+
+    -- Check if Ghostty is running (without launching it)
+    tell application "System Events"
+        set ghosttyRunning to (name of processes) contains "Ghostty"
+    end tell
+
+    if not ghosttyRunning then
+        do shell script "open -a Ghostty"
+        delay 0.5
+        tell application "Ghostty"
+            set term to focused terminal of selected tab of front window
+            input text "cd " & targetDir & " && clear" to term
+        end tell
+        tell application "System Events" to tell process "Ghostty"
+            key code 36 -- Enter
+        end tell
+        return "created"
+    end if
+
+    -- Search for a window whose first tab's working directory matches
+    tell application "Ghostty"
+        set winList to windows
+        repeat with i from 1 to count of winList
+            set w to item i of winList
+            set termDir to working directory of focused terminal of first tab of w
+            if termDir starts with targetDir then
+                -- Raise this window by index via System Events
+                tell application "System Events" to tell process "Ghostty"
+                    perform action "AXRaise" of window i
+                end tell
+                activate
+                return "focused"
+            end if
+        end repeat
+    end tell
+
+    -- No match — create a new window
+    tell application "System Events" to tell process "Ghostty"
+        click menu item "New Window" of menu 1 of menu bar item "File" of menu bar 1
+    end tell
+
+    delay 0.3
+
+    tell application "Ghostty"
+        set term to focused terminal of selected tab of front window
+        input text "cd " & targetDir & " && clear" to term
+    end tell
+    tell application "System Events" to tell process "Ghostty"
+        key code 36 -- Enter
+    end tell
+
+    return "created"
+end run
+APPLESCRIPT
