@@ -1,7 +1,6 @@
 font-feature = -calt
 theme = light:Gruvbox Light Hard,dark:Gruvbox Dark Hard
 # scrollback-limit = 100000000
-window-new-tab-position = end
 window-padding-balance = true
 window-vsync = true
 
@@ -10,6 +9,10 @@ window-height = 9000
 window-width = 9000
 
 keybind = global:super+ctrl+alt+t=toggle_quick_terminal
+keybind = super+alt+,=open_config
+
+# keybind = ctrl+n=navigate_search:next
+# keybind = ctrl+p=navigate_search:previous
 
 config-file = ?linux.config
 config-file = ?macos.config
@@ -45,6 +48,7 @@ keybind = vim/shift+g=scroll_to_bottom
 # Search (if you want vim-style search entry)
 keybind = vim/slash=start_search
 keybind = vim/n=navigate_search:next
+keybind = vim/N=navigate_search:previous
 
 # Copy mode / selection
 # Note we're missing a lot of actions here to make this more full featured.
