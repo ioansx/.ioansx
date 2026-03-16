@@ -1,0 +1,10 @@
+ui.editor = "nvim"
+
+[colors]
+tags = "cyan"
+author = "blue"
+timestamp = "blue"
+
+[user]
+name = "Ioan Stanila"
+email = "ioanstanilais@gmail.com"
