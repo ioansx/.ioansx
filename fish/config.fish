@@ -42,6 +42,7 @@ end
 fzf --fish | source
 zoxide init fish | source
 mise activate fish | source
+jj util completion fish | source
 
 function humantime --argument-names ms --description "Turn milliseconds into a human-readable string"
     set --query ms[1] || return
