@@ -1,15 +1,15 @@
 font-feature = -calt
 theme = light:Gruvbox Light Hard,dark:Gruvbox Dark Hard
-# scrollback-limit = 100000000
+scrollback-limit = 10000
 window-padding-balance = true
-window-vsync = true
+# window-vsync = true
 
 # Window width and height will be clamped to max screen size.
 window-height = 9000
 window-width = 9000
 
 keybind = global:super+ctrl+alt+t=toggle_quick_terminal
-keybind = super+alt+,=open_config
+# keybind = super+alt+,=open_config
 
 # keybind = ctrl+n=navigate_search:next
 # keybind = ctrl+p=navigate_search:previous
