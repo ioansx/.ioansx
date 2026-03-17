@@ -1,4 +1,6 @@
-ui.editor = "nvim"
+[ui]
+editor = "nvim"
+default-command = "log"
 
 [colors]
 tags = "cyan"
