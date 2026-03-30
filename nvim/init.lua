@@ -27,6 +27,8 @@ vim.opt.splitbelow = true
 
 vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
+
+-- vim.opt.autocomplete = true
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 8
@@ -38,6 +40,11 @@ vim.opt.wrap = false
 vim.opt.foldlevelstart = 99
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
+
+-- Experimental UI2
+require('vim._core.ui2').enable({})
+
+vim.cmd("packadd nvim.undotree")
 
 local function nmap(lhs, rhs, opts)
     vim.keymap.set("n", lhs, rhs, opts)
@@ -141,23 +148,6 @@ local function filesize()
     return string.format("%.1fMiB", size / 1048576)
 end
 
-local function diagnostics()
-    local buf = vim.api.nvim_get_current_buf()
-    local e = #vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.ERROR })
-    local w = #vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.WARN })
-    local parts = {}
-    if e > 0 then
-        parts[#parts + 1] = "%#DiagnosticError#E:" .. e .. "%*"
-    end
-    if w > 0 then
-        parts[#parts + 1] = "%#DiagnosticWarn#W:" .. w .. "%*"
-    end
-    if #parts == 0 then
-        return ""
-    end
-    return table.concat(parts, " ")
-end
-
 local function indent_style()
     if vim.bo.expandtab then
         return "spaces:" .. vim.bo.shiftwidth
@@ -172,15 +162,14 @@ end
 -- %#Group# / %* = highlight group switch / reset
 local function statusline()
     return " %f %m%r%= "
-        .. diagnostics() .. "  "
         .. vim.bo.fileencoding .. "  "
         .. filesize() .. "  "
         .. indent_style()
         .. "    %7l:%-3c %3p%% "
 end
 
-vim.opt.statusline = "%!v:lua.statusline()"
-_G.statusline = statusline
+-- vim.opt.statusline = "%!v:lua.statusline()"
+-- _G.statusline = statusline
 
 -- ---------------
 -- Format on save
@@ -587,13 +576,6 @@ nmap("<leader>ss", function() Snacks.picker.lsp_workspace_symbols() end, { desc 
 nmap("<leader>su", function() Snacks.picker.undo() end, { desc = "Undo History" })
 nmap("<leader>sk", function() Snacks.picker.keymaps() end, { desc = "Keymaps" })
 nmap("<leader>sw", function() Snacks.picker.grep_word() end, { desc = "Visual selection or word" })
-
--- -------
--- Copilot
--- -------
--- vim.pack.add({ "https://github.com/github/copilot.vim" })
--- vim.g.copilot_filetypes = { ["*"] = true, ["."] = false }
--- vim.keymap.set("i", "<C-l>", 'copilot#Accept("")', { expr = true, replace_keycodes = false, silent = true })
 
 -- ---------
 -- Blink CMP
