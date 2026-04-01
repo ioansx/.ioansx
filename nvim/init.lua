@@ -28,7 +28,6 @@ vim.opt.splitbelow = true
 vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
 
--- vim.opt.autocomplete = true
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 8
@@ -133,43 +132,36 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
--- -----------
--- Status Line
--- -----------
-local function filesize()
+-- ----
+-- Info
+-- ----
+local function notify_filesize()
     local size = vim.fn.getfsize(vim.fn.expand("%"))
+    local fsize;
     if size <= 0 then
-        return ""
+        fsize = ""
     elseif size < 1024 then
-        return size .. "B"
+        fsize = size .. "B"
     elseif size < 1048576 then
-        return string.format("%.1fKiB", size / 1024)
-    end
-    return string.format("%.1fMiB", size / 1048576)
-end
-
-local function indent_style()
-    if vim.bo.expandtab then
-        return "spaces:" .. vim.bo.shiftwidth
+        fsize = string.format("%.1fKiB", size / 1024)
     else
-        return "tabs:" .. vim.bo.tabstop
+        fsize = string.format("%.1fMiB", size / 1048576)
     end
+    vim.notify("File size: " .. fsize, vim.log.levels.INFO)
 end
 
--- %f = relative file path, %m = modified flag, %r = readonly flag
--- %= = right-align separator
--- %l = line number, %c = column, %p%% = percentage through file
--- %#Group# / %* = highlight group switch / reset
-local function statusline()
-    return " %f %m%r%= "
-        .. vim.bo.fileencoding .. "  "
-        .. filesize() .. "  "
-        .. indent_style()
-        .. "    %7l:%-3c %3p%% "
+local function notify_indent_style()
+    local style
+    if vim.bo.expandtab then
+        style = "spaces:" .. vim.bo.shiftwidth
+    else
+        style = "tabs:" .. vim.bo.tabstop
+    end
+    vim.notify("Indent style: " .. style, vim.log.levels.INFO)
 end
 
--- vim.opt.statusline = "%!v:lua.statusline()"
--- _G.statusline = statusline
+nmap("<leader>if", notify_filesize, { desc = "Info: file size" })
+nmap("<leader>ii", notify_indent_style, { desc = "Info: indent style" })
 
 -- ---------------
 -- Format on save
@@ -193,6 +185,10 @@ end
 --- Runs a formatter that reads stdin and writes to stdout.
 --- Returns true if formatting succeeded.
 local function format_with_cmd(fmt)
+    if not fmt then
+        return false
+    end
+
     local filepath = vim.api.nvim_buf_get_name(0)
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
     local input = table.concat(lines, "\n") .. "\n"
@@ -203,8 +199,9 @@ local function format_with_cmd(fmt)
     end
     if not cmd then return false end
 
-    local result = vim.fn.system(cmd, input)
-    if vim.v.shell_error ~= 0 then return false end
+    local obj = vim.system(cmd, { stdin = input }):wait()
+    if obj.code ~= 0 then return false end
+    local result = obj.stdout
 
     local new_lines = vim.split(result, "\n")
     if new_lines[#new_lines] == "" then table.remove(new_lines) end
@@ -232,13 +229,20 @@ local formatters = {
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         local fmt = formatters[vim.bo.filetype]
+        local has_lsp = #vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" }) > 0;
+        local timeout_ms = 500
 
-        local has_lsp = #vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" }) > 0
-        local prefer_lsp = not fmt or (fmt.lsp and has_lsp)
-
-        if prefer_lsp or not format_with_cmd(fmt) then
-            vim.lsp.buf.format({ timeout_ms = 500 })
+        if not fmt then
+            if has_lsp then
+                vim.lsp.buf.format({ timeout_ms })
+            end
+            return
+        elseif fmt.lsp and has_lsp then
+            vim.lsp.buf.format({ timeout_ms })
+            return
         end
+
+        format_with_cmd(fmt)
     end,
 })
 
@@ -252,83 +256,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
             vim.w.trailing_space_match = true
         end
     end
-})
-
--- ------------
--- LSP progress
--- ------------
----@type { win: integer?, buf: integer?, timer: table? }
-local LspProgress = { win = nil, buf = nil, timer = nil }
-
-local function lsp_progress_close()
-    if LspProgress.timer then
-        LspProgress.timer:stop()
-        LspProgress.timer = nil
-    end
-    if LspProgress.win and vim.api.nvim_win_is_valid(LspProgress.win) then
-        vim.api.nvim_win_close(LspProgress.win, true)
-    end
-    LspProgress.win = nil
-end
-
-local function lsp_progress_show(title, message, percentage)
-    if not LspProgress.buf or not vim.api.nvim_buf_is_valid(LspProgress.buf) then
-        LspProgress.buf = vim.api.nvim_create_buf(false, true)
-    end
-
-    local max_width = math.floor(vim.o.columns * 0.5)
-
-    local function rpad(s)
-        return string.rep(" ", max_width - vim.fn.strdisplaywidth(s)) .. s
-    end
-
-    local t = title or ""
-    if percentage then
-        t = t .. " (" .. percentage .. "%)"
-    end
-    local title_line = rpad(t:sub(1, max_width))
-    local msg = message or ""
-    if #msg > max_width then
-        msg = msg:sub(1, max_width - 1) .. "…"
-    end
-    local detail_line = rpad(msg:sub(1, max_width))
-
-    vim.api.nvim_buf_set_lines(LspProgress.buf, 0, -1, false, { title_line, detail_line })
-    vim.api.nvim_buf_clear_namespace(LspProgress.buf, -1, 0, -1)
-    local ns = vim.api.nvim_create_namespace("lsp_progress")
-    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Title", 0, 0, -1)
-    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Comment", 1, 0, -1)
-
-    local opts = {
-        relative = "editor",
-        width = max_width,
-        height = 2,
-        col = vim.o.columns - max_width,
-        row = vim.o.lines - 4,
-        style = "minimal",
-        border = "none",
-        noautocmd = true,
-        focusable = false,
-    }
-
-    if LspProgress.win and vim.api.nvim_win_is_valid(LspProgress.win) then
-        opts.noautocmd = nil
-        vim.api.nvim_win_set_config(LspProgress.win, opts)
-    else
-        LspProgress.win = vim.api.nvim_open_win(LspProgress.buf, false, opts)
-        vim.wo[LspProgress.win].winblend = 80
-        vim.wo[LspProgress.win].winhighlight = "NormalFloat:Normal"
-    end
-
-    if LspProgress.timer then LspProgress.timer:stop() end
-    LspProgress.timer = vim.defer_fn(lsp_progress_close, 2000)
-end
-
-vim.api.nvim_create_autocmd("LspProgress", {
-    callback = function(ev)
-        local data = ev.data.params.value
-        lsp_progress_show(data.title, data.message, data.percentage)
-    end,
 })
 
 -- ------------
@@ -465,19 +392,18 @@ local function lsp_start_clients()
     for _, server in ipairs(lsp_servers) do
         vim.lsp.enable(server)
     end
-    vim.cmd("edit")
 end
 
 local function lsp_stop_clients()
-    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
-        vim.lsp.stop_client(client.id)
+    for _, server in ipairs(lsp_servers) do
+        vim.lsp.enable(server, false)
     end
 end
 
 local function lsp_list_clients()
     local clients = vim.lsp.get_clients({ bufnr = 0 })
     if #clients == 0 then
-        vim.notify("No LSP clients attached", vim.log.levels.INFO)
+        vim.notify("No LSP clients attached.", vim.log.levels.INFO)
         return
     end
     local names = vim.tbl_map(function(c) return c.name end, clients)
@@ -487,6 +413,83 @@ end
 nmap("<leader>ls", lsp_start_clients, { desc = "LSP: start clients" })
 nmap("<leader>lx", lsp_stop_clients, { desc = "LSP: stop clients" })
 nmap("<leader>li", lsp_list_clients, { desc = "LSP: list clients" })
+
+-- ------------
+-- LSP progress
+-- ------------
+---@type { win: integer?, buf: integer?, timer: table? }
+local LspProgress = { win = nil, buf = nil, timer = nil }
+
+local function lsp_progress_close()
+    if LspProgress.timer then
+        LspProgress.timer:stop()
+        LspProgress.timer = nil
+    end
+    if LspProgress.win and vim.api.nvim_win_is_valid(LspProgress.win) then
+        vim.api.nvim_win_close(LspProgress.win, true)
+    end
+    LspProgress.win = nil
+end
+
+local function lsp_progress_show(title, message, percentage)
+    if not LspProgress.buf or not vim.api.nvim_buf_is_valid(LspProgress.buf) then
+        LspProgress.buf = vim.api.nvim_create_buf(false, true)
+    end
+
+    local max_width = math.floor(vim.o.columns * 0.5)
+
+    local function rpad(s)
+        return string.rep(" ", max_width - vim.fn.strdisplaywidth(s)) .. s
+    end
+
+    local t = title or ""
+    if percentage then
+        t = t .. " (" .. percentage .. "%)"
+    end
+    local title_line = rpad(t:sub(1, max_width))
+    local msg = message or ""
+    if #msg > max_width then
+        msg = msg:sub(1, max_width - 1) .. "…"
+    end
+    local detail_line = rpad(msg:sub(1, max_width))
+
+    vim.api.nvim_buf_set_lines(LspProgress.buf, 0, -1, false, { title_line, detail_line })
+    vim.api.nvim_buf_clear_namespace(LspProgress.buf, -1, 0, -1)
+    local ns = vim.api.nvim_create_namespace("lsp_progress")
+    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Title", 0, 0, -1)
+    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Comment", 1, 0, -1)
+
+    local opts = {
+        relative = "editor",
+        width = max_width,
+        height = 2,
+        col = vim.o.columns - max_width,
+        row = vim.o.lines - 4,
+        style = "minimal",
+        border = "none",
+        noautocmd = true,
+        focusable = false,
+    }
+
+    if LspProgress.win and vim.api.nvim_win_is_valid(LspProgress.win) then
+        opts.noautocmd = nil
+        vim.api.nvim_win_set_config(LspProgress.win, opts)
+    else
+        LspProgress.win = vim.api.nvim_open_win(LspProgress.buf, false, opts)
+        vim.wo[LspProgress.win].winblend = 80
+        vim.wo[LspProgress.win].winhighlight = "NormalFloat:Normal"
+    end
+
+    if LspProgress.timer then LspProgress.timer:stop() end
+    LspProgress.timer = vim.defer_fn(lsp_progress_close, 2000)
+end
+
+vim.api.nvim_create_autocmd("LspProgress", {
+    callback = function(ev)
+        local data = ev.data.params.value
+        lsp_progress_show(data.title, data.message, data.percentage)
+    end,
+})
 
 --- ----------
 --- Treesitter
