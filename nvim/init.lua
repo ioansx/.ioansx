@@ -12,7 +12,6 @@ vim.opt.relativenumber = true
 
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.gdefault = true
 
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -44,6 +43,7 @@ vim.opt.winborder = "single"
 require('vim._core.ui2').enable({})
 
 vim.cmd("packadd nvim.undotree")
+vim.cmd("packadd! matchit")
 
 local function nmap(lhs, rhs, opts)
     vim.keymap.set("n", lhs, rhs, opts)
