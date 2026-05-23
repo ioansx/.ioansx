@@ -39,6 +39,8 @@ vim.opt.foldlevelstart = 99
 vim.wo.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
+vim.opt.diffopt:append("algorithm:histogram")
+
 -- Experimental UI2
 require('vim._core.ui2').enable({})
 

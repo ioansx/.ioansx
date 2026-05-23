@@ -44,7 +44,7 @@ $env.config.datetime_format.normal = "%y-%m-%d %H:%M:%S"
 
 $env.PROMPT_COMMAND = {||
     let p = $"(pwd)"
-    let home = ($nu.home-path)
+    let home = ($nu.home-dir)
     $" ($p | str replace $home ~) "
 }
 $env.PROMPT_COMMAND_RIGHT = { $"(date now | format date '%Y-%d-%m %H:%M:%S%.3f')" }
@@ -52,6 +52,5 @@ $env.PROMPT_INDICATOR_VI_INSERT = ": "
 $env.PROMPT_INDICATOR_VI_NORMAL = "# "
 
 alias ll = ls -la
-alias lg = lazygit
 
 source ~/.config/nushell/.zoxide.nu

@@ -12,12 +12,10 @@ end
 
 fish_vi_key_bindings
 
-alias lzg="lazygit"
-
 fzf --fish | source
 zoxide init fish | source
 mise activate fish | source
-jj util completion fish | source
+complete --keep-order --exclusive --command jj --arguments "(COMPLETE=fish jj --ignore-working-copy -- (commandline --current-process --tokenize --cut-at-cursor) (commandline --current-token))"
 
 set -x JJ_CONFIG "$HOME/.ioansx/jj/config.toml"
 

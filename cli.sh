@@ -39,6 +39,9 @@ elif [ "$CMD_1" = "link" ]; then
         ln -fsv "$SCRIPT_DIR/ghostty/linux.config" $XDG_CONFIG_HOME/ghostty/linux.config
     fi
 
+    mkdir -p "$XDG_CONFIG_HOME/git"
+    ln -fsv "$SCRIPT_DIR/git/config" $XDG_CONFIG_HOME/git/config
+
     if [ "$OS" = "Darwin" ]; then
         rm -rf "$XDG_CONFIG_HOME/karabiner"
         ln -fsv "$SCRIPT_DIR/karabiner" $XDG_CONFIG_HOME/karabiner
@@ -82,6 +85,8 @@ elif [ "$CMD_1" = "unlink" ]; then
     if [ "$OS" = "Linux" ]; then
         rm -v $XDG_CONFIG_HOME/ghostty/linux.config
     fi
+
+    rm -v $XDG_CONFIG_HOME/git/config
 
     if [ "$OS" = "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/karabiner
