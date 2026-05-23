@@ -167,23 +167,21 @@ nmap("<leader>ii", notify_indent_style, { desc = "Info: indent style" })
 -- Format on save
 -- ---------------
 local function find_prettier(start_dir)
-    if vim.fn.executable("prettierd") == 1 then
-        return "prettierd"
-    end
-
-    vim.notify("prettierd not found in PATH, finding the local version in node_modules...", vim.log.levels.WARN)
-
     local dir = start_dir
     while dir and dir ~= "/" do
         local bin = dir .. "/node_modules/.bin/prettier"
         if vim.fn.executable(bin) == 1 then return bin end
         dir = vim.fn.fnamemodify(dir, ":h")
     end
+
+    if vim.fn.executable("prettier") == 1 then
+        return "prettier"
+    end
+
     return nil
 end
 
 --- Runs a formatter that reads stdin and writes to stdout.
---- Returns true if formatting succeeded.
 local function format_with_cmd(fmt)
     if not fmt then
         return false
@@ -328,8 +326,6 @@ require("gitsigns").setup({
         map('n', '<leader>gD', function() gitsigns.diffthis('~') end, { desc = "(Git) diff this vs. previous" })
 
         map('n', '<leader>gB', gitsigns.toggle_current_line_blame, { desc = "(Git) toggle blame" })
-        map('n', '<leader>gw', gitsigns.toggle_word_diff, { desc = "(Git) toggle word diff" })
-        map({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = "(Git) select hunk" })
     end
 })
 
@@ -643,77 +639,3 @@ local function PiTerminalOpen()
 end
 
 vim.keymap.set({ "n", "t" }, "<C-7>", PiTerminalOpen, { desc = "PiTerm (float)" })
-
--- ---------------------------
--- Navigator floating terminal
--- ---------------------------
--- local NavigatorState = { win = nil, buf = nil, prev_win = nil }
---
--- local function NavigatorOpen()
---     if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
---         vim.api.nvim_win_close(NavigatorState.win, false)
---         NavigatorState.win = nil
---         return
---     end
---
---     if vim.fn.executable("nav") ~= 1 then
---         vim.notify("nav not found in PATH", vim.log.levels.ERROR)
---         return
---     end
---
---     NavigatorState.prev_win = vim.api.nvim_get_current_win()
---
---     -- Get current buffer's directory and filename
---     local bufpath = vim.api.nvim_buf_get_name(0)
---     local dir = vim.fn.fnamemodify(bufpath, ":h")
---     local filename = vim.fn.fnamemodify(bufpath, ":t")
---
---     -- Fall back to cwd if buffer has no file
---     if dir == "" or dir == "." then
---         dir = vim.fn.getcwd()
---         filename = nil
---     end
---
---     if not NavigatorState.buf or not vim.api.nvim_buf_is_valid(NavigatorState.buf) then
---         NavigatorState.buf = vim.api.nvim_create_buf(false, true)
---         vim.bo[NavigatorState.buf].filetype = "nav"
---     end
---
---     NavigatorState.win = vim.api.nvim_open_win(NavigatorState.buf, true, {
---         relative = "editor",
---         width = vim.o.columns,
---         height = vim.o.lines - 2,
---         col = 0,
---         row = 0,
---         border = "none",
---         style = "minimal",
---         noautocmd = true,
---     })
---     vim.wo[NavigatorState.win].winhighlight = "NormalFloat:Normal"
---
---     if vim.bo[NavigatorState.buf].buftype ~= "terminal" then
---         -- Build command with directory and optional select
---         local cmd = "nav " .. vim.fn.shellescape(dir)
---         if filename and filename ~= "" then
---             cmd = cmd .. " --select " .. vim.fn.shellescape(filename)
---         end
---
---         vim.fn.jobstart(cmd, {
---             term = true,
---             on_exit = function()
---                 if NavigatorState.win and vim.api.nvim_win_is_valid(NavigatorState.win) then
---                     pcall(vim.api.nvim_win_close, NavigatorState.win, true)
---                 end
---                 if NavigatorState.prev_win and vim.api.nvim_win_is_valid(NavigatorState.prev_win) then
---                     pcall(vim.api.nvim_set_current_win, NavigatorState.prev_win)
---                 end
---                 NavigatorState.win = nil
---                 NavigatorState.buf = nil
---             end,
---         })
---     end
---
---     vim.cmd.startinsert()
--- end
---
--- vim.keymap.set({ "n", "t" }, "<C-8>", NavigatorOpen, { desc = "Navigator (float)" })
