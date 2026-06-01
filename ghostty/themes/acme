@@ -1,0 +1,29 @@
+# acme — Rob Pike's Acme palette for Ghostty. Cream page, dark ink, gold
+# selection. Mirrors nvim colors/acme.lua.
+#
+# Readability note: this uses the standard light-theme ramp (like Gruvbox
+# Light), NOT the inverted one. Slot 0 stays DARK so text printed in "black"
+# (prompts, ls, shell syntax) is readable on the cream background; the gray
+# ramp runs 0(dark) -> 8 -> 7 -> 15(darkest), and no text slot sits near #ffffea.
+palette = 0=#1a1a14
+palette = 1=#a23c2e
+palette = 2=#5a6b2a
+palette = 3=#8a6a16
+palette = 4=#36567f
+palette = 5=#7d4a8f
+palette = 6=#2f7468
+palette = 7=#5c5a4a
+palette = 8=#8a8470
+palette = 9=#b35040
+palette = 10=#6e8238
+palette = 11=#a5821f
+palette = 12=#4a6a96
+palette = 13=#9159a3
+palette = 14=#3a8a7c
+palette = 15=#1a1a14
+background = #ffffea
+foreground = #000000
+cursor-color = #000000
+cursor-text = #ffffea
+selection-background = #eeee9e
+selection-foreground = #000000

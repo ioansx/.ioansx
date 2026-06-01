@@ -24,8 +24,10 @@ vim.opt.smartindent = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+vim.opt.termguicolors = true
 vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
+-- vim.cmd("colorscheme acme")
 
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true

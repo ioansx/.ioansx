@@ -1,5 +1,6 @@
 font-feature = -calt
 theme = light:Gruvbox Light Hard,dark:Gruvbox Dark Hard
+# theme = acme
 # scrollback-limit = 10000
 window-padding-balance = true
 window-vsync = true
