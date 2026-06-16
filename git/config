@@ -2,6 +2,12 @@
 	name = Stănilă Ioan
 	email = ioanstanilais@gmail.com
 
+[core]
+	editor = nvim
+
+[commit]
+	verbose = true
+
 [init]
 	defaultBranch = main
 
@@ -20,6 +26,7 @@
 	autoStash = true
 	autoSquash = true
 	updateRefs = true
+	missingCommitsCheck = error
 
 [merge]
 	conflictStyle = zdiff3
@@ -27,8 +34,10 @@
 [diff]
 	algorithm = histogram
 	colorMoved = default
+	colorMovedWS = allow-indentation-change
 	mnemonicPrefix = true
 	renames = true
+	wsErrorHighlight = all
 
 [rerere]
 	enabled = true
@@ -45,6 +54,13 @@
 
 [log]
 	date = iso
+	follow = true
 
 [help]
 	autocorrect = prompt
+
+[alias]
+	c = commit --all
+	s = status
+	l = log --graph --abbrev-commit --decorate
+	ll = log --graph --abbrev-commit --decorate --all
