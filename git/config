@@ -61,6 +61,7 @@
 
 [alias]
 	c = commit --all
-	s = status
+	fa = fetch --all
 	l = log --graph --abbrev-commit --decorate
-	ll = log --graph --abbrev-commit --decorate --all
+	la = log --graph --abbrev-commit --decorate --all
+	s = status
