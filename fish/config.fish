@@ -50,3 +50,7 @@ function fish_prompt --description 'Write out the prompt'
 
     echo -n -s (set_color $color_cwd) (date "+%T") " " (prompt_pwd --full-length-dirs 13) $normal " "$prompt_status $suffix " "
 end
+
+function fish_right_prompt --description 'Write out the right prompt'
+    fish_vcs_prompt
+end
