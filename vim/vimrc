@@ -28,3 +28,6 @@ set scrolloff=8
 set timeoutlen=300
 set updatetime=250
 set clipboard=unnamedplus
+set noswapfile
+set nobackup
+set nowritebackup
