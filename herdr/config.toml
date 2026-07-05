@@ -1,0 +1,31 @@
+onboarding = false
+
+[ui.toast]
+delivery = "terminal"
+
+[ui.sound]
+# Play sounds when agents change state in background workspaces.
+enabled = false
+
+[ui]
+prompt_new_tab_name = false
+
+agent_panel_sort = "spaces"
+[keys]
+prefix = "ctrl+a"
+
+[keys.indexed]
+# tmux-style: alt+1..9 switches directly to tab 1..9, no prefix.
+# (Ghostty's macos-option-as-alt makes Option send Alt.)
+tabs = "alt"
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[terminal]
+# Executable used for new interactive panes.
+default_shell = "/usr/local/bin/fish"
+
+[experimental]
+kitty_graphics = true

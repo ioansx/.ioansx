@@ -43,6 +43,9 @@ elif [ "$CMD_1" = "link" ]; then
     mkdir -p "$XDG_CONFIG_HOME/git"
     ln -fsv "$SCRIPT_DIR/git/config" $XDG_CONFIG_HOME/git/config
 
+    mkdir -p "$XDG_CONFIG_HOME/herdr"
+    ln -fsv "$SCRIPT_DIR/herdr/config.toml" $XDG_CONFIG_HOME/herdr/config.toml
+
     if [ "$OS" = "Darwin" ]; then
         rm -rf "$XDG_CONFIG_HOME/karabiner"
         ln -fsv "$SCRIPT_DIR/karabiner" $XDG_CONFIG_HOME/karabiner
@@ -89,6 +92,8 @@ elif [ "$CMD_1" = "unlink" ]; then
     fi
 
     rm -v $XDG_CONFIG_HOME/git/config
+
+    rm -v $XDG_CONFIG_HOME/herdr/config.toml
 
     if [ "$OS" = "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/karabiner
