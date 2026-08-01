@@ -27,7 +27,6 @@ vim.opt.splitbelow = true
 vim.opt.termguicolors = true
 vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
--- vim.cmd("colorscheme acme")
 
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
 vim.opt.cursorline = true
@@ -274,7 +273,7 @@ require("gruvbox").setup({
     },
     contrast = "hard",
 })
-vim.cmd("colorscheme gruvbox")
+-- vim.cmd("colorscheme gruvbox")
 
 -- -------
 -- Utility
@@ -558,6 +557,9 @@ require("snacks").setup({
         },
     },
 })
+
+-- Default SnacksPickerDir (NonText, #4f5258) matches the selection bg, hiding the dir part.
+vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
 
 nmap("<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
 nmap("<leader>f", function() Snacks.picker.files({ hidden = true }) end, { desc = "Find Files" })

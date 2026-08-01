@@ -189,6 +189,29 @@
                   }
                 ],
                 "type": "basic"
+              },
+              {
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_command",
+                      "left_option",
+                      "left_shift",
+                      "left_control"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "software_function": {
+                      "open_application": {
+                        "bundle_identifier": "com.apple.Reminders"
+                      }
+                    }
+                  }
+                ],
+                "type": "basic"
               }
             ]
           }

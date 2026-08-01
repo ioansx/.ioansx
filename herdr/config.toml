@@ -21,6 +21,8 @@ prefix = "ctrl+a"
 tabs = "alt"
 # Meta+Shift+1..9 focuses agent rows directly.
 agents = "alt+shift"
+# Ctrl+Meta+1..9 switches workspaces directly.
+workspaces = "ctrl+alt"
 
 [theme]
 name = "gruvbox"
