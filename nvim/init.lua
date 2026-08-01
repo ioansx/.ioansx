@@ -42,6 +42,11 @@ vim.opt.winborder = "single"
 
 vim.opt.diffopt:append("algorithm:histogram")
 
+-- ------------
+-- Color Scheme
+-- ------------
+vim.cmd("colorscheme istheme")
+
 -- Experimental UI2
 require('vim._core.ui2').enable({})
 
@@ -258,22 +263,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
         end
     end
 })
-
--- ------------
--- Color Scheme
--- ------------
-vim.pack.add({ "https://github.com/ellisonleao/gruvbox.nvim" })
-require("gruvbox").setup({
-    italic = {
-        strings = false,
-        emphasis = false,
-        comments = false,
-        operators = false,
-        folds = false,
-    },
-    contrast = "hard",
-})
--- vim.cmd("colorscheme gruvbox")
 
 -- -------
 -- Utility
@@ -559,7 +548,7 @@ require("snacks").setup({
 })
 
 -- Default SnacksPickerDir (NonText, #4f5258) matches the selection bg, hiding the dir part.
-vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
+-- vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
 
 nmap("<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
 nmap("<leader>f", function() Snacks.picker.files({ hidden = true }) end, { desc = "Find Files" })

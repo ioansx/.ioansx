@@ -1,0 +1,24 @@
+# istheme — brighter neutral dark for Ghostty. Soft white ink on graphite,
+# muted accents. Mirrors nvim colors/istheme.lua.
+palette = 0=#3a3f46
+palette = 1=#ee8b80
+palette = 2=#b2e084
+palette = 3=#e89a70
+palette = 4=#e0c088
+palette = 5=#c8a8ea
+palette = 6=#82d2c6
+palette = 7=#e6e8eb
+palette = 8=#828992
+palette = 9=#f7a198
+palette = 10=#c4ea98
+palette = 11=#f2b28c
+palette = 12=#f0d4a4
+palette = 13=#d8c0f4
+palette = 14=#98e2d6
+palette = 15=#f5f6f8
+background = #24272c
+foreground = #e6e8eb
+cursor-color = #e6e8eb
+cursor-text = #24272c
+selection-background = #3e4450
+selection-foreground = #f5f6f8

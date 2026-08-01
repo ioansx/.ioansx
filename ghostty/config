@@ -1,5 +1,6 @@
 font-feature = -calt
-theme = light:Nvim Light,dark:Nvim Dark
+theme = istheme
+# theme = light:Nvim Light,dark:Nvim Dark
 # theme = acme
 scrollback-limit = 100000000
 window-padding-balance = true
