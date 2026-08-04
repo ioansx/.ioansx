@@ -89,6 +89,12 @@ hi("PmenuExtraSel",   { fg = p.bg, bg = p.gold })
 hi("PmenuSbar",       { bg = p.bg_alt })
 hi("PmenuThumb",      { bg = p.gray_nt })
 
+-- Snacks picker. Its defaults point these at NonText, which is meant for
+-- invisibles and disappears on the float background — a path you can't read.
+hi("SnacksPickerDir",         { fg = p.gray })
+hi("SnacksPickerPathHidden",  { fg = p.gray })
+hi("SnacksPickerPathIgnored", { fg = p.gray })
+
 -- ── Legacy syntax ─────────────────────────────────────────────────────────--
 hi("Comment",         { fg = p.gray })
 hi("Constant",        { fg = p.purple })
