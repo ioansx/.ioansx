@@ -123,29 +123,6 @@
               },
               {
                 "from": {
-                  "key_code": "t",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/pgAdmin 4.app"
-                      }
-                    }
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
                   "key_code": "r",
                   "modifiers": {
                     "mandatory": [
