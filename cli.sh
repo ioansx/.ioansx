@@ -25,7 +25,7 @@ if [ -z "$CMD_1" ]; then
     print_help
 elif [ "$CMD_1" = "link" ]; then
     # ln -fsv "$SCRIPT_DIR/bash/.bashrc" ~/.bashrc
-    # ln -fsv "$SCRIPT_DIR/bash/.inputrc" ~/.inputrc
+    ln -fsv "$SCRIPT_DIR/bash/.inputrc" ~/.inputrc
 
     mkdir -p "$XDG_CONFIG_HOME/fish"
     ln -fsv "$SCRIPT_DIR/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
@@ -66,6 +66,8 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$SCRIPT_DIR/nushell/config.nu" $XDG_CONFIG_HOME/nushell/config.nu
     ln -fsv "$SCRIPT_DIR/nushell/.zoxide.nu" $XDG_CONFIG_HOME/nushell/.zoxide.nu
 
+    ln -fsv "$SCRIPT_DIR/psql/psqlrc" ~/.psqlrc
+
     ln -fsv "$SCRIPT_DIR/tmux/tmux.conf" ~/.tmux.conf
 
     mkdir -p "$XDG_CONFIG_HOME/vim"
@@ -80,7 +82,7 @@ elif [ "$CMD_1" = "link" ]; then
     ln -fsv "$SCRIPT_DIR/zed/settings.json" $XDG_CONFIG_HOME/zed/settings.json
 elif [ "$CMD_1" = "unlink" ]; then
     # rm -v ~/.bashrc
-    # rm -v ~/.inputrc
+    rm -v ~/.inputrc
     rm -v $XDG_CONFIG_HOME/fish/config.fish
     rm -v $XDG_CONFIG_HOME/ghostty/config
     rm -v $XDG_CONFIG_HOME/ghostty/themes
@@ -107,6 +109,7 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v $XDG_CONFIG_HOME/nvim/colors
     rm -v $XDG_CONFIG_HOME/nushell/config.nu
     rm -v $XDG_CONFIG_HOME/nushell/.zoxide.nu
+    rm -v ~/.psqlrc
     rm -v ~/.tmux.conf
     rm -v $XDG_CONFIG_HOME/vim/vimrc
 
