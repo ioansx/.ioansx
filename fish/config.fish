@@ -1,16 +1,26 @@
-function fish_greeting; end
+set -g fish_greeting
 
 set -x XDG_CONFIG_HOME "$HOME/.config"
-fish_add_path /opt/homebrew/bin $HOME/.ioansx/bin $HOME/.cargo/bin $HOME/.pulumi/bin $HOME/.local/bin $HOME/dev/google-cloud-sdk/bin
 
-fish_vi_key_bindings
+# -g keeps PATH derived from this file alone. The default scope is universal,
+# which persists in fish_variables and drifts out of sync with the config.
+# Missing directories are skipped, so entries for other machines are harmless.
+fish_add_path -g /opt/homebrew/bin $HOME/.ioansx/bin $HOME/.cargo/bin \
+    $HOME/.pulumi/bin $HOME/.local/bin $HOME/.config/emacs/bin \
+    $HOME/dev/google-cloud-sdk/bin
 
-fzf --fish | source
-zoxide init fish | source
+# Not interactive-only: scripts need the tool paths mise puts on PATH.
 mise activate fish | source
 # mise re-reads the environment on every prompt (~11ms). Its PWD hook already
 # covers directory changes, so keep that and drop the per-prompt check.
 functions --erase __mise_env_eval_on_prompt
+
+if status is-interactive
+    # Must come before fzf: fish_vi_key_bindings resets bindings.
+    fish_vi_key_bindings
+    fzf --fish | source
+    zoxide init fish | source
+end
 
 # Ayu Mirage accents the prompt borrows from.
 set -g __prompt_dim 5C6773
