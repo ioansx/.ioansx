@@ -15,9 +15,6 @@ fish_vi_key_bindings
 fzf --fish | source
 zoxide init fish | source
 mise activate fish | source
-complete --keep-order --exclusive --command jj --arguments "(COMPLETE=fish jj --ignore-working-copy -- (commandline --current-process --tokenize --cut-at-cursor) (commandline --current-token))"
-
-set -x JJ_CONFIG "$HOME/.ioansx/jj/config.toml"
 
 function fish_prompt --description 'Write out the prompt'
     set -l last_pipestatus $pipestatus
@@ -28,12 +25,12 @@ function fish_prompt --description 'Write out the prompt'
 
     # Color the prompt differently when we're root
     set -l color_cwd $fish_color_cwd
-    set -l suffix ' $'
+    set -l suffix '❯'
     if functions -q fish_is_root_user; and fish_is_root_user
         if set -q fish_color_cwd_root
             set color_cwd $fish_color_cwd_root
         end
-        set suffix ' #'
+        set suffix '#'
     end
 
     # Write pipestatus
@@ -48,9 +45,13 @@ function fish_prompt --description 'Write out the prompt'
     set -l statusb_color (set_color $bold_flag $fish_color_status)
     set -l prompt_status (__fish_print_pipestatus "[" "]" "|" "$status_color" "$statusb_color" $last_pipestatus)
 
-    echo -n -s (set_color $color_cwd) (date "+%T") " " (prompt_pwd --full-length-dirs 13) $normal " "$prompt_status $suffix " "
-end
+    # Red suffix when the last command failed, so the signal sits where you look.
+    set -l suffix_color $normal
+    if test $__fish_last_status -ne 0
+        set suffix_color (set_color $fish_color_status)
+    end
 
-function fish_right_prompt --description 'Write out the right prompt'
-    fish_vcs_prompt
+    echo -s (set_color $color_cwd) (date "+%T") " " (prompt_pwd --full-length-dirs 13) $normal (fish_vcs_prompt) " "$prompt_status
+    # One space puts the suffix under the ']' of fish_mode_prompt's '[N] ' indicator.
+    echo -n -s " " $suffix_color $suffix $normal "  "
 end
