@@ -20,6 +20,15 @@ if status is-interactive
     fish_vi_key_bindings
     fzf --fish | source
     zoxide init fish | source
+
+    alias n nav
+
+    # Ghostty's super+shift+j writes the scrollback to <tmp>/<random>/history.txt
+    # and types that path at the prompt. Enter turns it into an nvim command.
+    function _nvim_scrollback
+        echo nvim $argv[1]
+    end
+    abbr -a scrollback --position command --regex '.*/history\.txt' --function _nvim_scrollback
 end
 
 # Ayu Mirage accents the prompt borrows from.

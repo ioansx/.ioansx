@@ -16,6 +16,11 @@ window-vsync = true
 # keybind = ctrl+n=navigate_search:next
 # keybind = ctrl+p=navigate_search:previous
 
+# Dumps the scrollback to a temp file and types its path at the prompt; the
+# `scrollback` abbr in config.fish turns that path into `nvim <path>` on enter.
+# Shadows the default binding, which writes only the visible screen.
+keybind = super+shift+j=write_scrollback_file:paste,plain
+
 config-file = ?linux.config
 config-file = ?macos.config
 

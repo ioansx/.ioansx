@@ -276,17 +276,6 @@ vim.pack.add({ "https://github.com/nvim-mini/mini.nvim" })
 require("mini.icons").setup()
 require("mini.splitjoin").setup()
 
--- ---
--- Oil
--- ---
-vim.pack.add({ "https://github.com/stevearc/oil.nvim" })
-require("oil").setup({
-    columns = { "icon" },
-    delete_to_trash = true,
-    view_options = { show_hidden = true },
-})
-nmap("-", "<CMD>Oil<CR>", { desc = "Oil (open)" })
-
 -- --------
 -- Gitsigns
 -- --------
@@ -627,3 +616,59 @@ local function PiTerminalOpen()
 end
 
 vim.keymap.set({ "n", "t" }, "<C-7>", PiTerminalOpen, { desc = "PiTerm (float)" })
+
+-- ---------
+-- Navigator
+-- ---------
+-- It takes the current window over, and edits the file it is left on into that
+-- same window over $NVIM.
+local function NavigatorOpen(dir, select)
+    local win = vim.api.nvim_get_current_win()
+    local origin = vim.api.nvim_get_current_buf()
+
+    vim.cmd.enew()
+    local term = vim.api.nvim_get_current_buf()
+
+    local cmd = { "nav", dir }
+    if select and select ~= "" then
+        vim.list_extend(cmd, { "--select", select })
+    end
+
+    vim.fn.jobstart(cmd, {
+        term = true,
+        on_exit = function()
+            -- Opening a file already replaced the terminal; quitting did not, so put
+            -- back whatever the window was showing before.
+            if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == term then
+                if vim.api.nvim_buf_is_valid(origin) then
+                    vim.api.nvim_win_set_buf(win, origin)
+                else
+                    vim.api.nvim_win_call(win, vim.cmd.enew)
+                end
+            end
+            vim.api.nvim_buf_delete(term, { force = true })
+        end,
+    })
+
+    vim.cmd.startinsert()
+end
+
+nmap("-", function()
+    local file = vim.api.nvim_buf_get_name(0)
+    if file == "" or vim.bo.buftype ~= "" then
+        return NavigatorOpen(vim.fn.getcwd(), nil)
+    end
+    NavigatorOpen(vim.fs.dirname(file), vim.fs.basename(file))
+end, { desc = "Navigator (open)" })
+
+-- `nvim <dir>` doesn't have netrw to land in, so drop the directory buffer and
+-- hand the path to the navigator.
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        local arg = vim.fn.argv(0)
+        if type(arg) == "string" and arg ~= "" and vim.fn.isdirectory(arg) == 1 then
+            vim.cmd("enew | bwipeout #")
+            NavigatorOpen(arg, nil)
+        end
+    end,
+})
