@@ -40,6 +40,12 @@
 	renames = true
 	wsErrorHighlight = all
 
+[difftool]
+	prompt = false
+
+[difftool "nvim"]
+	cmd = nvim -d "$LOCAL" "$REMOTE"
+
 [rerere]
 	enabled = true
 	autoUpdate = true
@@ -65,4 +71,5 @@
 	fa = fetch --all
 	l = log --graph --abbrev-commit --decorate
 	la = log --graph --abbrev-commit --decorate --all
+	ndiff = difftool --dir-diff --tool nvim
 	s = status

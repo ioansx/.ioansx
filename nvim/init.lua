@@ -51,6 +51,7 @@ vim.cmd("colorscheme istheme")
 require('vim._core.ui2').enable({})
 
 vim.cmd("packadd nvim.undotree")
+vim.cmd("packadd nvim.difftool")
 vim.cmd("packadd! matchit")
 
 local function nmap(lhs, rhs, opts)
