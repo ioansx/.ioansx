@@ -6,6 +6,9 @@
 	editor = nvim
 	pager = less -+F
 
+[status]
+	showUntrackedFiles = all
+
 [commit]
 	verbose = true
 
@@ -72,4 +75,4 @@
 	l = log --graph --abbrev-commit --decorate
 	la = log --graph --abbrev-commit --decorate --all
 	ndiff = difftool --dir-diff --tool nvim
-	s = status
+	s = status --renames
