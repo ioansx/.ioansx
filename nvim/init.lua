@@ -37,7 +37,7 @@ vim.opt.swapfile = false
 
 vim.opt.wrap = false
 vim.opt.foldlevelstart = 99
-vim.wo.signcolumn = "yes:2"
+vim.opt.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
 vim.opt.diffopt:append("algorithm:histogram")
@@ -97,8 +97,8 @@ end
 nmap("<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 nmap("<leader>tw", ":set wrap!<CR>", { desc = "toggle wrap" })
 nmap("<leader>tk", toggle_inlay_hints, { desc = "toggle inlay hints" })
-nmap("<leader>tq", toggle_quickfix_list, { noremap = true, silent = true, desc = "toggle quickfix list" })
-nmap("<leader>tl", toggle_location_list, { noremap = true, silent = true, desc = "toggle location list" })
+nmap("<leader>tq", toggle_quickfix_list, { silent = true, desc = "toggle quickfix list" })
+nmap("<leader>tl", toggle_location_list, { silent = true, desc = "toggle location list" })
 
 -- -----------
 -- Smart paste
@@ -113,18 +113,18 @@ nmap("<leader>yc", ":let @+ = join([expand('%:.'),  line('.')], ':')<CR>", { des
 nmap("<leader>yf", ":let @+ = expand('%:t')<CR>", { desc = "yank file name" })
 nmap("<leader>yr", ":let @+ = expand('%:.')<CR>", { desc = "yank relative file path" })
 
--- -----------
--- Diagnostics
--- -----------
+-- ---------------------
+-- Diagnostics & LSP nav
+-- ---------------------
 vim.diagnostic.config({ severity_sort = true, virtual_text = true })
 
 local function diagnostic_copen_errors()
     vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
 end
 
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
-vim.keymap.set("n", "<leader>de", diagnostic_copen_errors, { desc = "diagnostics copen errors" })
-vim.keymap.set("n", "<leader>da", vim.diagnostic.setqflist, { desc = "diagnostics copen all" })
+nmap("<leader>dl", vim.diagnostic.setloclist, { desc = "diagnostics lopen" })
+nmap("<leader>de", diagnostic_copen_errors, { desc = "diagnostics copen errors" })
+nmap("<leader>da", vim.diagnostic.setqflist, { desc = "diagnostics copen all" })
 
 nmap("gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration()" })
 nmap("gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()" })
@@ -146,7 +146,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- ----
 local function notify_filesize()
     local size = vim.fn.getfsize(vim.fn.expand("%"))
-    local fsize;
+    local fsize
     if size <= 0 then
         fsize = ""
     elseif size < 1024 then
@@ -206,19 +206,24 @@ local function format_with_cmd(fmt)
     end
     if not cmd then return false end
 
-    local obj = vim.system(cmd, { stdin = input }):wait()
+    local obj = vim.system(cmd, { stdin = input }):wait(3000)
     if obj.code ~= 0 then return false end
     local result = obj.stdout
 
     local new_lines = vim.split(result, "\n")
     if new_lines[#new_lines] == "" then table.remove(new_lines) end
-    if new_lines[1] and new_lines[1]:match("^/%*!.*%*/") then table.remove(new_lines, 1) end -- strip daisyUI banner
+    -- strip daisyUI banner
+    if vim.bo.filetype == "css" and new_lines[1] and new_lines[1]:match("^/%*!.*%*/") then
+        table.remove(new_lines, 1)
+    end
     vim.api.nvim_buf_set_lines(0, 0, -1, false, new_lines)
     return true
 end
 
 local function prettier_cmd(fp)
-    return { find_prettier(vim.fn.fnamemodify(fp, ":h")), "--stdin-filepath", fp }
+    local bin = find_prettier(vim.fn.fnamemodify(fp, ":h"))
+    if not bin then return nil end
+    return { bin, "--stdin-filepath", fp }
 end
 
 local formatters = {
@@ -236,16 +241,10 @@ local formatters = {
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
         local fmt = formatters[vim.bo.filetype]
-        local has_lsp = #vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" }) > 0;
-        local timeout_ms = 500
+        local has_lsp = #vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" }) > 0
 
-        if not fmt then
-            if has_lsp then
-                vim.lsp.buf.format({ timeout_ms })
-            end
-            return
-        elseif fmt.lsp and has_lsp then
-            vim.lsp.buf.format({ timeout_ms })
+        if (not fmt or fmt.lsp) and has_lsp then
+            vim.lsp.buf.format({ timeout_ms = 500 })
             return
         end
 
@@ -433,8 +432,8 @@ local function lsp_progress_show(title, message, percentage)
     vim.api.nvim_buf_set_lines(LspProgress.buf, 0, -1, false, { title_line, detail_line })
     vim.api.nvim_buf_clear_namespace(LspProgress.buf, -1, 0, -1)
     local ns = vim.api.nvim_create_namespace("lsp_progress")
-    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Title", 0, 0, -1)
-    vim.api.nvim_buf_add_highlight(LspProgress.buf, ns, "Comment", 1, 0, -1)
+    vim.hl.range(LspProgress.buf, ns, "Title", { 0, 0 }, { 0, #title_line })
+    vim.hl.range(LspProgress.buf, ns, "Comment", { 1, 0 }, { 1, #detail_line })
 
     local opts = {
         relative = "editor",
@@ -497,12 +496,13 @@ require("nvim-treesitter").install({
 
 vim.api.nvim_create_autocmd("FileType", {
     callback = function()
-        pcall(vim.treesitter.start)
-        -- folds
-        vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        vim.wo[0][0].foldmethod = 'expr'
-        -- indentation
-        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        if pcall(vim.treesitter.start) then
+            -- folds
+            vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+            vim.wo[0][0].foldmethod = 'expr'
+            -- indentation
+            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
     end,
 })
 
