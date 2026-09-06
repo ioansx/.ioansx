@@ -21,6 +21,18 @@ if status is-interactive
     fzf --fish | source
     zoxide init fish | source
 
+    # nav cannot cd the shell that launched it, so it writes where the session
+    # ended and this follows it there.
+    function nav --wraps nav --description 'nav, landing the shell where it ended'
+        set -l cwd_file (mktemp -t nav-cwd)
+        command nav --cwd-file $cwd_file $argv
+        set -l ended (cat $cwd_file)
+        rm -f $cwd_file
+
+        if test -d "$ended"; and test "$ended" != $PWD
+            cd $ended
+        end
+    end
     alias n nav
 
     # Ghostty's super+shift+j writes the scrollback to <tmp>/<random>/history.txt
