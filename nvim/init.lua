@@ -227,12 +227,13 @@ local function prettier_cmd(fp)
 end
 
 local formatters = {
-    go         = { lsp = true, cmd = { "goimports" } },
+    go         = { lsp = true, cmd = { "gofmt" } },
     rust       = { lsp = true, cmd = { "rustfmt", "--edition", "2024" } },
     zig        = { lsp = true, cmd = { "zig", "fmt", "--stdin" } },
     javascript = { cmd = prettier_cmd },
     typescript = { cmd = prettier_cmd },
     svelte     = { cmd = prettier_cmd },
+    html       = { cmd = prettier_cmd },
     css        = { cmd = prettier_cmd },
     json       = { cmd = prettier_cmd },
     yaml       = { cmd = prettier_cmd },
@@ -326,7 +327,6 @@ local lsp_servers = {
     "gopls",
     "lua_ls",
     "rust_analyzer",
-    "superhtml",
     "svelte",
     "tailwindcss",
     "taplo",
