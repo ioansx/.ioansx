@@ -96,6 +96,7 @@ end
 
 nmap("<leader>tn", ":set rnu!<CR>", { desc = "toggle relativenumber" })
 nmap("<leader>tw", ":set wrap!<CR>", { desc = "toggle wrap" })
+nmap("<leader>ts", ":set spell!<CR>", { desc = "toggle spellcheck" })
 nmap("<leader>tk", toggle_inlay_hints, { desc = "toggle inlay hints" })
 nmap("<leader>tq", toggle_quickfix_list, { silent = true, desc = "toggle quickfix list" })
 nmap("<leader>tl", toggle_location_list, { silent = true, desc = "toggle location list" })
