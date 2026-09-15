@@ -32,7 +32,6 @@ elif [ "$CMD_1" = "link" ]; then
 
     mkdir -p "$XDG_CONFIG_HOME/ghostty"
     ln -fsv "$SCRIPT_DIR/ghostty/config" $XDG_CONFIG_HOME/ghostty/config
-    ln -fsv "$SCRIPT_DIR/ghostty/themes" $XDG_CONFIG_HOME/ghostty/themes
     if [ "$OS" = "Darwin" ]; then
         ln -fsv "$SCRIPT_DIR/ghostty/macos.config" $XDG_CONFIG_HOME/ghostty/macos.config
     fi
@@ -85,7 +84,6 @@ elif [ "$CMD_1" = "unlink" ]; then
     rm -v ~/.inputrc
     rm -v $XDG_CONFIG_HOME/fish/config.fish
     rm -v $XDG_CONFIG_HOME/ghostty/config
-    rm -v $XDG_CONFIG_HOME/ghostty/themes
     if [ "$OS" = "Darwin" ]; then
         rm -v $XDG_CONFIG_HOME/ghostty/macos.config
     fi

@@ -25,7 +25,6 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 vim.opt.termguicolors = true
-vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
 
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
@@ -41,11 +40,6 @@ vim.opt.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
 vim.opt.diffopt:append("algorithm:histogram")
-
--- ------------
--- Color Scheme
--- ------------
-vim.cmd("colorscheme istheme")
 
 -- Experimental UI2
 require('vim._core.ui2').enable({})
@@ -538,8 +532,11 @@ require("snacks").setup({
     },
 })
 
--- Default SnacksPickerDir (NonText, #4f5258) matches the selection bg, hiding the dir part.
--- vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
+-- Snacks links these to NonText, which is the same grey as the selection bg in the
+-- default theme, so the dir part vanishes on the selected row.
+vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
+vim.api.nvim_set_hl(0, "SnacksPickerPathHidden", { link = "Comment" })
+vim.api.nvim_set_hl(0, "SnacksPickerPathIgnored", { link = "Comment" })
 
 nmap("<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
 nmap("<leader>f", function() Snacks.picker.files({ hidden = true }) end, { desc = "Find Files" })
