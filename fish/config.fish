@@ -16,6 +16,10 @@ mise activate fish | source
 functions --erase __mise_env_eval_on_prompt
 
 if status is-interactive
+    # The only stock theme that uses named colors, so highlighting follows
+    # whatever palette the terminal is set to instead of pinning its own.
+    fish_config theme choose "fish default"
+
     # Must come before fzf: fish_vi_key_bindings resets bindings.
     fish_vi_key_bindings
     fzf --fish | source
@@ -43,11 +47,11 @@ if status is-interactive
     abbr -a scrollback --position command --regex '.*/history\.txt' --function _nvim_scrollback
 end
 
-# Ayu Mirage accents the prompt borrows from.
-set -g __prompt_dim 5C6773
-set -g __prompt_insert 5CCFE6
-set -g __prompt_command_mode FFCC66
-set -g __prompt_visual D4BFFF
+# Named colors, for the same reason as the theme above.
+set -g __prompt_dim brblack
+set -g __prompt_insert cyan
+set -g __prompt_command_mode yellow
+set -g __prompt_visual magenta
 set -g __fish_git_prompt_color $__prompt_dim
 
 # The mode block is drawn inside fish_prompt so the blank-line separator can sit

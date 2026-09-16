@@ -1,5 +1,5 @@
 font-feature = -calt
-theme = light:Nvim Light,dark:Nvim Dark
+theme = Ayu Mirage
 # theme = acme
 scrollback-limit = 100000000
 window-padding-balance = true

@@ -24,7 +24,6 @@ vim.opt.smartindent = true
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
-vim.opt.termguicolors = true
 vim.opt.clipboard = "unnamedplus"
 
 vim.opt.completeopt = "menu,menuone,noinsert,popup"
@@ -40,6 +39,15 @@ vim.opt.signcolumn = "yes:2"
 vim.opt.winborder = "single"
 
 vim.opt.diffopt:append("algorithm:histogram")
+
+vim.opt.termguicolors = false
+
+-- The default theme gives these groups guifg/guibg only, so with termguicolors
+-- off they render as plain text: comments blend into code and the cursorline
+-- disappears. These slots come from the terminal's palette. These run at
+-- startup and have to move after where the colorscheme is set to apply.
+vim.api.nvim_set_hl(0, "Comment", { ctermfg = 8 })
+vim.api.nvim_set_hl(0, "CursorLine", { ctermbg = 0 })
 
 -- Experimental UI2
 require('vim._core.ui2').enable({})
@@ -533,10 +541,12 @@ require("snacks").setup({
 })
 
 -- Snacks links these to NonText, which is the same grey as the selection bg in the
--- default theme, so the dir part vanishes on the selected row.
-vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
-vim.api.nvim_set_hl(0, "SnacksPickerPathHidden", { link = "Comment" })
-vim.api.nvim_set_hl(0, "SnacksPickerPathIgnored", { link = "Comment" })
+-- default theme, so the dir part vanishes on the selected row. No-ops while
+-- termguicolors is off: the default theme gives NonText and Comment guifg only,
+-- so both render as plain foreground. Uncomment if termguicolors goes back on.
+-- vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "Comment" })
+-- vim.api.nvim_set_hl(0, "SnacksPickerPathHidden", { link = "Comment" })
+-- vim.api.nvim_set_hl(0, "SnacksPickerPathIgnored", { link = "Comment" })
 
 nmap("<leader>/", function() Snacks.picker.grep() end, { desc = "Grep" })
 nmap("<leader>f", function() Snacks.picker.files({ hidden = true }) end, { desc = "Find Files" })
