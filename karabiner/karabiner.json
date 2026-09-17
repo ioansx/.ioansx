@@ -266,7 +266,7 @@
             ]
           },
           {
-            "description": "Air75 cat key (fn + space): shift + F13 = Automator 'Screenshot Area and Copy Path'. Not 'mandatory: fn': Karabiner releases a mandatory fn early and macOS reads that as a Globe tap (switches input source)",
+            "description": "Air75 cat key (fn + space): F13 = macOS 'Copy picture of selected area to the clipboard'. Not 'mandatory: fn': Karabiner releases a mandatory fn early and macOS reads that as a Globe tap (switches input source)",
             "manipulators": [
               {
                 "conditions": [
@@ -299,7 +299,7 @@
                   "key_code": "spacebar",
                   "modifiers": { "optional": ["any"] }
                 },
-                "to": [{ "key_code": "f13", "modifiers": ["left_shift"] }],
+                "to": [{ "key_code": "f13" }],
                 "type": "basic"
               }
             ]
