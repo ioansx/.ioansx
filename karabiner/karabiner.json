@@ -4,301 +4,94 @@
       "complex_modifications": {
         "rules": [
           {
-            "description": "Hyper: open apps",
+            "description": "Hyper + key: open app",
             "manipulators": [
               {
-                "from": {
-                  "key_code": "g",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "bundle_identifier": "com.apple.Finder"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "a", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.mitchellh.ghostty" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "f",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_control",
-                      "left_option",
-                      "left_shift"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Firefox.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "spacebar", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.mitchellh.ghostty" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "d",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_control",
-                      "left_option",
-                      "left_shift"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Brave Browser.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "d", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.brave.Browser" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "s",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_control",
-                      "left_option",
-                      "left_shift"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Users/ioan/Applications/Brave Browser Apps.localized/Claude.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "e", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.linear" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "a",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_control",
-                      "left_option",
-                      "left_shift"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Ghostty.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "f", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "org.mozilla.firefox" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "t",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/OrbStack.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "g", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.apple.Finder" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "r",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Slack.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "r", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.tinyspeck.slackmacgap" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "e",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Linear.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "s", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.brave.Browser.app.fmpnliohjhemenmnlpbfagaolkdacoja" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "w",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "bundle_identifier": "com.apple.Reminders"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "t", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "dev.kdrag0n.MacVirt" } } }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "spacebar",
-                  "modifiers": {
-                    "mandatory": [
-                      "left_command",
-                      "left_option",
-                      "left_shift",
-                      "left_control"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "software_function": {
-                      "open_application": {
-                        "file_path": "/Applications/Ghostty.app"
-                      }
-                    }
-                  }
-                ],
+                "from": { "key_code": "w", "modifiers": { "mandatory": ["command", "control", "option", "shift"] } },
+                "to": [{ "software_function": { "open_application": { "bundle_identifier": "com.apple.reminders" } } }],
                 "type": "basic"
               }
             ]
           },
           {
-            "description": "Caps lock: hold = hyper, tap = escape, fn + caps = caps lock",
+            "description": "Caps lock: hold = hyper, tap = escape, fn + caps = caps lock. Not on the Go60, whose firmware has its own hyper: there caps lock stays caps lock",
             "manipulators": [
               {
-                "from": {
-                  "key_code": "caps_lock",
-                  "modifiers": { "mandatory": ["fn"], "optional": ["caps_lock"] }
-                },
+                "from": { "key_code": "caps_lock", "modifiers": { "mandatory": ["fn"], "optional": ["caps_lock"] } },
                 "to": [{ "key_code": "caps_lock" }],
                 "type": "basic"
               },
               {
-                "from": {
-                  "key_code": "caps_lock",
-                  "modifiers": { "optional": ["any"] }
-                },
-                "to": [
-                  {
-                    "key_code": "left_shift",
-                    "modifiers": ["left_command", "left_control", "left_option"]
-                  }
-                ],
+                "conditions": [{ "type": "device_unless", "identifiers": [{ "vendor_id": 5824, "product_id": 10203 }] }],
+                "from": { "key_code": "caps_lock", "modifiers": { "optional": ["any"] } },
+                "to": [{ "key_code": "left_shift", "modifiers": ["left_command", "left_control", "left_option"] }],
                 "to_if_alone": [{ "key_code": "escape" }],
                 "type": "basic"
               }
             ]
           },
           {
-            "description": "Air75 cat key (fn + space): F13 = macOS 'Copy picture of selected area to the clipboard'. Not 'mandatory: fn': Karabiner releases a mandatory fn early and macOS reads that as a Globe tap (switches input source)",
+            "description": "Screenshot key = F13, bound in System Settings to 'Copy picture of selected area to the clipboard'. Air75: cat key (fn + space); Go60: shift + print_screen",
             "manipulators": [
               {
-                "conditions": [
-                  {
-                    "type": "device_if",
-                    "identifiers": [
-                      { "vendor_id": 1452, "product_id": 591 },
-                      { "vendor_id": 1452, "product_id": 598 }
-                    ]
-                  }
-                ],
-                "from": {
-                  "key_code": "spacebar",
-                  "modifiers": { "optional": ["caps_lock", "command", "control", "option", "shift"] }
-                },
+                "conditions": [{ "type": "device_if", "identifiers": [{ "vendor_id": 1452, "product_id": 591 }, { "vendor_id": 1452, "product_id": 598 }] }],
+                "from": { "key_code": "spacebar", "modifiers": { "optional": ["caps_lock", "command", "control", "option", "shift"] } },
                 "to": [{ "key_code": "spacebar" }],
                 "type": "basic"
               },
               {
-                "conditions": [
-                  {
-                    "type": "device_if",
-                    "identifiers": [
-                      { "vendor_id": 1452, "product_id": 591 },
-                      { "vendor_id": 1452, "product_id": 598 }
-                    ]
-                  }
-                ],
-                "from": {
-                  "key_code": "spacebar",
-                  "modifiers": { "optional": ["any"] }
-                },
+                "conditions": [{ "type": "device_if", "identifiers": [{ "vendor_id": 1452, "product_id": 591 }, { "vendor_id": 1452, "product_id": 598 }] }],
+                "from": { "key_code": "spacebar", "modifiers": { "optional": ["any"] } },
+                "to": [{ "key_code": "f13" }],
+                "type": "basic"
+              },
+              {
+                "from": { "key_code": "print_screen", "modifiers": { "mandatory": ["shift"] } },
                 "to": [{ "key_code": "f13" }],
                 "type": "basic"
               }
@@ -308,11 +101,7 @@
       },
       "devices": [
         {
-          "identifiers": {
-            "is_keyboard": true,
-            "product_id": 834,
-            "vendor_id": 1452
-          },
+          "identifiers": { "is_keyboard": true, "vendor_id": 1452, "product_id": 834 },
           "simple_modifications": [
             {
               "from": { "key_code": "non_us_backslash" },
@@ -321,21 +110,26 @@
           ]
         },
         {
-          "identifiers": {
-            "is_keyboard": true,
-            "product_id": 6505,
-            "vendor_id": 12951
-          },
+          "identifiers": { "is_keyboard": true, "vendor_id": 12951, "product_id": 6505 },
           "ignore": true
         },
         {
-          "identifiers": {
-            "is_keyboard": true,
-            "is_pointing_device": true,
-            "product_id": 10203,
-            "vendor_id": 5824
-          },
+          "identifiers": { "is_keyboard": true, "is_pointing_device": true, "vendor_id": 5824, "product_id": 10203 },
           "ignore": false,
+          "fn_function_keys": [
+            { "from": { "key_code": "f1" }, "to": [{ "key_code": "f1" }] },
+            { "from": { "key_code": "f2" }, "to": [{ "key_code": "f2" }] },
+            { "from": { "key_code": "f3" }, "to": [{ "key_code": "f3" }] },
+            { "from": { "key_code": "f4" }, "to": [{ "key_code": "f4" }] },
+            { "from": { "key_code": "f5" }, "to": [{ "key_code": "f5" }] },
+            { "from": { "key_code": "f6" }, "to": [{ "key_code": "f6" }] },
+            { "from": { "key_code": "f7" }, "to": [{ "key_code": "f7" }] },
+            { "from": { "key_code": "f8" }, "to": [{ "key_code": "f8" }] },
+            { "from": { "key_code": "f9" }, "to": [{ "key_code": "f9" }] },
+            { "from": { "key_code": "f10" }, "to": [{ "key_code": "f10" }] },
+            { "from": { "key_code": "f11" }, "to": [{ "key_code": "f11" }] },
+            { "from": { "key_code": "f12" }, "to": [{ "key_code": "f12" }] }
+          ],
           "simple_modifications": [
             {
               "from": { "key_code": "f14" },
@@ -346,10 +140,7 @@
       ],
       "name": "Default",
       "selected": true,
-      "virtual_hid_keyboard": {
-        "country_code": 0,
-        "keyboard_type_v2": "ansi"
-      }
+      "virtual_hid_keyboard": { "country_code": 0, "keyboard_type_v2": "ansi" }
     }
   ]
 }
