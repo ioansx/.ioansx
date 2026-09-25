@@ -27,6 +27,11 @@ elif [ "$CMD_1" = "link" ]; then
     # ln -fsv "$SCRIPT_DIR/bash/.bashrc" ~/.bashrc
     ln -fsv "$SCRIPT_DIR/bash/.inputrc" ~/.inputrc
 
+    mkdir -p ~/.claude/skills
+    for skill in "$SCRIPT_DIR"/claude/skills/*/; do
+        ln -fsvn "${skill%/}" ~/.claude/skills/
+    done
+
     mkdir -p "$XDG_CONFIG_HOME/fish"
     ln -fsv "$SCRIPT_DIR/fish/config.fish" $XDG_CONFIG_HOME/fish/config.fish
 
@@ -82,6 +87,9 @@ elif [ "$CMD_1" = "link" ]; then
 elif [ "$CMD_1" = "unlink" ]; then
     # rm -v ~/.bashrc
     rm -v ~/.inputrc
+    for skill in "$SCRIPT_DIR"/claude/skills/*/; do
+        rm -v ~/.claude/skills/"$(basename "$skill")"
+    done
     rm -v $XDG_CONFIG_HOME/fish/config.fish
     rm -v $XDG_CONFIG_HOME/ghostty/config
     if [ "$OS" = "Darwin" ]; then
