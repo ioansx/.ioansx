@@ -6,6 +6,8 @@ A ticket pipeline for any repository:
 /s-start → /s-reqs → /s-plan → /s-impl → /s-review → /s-pr        (/s-load at any point)
 ```
 
+`/s-auto` runs every stage up to `/s-pr` unattended.
+
 Each stage writes one artifact into the ticket's directory, commits it, and names the next command. The skills
 bring their own mechanics; the project brings its rules. When the two disagree, the project wins, except for
 the overrides below.
