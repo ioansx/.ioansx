@@ -74,7 +74,8 @@ Before showing the plan, fix every failure:
 ## 7. Approval
 
 Show the plan in the conversation as a summary: the approach, the steps, and the choices the user should
-check. Ask for approval. Revise on feedback and ask again until the user approves. Commit only after approval.
+check. Ask for approval, and say how to give it: reply to approve, or run `/s-impl`, which counts as approval.
+Revise on feedback and ask again until the user approves. Commit only after approval.
 
 ## 8. Finish
 

@@ -20,6 +20,9 @@ judged against `ticket.md`. Resume from the first unticked step; the ticks and `
 memory of an earlier session. If the working tree has uncommitted changes you did not make, ask before
 touching those files.
 
+`plan.md` uncommitted means `/s-plan` is still waiting for approval, and running `/s-impl` is that approval:
+commit `plan.md` as `/s-plan` would (`<TICKET> workflow: plan (s-plan)`), then start.
+
 ## 2. Each step
 
 1. Make the change the step describes, in the files it names. Match the surrounding code and the project's
